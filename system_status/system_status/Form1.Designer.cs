@@ -294,22 +294,22 @@
         public System.Windows.Forms.TabControl tabControl1;
         public System.Windows.Forms.TabPage tabs_host;
         public System.Windows.Forms.TabPage tabs_hdd;
-        private System.Windows.Forms.TabPage tabs_firewall;
-        private System.Windows.Forms.TabPage tabs_service;
-        private System.Windows.Forms.TabPage tabs_running_program;
-        private System.Windows.Forms.TabPage tabs_task;
-        private System.Windows.Forms.DataGridView location_grid;
-        private System.Windows.Forms.DataGridView hdd_grid;
-        private System.Windows.Forms.DataGridView firewall_grid;
-        private System.Windows.Forms.DataGridView system_service_grid;
-        private System.Windows.Forms.DataGridView tasks;
-        private System.Windows.Forms.DataGridView schedule_grid;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
-        private System.Windows.Forms.TabPage tabs_IIS;
-        private System.Windows.Forms.GroupBox groupBox1;
+        public System.Windows.Forms.TabPage tabs_firewall;
+        public System.Windows.Forms.TabPage tabs_service;
+        public System.Windows.Forms.TabPage tabs_running_program;
+        public System.Windows.Forms.TabPage tabs_task;
+        public System.Windows.Forms.DataGridView location_grid;
+        public System.Windows.Forms.DataGridView hdd_grid;
+        public System.Windows.Forms.DataGridView firewall_grid;
+        public System.Windows.Forms.DataGridView system_service_grid;
+        public System.Windows.Forms.DataGridView tasks;
+        public System.Windows.Forms.DataGridView schedule_grid;
+        public System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        public System.Windows.Forms.StatusStrip statusStrip1;
+        public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        public System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
+        public System.Windows.Forms.TabPage tabs_IIS;
+        public System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

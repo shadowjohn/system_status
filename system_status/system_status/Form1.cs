@@ -40,7 +40,7 @@ namespace system_status
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+            cHdd.hdd_init(this);
             
         }
 
