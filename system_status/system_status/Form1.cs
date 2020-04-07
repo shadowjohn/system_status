@@ -31,7 +31,7 @@ namespace system_status
             InitializeComponent();
             theform = this;
             cLocation = new location_info();
-            cHdd = new hdd_info();
+            cHdd = new hdd_info();//硬碟資訊
             cFirewall = new firewall_info();
             cSystemService = new system_service();
             cSchedule = new schedule();
