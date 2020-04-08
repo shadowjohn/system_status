@@ -14,7 +14,8 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Diagnostics;
-
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace utility
 {
@@ -270,6 +271,76 @@ namespace utility
             TimeSpan span = dt - UnixEpoch;
             long microseconds = span.Ticks / (TimeSpan.TicksPerMillisecond / 1000);
             return microseconds.ToString();
+        }
+        public string trim(string input)
+        {
+            return input.Trim();
+        }
+        public void file_put_contents(string filepath, string input)
+        {
+            file_put_contents(filepath, s2b(input), false);
+        }
+        public byte[] s2b(string input)
+        {
+            return System.Text.Encoding.UTF8.GetBytes(input);
+        }
+        public void file_put_contents(string filepath, byte[] input)
+        {
+            file_put_contents(filepath, input, false);
+        }
+        public void file_put_contents(string filepath, string input, bool isFileAppend)
+        {
+            file_put_contents(filepath, s2b(input), isFileAppend);
+        }
+        public void file_put_contents(string filepath, byte[] input, bool isFileAppend)
+        {
+
+            switch (isFileAppend)
+            {
+                case true:
+                    {
+                        FileStream myFile = null;
+                        if (!is_file(filepath))
+                        {
+                            myFile = File.Open(@filepath, FileMode.Create);
+                        }
+                        else
+                        {
+                            myFile = File.Open(@filepath, FileMode.Append);
+                        }
+                        myFile.Seek(myFile.Length, SeekOrigin.Begin);
+                        myFile.Write(input, 0, input.Length);
+                        myFile.Dispose();
+                    }
+                    break;
+                case false:
+                    {
+                        FileStream myFile = File.Open(@filepath, FileMode.Create);
+                        myFile.Write(input, 0, input.Length);
+                        myFile.Dispose();
+                    }
+                    break;
+            }
+        }
+        public JArray json_decode(string input)
+        {
+            input = trim(input);
+            if (input.Length != 0)
+            {
+                if (input.Substring(1, 1) != "[")
+                {
+                    input = "[" + input + "]";
+                    return (JArray)JsonConvert.DeserializeObject<JArray>(input);
+                }
+                else
+                {
+                    return (JArray)JsonConvert.DeserializeObject<JArray>(input);
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 
