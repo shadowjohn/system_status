@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabs_host = new System.Windows.Forms.TabPage();
-            this.location_grid = new System.Windows.Forms.DataGridView();
+            this.system_grid = new System.Windows.Forms.DataGridView();
             this.tabs_hdd = new System.Windows.Forms.TabPage();
             this.hdd_grid = new System.Windows.Forms.DataGridView();
             this.tabs_running_program = new System.Windows.Forms.TabPage();
@@ -45,6 +45,8 @@
             this.tabs_IIS = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabs_setting = new System.Windows.Forms.TabPage();
+            this.btnManual = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.textSystemName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -52,10 +54,9 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.button1 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabs_host.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.location_grid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.system_grid)).BeginInit();
             this.tabs_hdd.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.hdd_grid)).BeginInit();
             this.tabs_running_program.SuspendLayout();
@@ -92,7 +93,7 @@
             // 
             // tabs_host
             // 
-            this.tabs_host.Controls.Add(this.location_grid);
+            this.tabs_host.Controls.Add(this.system_grid);
             this.tabs_host.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.tabs_host.Location = new System.Drawing.Point(4, 22);
             this.tabs_host.Name = "tabs_host";
@@ -102,15 +103,15 @@
             this.tabs_host.Text = "本機資訊";
             this.tabs_host.UseVisualStyleBackColor = true;
             // 
-            // location_grid
+            // system_grid
             // 
-            this.location_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.location_grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.location_grid.Location = new System.Drawing.Point(3, 3);
-            this.location_grid.Name = "location_grid";
-            this.location_grid.RowTemplate.Height = 24;
-            this.location_grid.Size = new System.Drawing.Size(794, 357);
-            this.location_grid.TabIndex = 0;
+            this.system_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.system_grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.system_grid.Location = new System.Drawing.Point(3, 3);
+            this.system_grid.Name = "system_grid";
+            this.system_grid.RowTemplate.Height = 24;
+            this.system_grid.Size = new System.Drawing.Size(794, 357);
+            this.system_grid.TabIndex = 0;
             // 
             // tabs_hdd
             // 
@@ -128,8 +129,8 @@
             this.hdd_grid.AllowUserToAddRows = false;
             this.hdd_grid.AllowUserToDeleteRows = false;
             this.hdd_grid.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(3);
-            this.hdd_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(3);
+            this.hdd_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.hdd_grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.hdd_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.hdd_grid.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -244,6 +245,7 @@
             // 
             // tabs_setting
             // 
+            this.tabs_setting.Controls.Add(this.btnManual);
             this.tabs_setting.Controls.Add(this.button1);
             this.tabs_setting.Controls.Add(this.btnSave);
             this.tabs_setting.Controls.Add(this.textSystemName);
@@ -255,10 +257,30 @@
             this.tabs_setting.Text = "功能設定";
             this.tabs_setting.UseVisualStyleBackColor = true;
             // 
+            // btnManual
+            // 
+            this.btnManual.Location = new System.Drawing.Point(652, 313);
+            this.btnManual.Name = "btnManual";
+            this.btnManual.Size = new System.Drawing.Size(75, 23);
+            this.btnManual.TabIndex = 4;
+            this.btnManual.Text = "手動同步";
+            this.btnManual.UseVisualStyleBackColor = true;
+            this.btnManual.Click += new System.EventHandler(this.btnManual_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(489, 313);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSave.Location = new System.Drawing.Point(407, 253);
+            this.btnSave.Location = new System.Drawing.Point(476, 238);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(106, 34);
             this.btnSave.TabIndex = 2;
@@ -269,7 +291,7 @@
             // textSystemName
             // 
             this.textSystemName.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.textSystemName.Location = new System.Drawing.Point(138, 16);
+            this.textSystemName.Location = new System.Drawing.Point(154, 112);
             this.textSystemName.Name = "textSystemName";
             this.textSystemName.Size = new System.Drawing.Size(359, 36);
             this.textSystemName.TabIndex = 1;
@@ -278,7 +300,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(14, 23);
+            this.label1.Location = new System.Drawing.Point(27, 124);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(130, 24);
             this.label1.TabIndex = 0;
@@ -324,16 +346,6 @@
             this.toolStripProgressBar1.Size = new System.Drawing.Size(400, 16);
             this.toolStripProgressBar1.Step = 1;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(652, 308);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -347,7 +359,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabs_host.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.location_grid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.system_grid)).EndInit();
             this.tabs_hdd.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.hdd_grid)).EndInit();
             this.tabs_running_program.ResumeLayout(false);
@@ -378,7 +390,7 @@
         public System.Windows.Forms.TabPage tabs_service;
         public System.Windows.Forms.TabPage tabs_running_program;
         public System.Windows.Forms.TabPage tabs_task;
-        public System.Windows.Forms.DataGridView location_grid;
+        public System.Windows.Forms.DataGridView system_grid;
         public System.Windows.Forms.DataGridView hdd_grid;
         public System.Windows.Forms.DataGridView firewall_grid;
         public System.Windows.Forms.DataGridView system_service_grid;
@@ -394,7 +406,8 @@
         public System.Windows.Forms.Button btnSave;
         public System.Windows.Forms.TextBox textSystemName;
         public System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
+        public System.Windows.Forms.Button button1;
+        public System.Windows.Forms.Button btnManual;
     }
 }
 

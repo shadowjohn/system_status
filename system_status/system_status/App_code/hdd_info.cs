@@ -17,7 +17,7 @@ namespace system_status.App_code
         {
         }
         public bool is_running = false;
-        public void hdd_init(Form1 theform)
+        public void init(Form1 theform)
         {
             is_running = true;
             theform.setStatusBar("硬碟資訊載入開始...", 0);
@@ -42,19 +42,19 @@ namespace system_status.App_code
         ""hddFormatType"":{""name"":""分割類型"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {   
-        ""hddTotalSpace"":{""name"":""總空間"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddTotalSpace"":{""name"":""總空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {   
         ""hddTotalSpaceDisplay"":{""name"":""總空間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddUsageSpace"":{""name"":""已使用空間"",""width"":100,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddUsageSpace"":{""name"":""已使用空間_資料"",""width"":100,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
         ""hddUsageSpaceDisplay"":{""name"":""已使用空間"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddFreeSpace"":{""name"":""剩餘空間"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddFreeSpace"":{""name"":""剩餘空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
         ""hddFreeSpaceDisplay"":{""name"":""剩餘空間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}

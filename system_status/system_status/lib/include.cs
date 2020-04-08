@@ -16,6 +16,8 @@ using System.Threading;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Management;
+using System.Windows.Forms;
 
 namespace utility
 {
@@ -226,7 +228,23 @@ namespace utility
             //取得專案的起始位置
             return pwd();
         }
+        public string getCPUId()
+        {
+            string cpuInfo = string.Empty;
+            ManagementClass mc = new System.Management.ManagementClass("win32_processor");
+            ManagementObjectCollection moc = mc.GetInstances();
 
+            foreach (ManagementObject mo in moc)
+            {
+                if (cpuInfo == "")
+                {
+                    //Get only the first CPU's ID
+                    cpuInfo = mo.Properties["processorID"].Value.ToString();
+                    break;
+                }
+            }
+            return cpuInfo;
+        }
         public string system(string command)
         {
             StringBuilder sb = new StringBuilder();
@@ -341,6 +359,58 @@ namespace utility
             {
                 return null;
             }
+        }
+        public string json_encode(object input)
+        {
+            return EscapeUnicode(JsonConvert.SerializeObject(input, Formatting.None));
+        }
+        public string json_encode_formated(object input)
+        {
+            return EscapeUnicode(JsonConvert.SerializeObject(input, Formatting.Indented));
+        }
+        public string EscapeUnicode(string input)
+        {
+            StringBuilder sb = new StringBuilder(input.Length);
+            foreach (char ch in input)
+            {
+                if (ch <= 0x7f)
+                    sb.Append(ch);
+                else
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "\\u{0:x4}", (int)ch);
+            }
+            return sb.ToString();
+        }
+        public string json_format(string input)
+        {
+            JArray jdod = json_decode(input);
+            return EscapeUnicode(JsonConvert.SerializeObject(jdod, Formatting.Indented));
+        }
+        public string json_format_utf8(string input)
+        {
+            JArray jdod = json_decode(input);
+            return JsonConvert.SerializeObject(jdod, Formatting.Indented);
+        }
+        public DataTable gridViewToDataTable(DataGridView grid)
+        {
+            //From : http://gisellemurmured.blogspot.com/2012/08/datatable-gridview.html
+            DataTable dt = new DataTable();            
+            for (int i = 0; i < grid.Columns.Count; i++)
+            {
+                DataColumn dc = new DataColumn();
+                dc.ColumnName = grid.Columns[i].HeaderText;
+                dt.Columns.Add(dc);
+            }
+            //構造行
+            for (int i = 0; i < grid.Rows.Count; i++)
+            {
+                DataRow dr = dt.NewRow();
+                for (int j = 0; j < grid.Columns.Count; j++)
+                {
+                    dr[j] = grid.Rows[i].Cells[j].Value;
+                }
+                dt.Rows.Add(dr);
+            }
+            return dt;
         }
     }
 

@@ -93,6 +93,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -108,7 +109,7 @@
     <Compile Include="App_code\firewall_info.cs" />
     <Compile Include="App_code\hdd_info.cs" />
     <Compile Include="App_code\ini.cs" />
-    <Compile Include="App_code\location_info.cs" />
+    <Compile Include="App_code\system_info.cs" />
     <Compile Include="App_code\schedule.cs" />
     <Compile Include="App_code\system_service.cs" />
     <Compile Include="App_code\tasks.cs" />

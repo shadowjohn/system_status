@@ -20,7 +20,7 @@ namespace system_status
     public partial class Form1 : Form
     {
         public myinclude my = null;
-        location_info cLocation = null;
+        system_info cSystem = null;
         hdd_info cHdd = null;
         firewall_info cFirewall = null;
         system_service cSystemService = null;
@@ -72,7 +72,7 @@ namespace system_status
             my = new myinclude();
             InitializeComponent();
             theform = this;
-            cLocation = new location_info();
+            cSystem = new system_info();
             cHdd = new hdd_info();//硬碟資訊
             cFirewall = new firewall_info();
             cSystemService = new system_service();
@@ -88,7 +88,7 @@ namespace system_status
             //載入設定檔
             cIni.ini_init(this);
             //預設看要帶哪一個
-            //cHdd.hdd_init(this);
+            //cHdd.init(this);
             tabControl1.SelectTab("tabs_hdd");
             tabControl1_Click(new object(), new EventArgs());
             if (iniData["setting"]["NAME"] == "")
@@ -118,7 +118,7 @@ namespace system_status
                 case "tabs_hdd":
                     //讀硬碟的
                     log("硬碟");
-                    cHdd.hdd_init(this);
+                    cHdd.init(this);
                     break;
                 case "tabs_running_program":
                     //執行緒
@@ -155,7 +155,26 @@ namespace system_status
 
         private void button1_Click(object sender, EventArgs e)
         {
-            setStatusBarTitle("你好", 5000);
+            setStatusBarTitle(my.getCPUId(), 5000);
+        }
+
+        private void btnManual_Click(object sender, EventArgs e)
+        {
+            //手動同步
+            //收集所有 gridview 的內容
+            //組合成 json 加密後，上傳到伺服器
+            Dictionary<string, object> output = new Dictionary<string, object>();
+            setStatusBar("同步開始...", 0);
+            output["NAME"] = textSystemName.Text;
+            output["CPUID"] = my.getCPUId();
+            setStatusBar("同步開始...取得系統資訊", 20);
+
+            cSystem.init(this);
+            output["SYSTEM_INFO"] = my.gridViewToDataTable(system_grid);
+            setStatusBar("同步開始...取得硬碟資訊", 40);
+            cHdd.init(this);
+            output["HDD_INFO"] = my.gridViewToDataTable(hdd_grid);
+            log(my.json_encode_formated(output));
         }
     }
 }
