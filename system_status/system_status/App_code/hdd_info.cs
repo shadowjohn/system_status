@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using Simplified.IO;
 namespace system_status.App_code
 {
     class hdd_info
@@ -36,10 +36,13 @@ namespace system_status.App_code
         ""hddID"":{""name"":""磁碟代號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
-        ""hddType"":{""name"":""磁碟類型"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddType"":{""name"":""磁碟類型"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
-        ""hddFormatType"":{""name"":""分割類型"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddFormatType"":{""name"":""分割類型"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },
+    {   
+        ""hddModel"":{""name"":""硬碟型號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
     {   
         ""hddTotalSpace"":{""name"":""總空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
@@ -61,12 +64,26 @@ namespace system_status.App_code
     },
     {
         ""hddUsagePercent"":{""name"":""百分比"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+    },
+    {
+        ""hddUsageHour"":{""name"":""使用時間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+    },
+    {
+        ""hddOnOffTimes"":{""name"":""開關機次數"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+    },
+    {
+        ""hddBadSectors"":{""name"":""壞軌"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+    },
+    {
+        ""hddTemperature"":{""name"":""溫度"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     }
 ]
             ";
             var jdLists = theform.my.json_decode(json_columns);
             foreach (JObject item in jdLists[0])
             {
+                //var item_dict = item.ToObject<Dictionary<string, Dictionary< string, string>>>();                
+                //break;
                 foreach (JProperty p in item.Properties())
                 {
                     //p.Name;
@@ -74,6 +91,7 @@ namespace system_status.App_code
                     //Console.WriteLine(p.Name);
                     //Console.WriteLine(p.Value);
                     string key = p.Name;
+                    //string key = item_dict.Keys.;
                     theform.hdd_grid.Columns.Add(new DataGridViewTextBoxColumn
                     {
                         DataPropertyName = key,
@@ -117,20 +135,27 @@ namespace system_status.App_code
 
 
             DriveInfo[] drives = DriveInfo.GetDrives();
+
+            var SmartDrives = Simplified.IO.Smart.GetDrives();
             int step = 0;
             int total_step = drives.Count();
-            foreach (DriveInfo drive in drives)
+            foreach (var drive in drives)
             {
+                
+     
+
                 theform.setStatusBar("硬碟資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
                 step++;
                 //There are more attributes you can use.
                 //Check the MSDN link for a complete example.
                 //Console.WriteLine(drive.Name);
+
                 if (!drive.IsReady)
                 {
                     continue;
                 }
                 string driverName = drive.Name;
+                driverName = driverName.Replace("\\", "");
                 DriveType driverType = drive.DriveType;
                 long freeSpace = drive.TotalFreeSpace;
                 long totalSize = drive.TotalSize;
@@ -174,7 +199,52 @@ namespace system_status.App_code
                     theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Red;
                     theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Font = new Font(theform.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold);
                 }
-            }
+
+                //接下來是跑 smart
+                foreach (var SmartDrive in SmartDrives)
+                {
+                    if (SmartDrive.DriveLetters.Count == 0)
+                    {
+                        continue;
+                    }
+                    
+                    if (SmartDrive.DriveLetters[0]!=driverName)
+                    {
+                        //同名才處理
+                        continue;
+                    }
+                    //型號
+                    theform.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
+                    //Console.WriteLine(theform.my.json_encode(SmartDrive));
+                    //Console.WriteLine(SmartDrive.DriveLetters[0] + ","+ driverName);
+                    foreach (var p in SmartDrive.SmartAttributes)
+                    {
+                        //Console.WriteLine(p.Name);
+                        switch(p.Name)
+                        {
+                            case "Temperature":
+                                //溫度
+                                if (p.Register == 194)
+                                {
+                                    theform.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = p.Data;
+                                }
+                                break;
+                            case "Reallocated sector count":
+                                //壞軌數
+                                theform.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
+                                break;
+                            case "Power-on hours count":
+                                //開機時數                                
+                                theform.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
+                                break;
+                            case "Power cycle count":
+                                //開關機次數
+                                theform.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
+                                break;
+                        }
+                    }
+                }
+            } // Drives
             theform.setStatusBar("就緒", 0);
             is_running = false;
         }
