@@ -33,49 +33,49 @@ namespace system_status.App_code
             string json_columns = @"
 [
     {   
-        ""hddID"":{""name"":""磁碟代號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+        ""hddID"":{""id"":""hddID"",""name"":""磁碟代號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
-        ""hddType"":{""name"":""磁碟類型"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+        ""hddType"":{""id"":""hddType"",""name"":""磁碟類型"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
-        ""hddFormatType"":{""name"":""分割類型"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+        ""hddFormatType"":{""id"":""hddFormatType"",""name"":""分割類型"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
-        ""hddModel"":{""name"":""硬碟型號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+        ""hddModel"":{""id"":""hddModel"",""name"":""硬碟型號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
     {   
-        ""hddTotalSpace"":{""name"":""總空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddTotalSpace"":{""id"":""hddTotalSpace"",""name"":""總空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {   
-        ""hddTotalSpaceDisplay"":{""name"":""總空間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddTotalSpaceDisplay"":{""id"":""hddTotalSpaceDisplay"",""name"":""總空間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddUsageSpace"":{""name"":""已使用空間_資料"",""width"":100,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddUsageSpace"":{""id"":""hddUsageSpace"",""name"":""已使用空間_資料"",""width"":100,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddUsageSpaceDisplay"":{""name"":""已使用空間"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddUsageSpaceDisplay"":{""id"":""hddUsageSpaceDisplay"",""name"":""已使用空間"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddFreeSpace"":{""name"":""剩餘空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddFreeSpace"":{""id"":""hddFreeSpace"",""name"":""剩餘空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddFreeSpaceDisplay"":{""name"":""剩餘空間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddFreeSpaceDisplay"":{""id"":""hddFreeSpaceDisplay"",""name"":""剩餘空間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddUsagePercent"":{""name"":""百分比"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddUsagePercent"":{""id"":""hddUsagePercent"",""name"":""百分比"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddUsageHour"":{""name"":""使用時間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddUsageHour"":{""id"":""hddUsageHour"",""name"":""使用時間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddOnOffTimes"":{""name"":""開關機次數"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddOnOffTimes"":{""id"":""hddOnOffTimes"",""name"":""開關機次數"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddBadSectors"":{""name"":""壞軌"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddBadSectors"":{""id"":""hddBadSectors"",""name"":""壞軌"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
-        ""hddTemperature"":{""name"":""溫度"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
+        ""hddTemperature"":{""id"":""hddTemperature"",""name"":""溫度"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     }
 ]
             ";
@@ -91,11 +91,12 @@ namespace system_status.App_code
                     //Console.WriteLine(p.Name);
                     //Console.WriteLine(p.Value);
                     string key = p.Name;
+                    string id = p.Value["id"].ToString();
                     //string key = item_dict.Keys.;
                     theform.hdd_grid.Columns.Add(new DataGridViewTextBoxColumn
                     {
-                        DataPropertyName = key,
-                        Name = key,
+                        DataPropertyName = id,
+                        Name = id,
                         HeaderText = p.Value["name"].ToString(),
                         Width = Convert.ToInt32(p.Value["width"]),
                         Visible = Convert.ToBoolean(p.Value["display"])

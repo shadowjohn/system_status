@@ -397,7 +397,8 @@ namespace utility
             for (int i = 0; i < grid.Columns.Count; i++)
             {
                 DataColumn dc = new DataColumn();
-                dc.ColumnName = grid.Columns[i].HeaderText;
+                //dc.ColumnName = grid.Columns[i].HeaderText;
+                dc.ColumnName = grid.Columns[i].DataPropertyName;
                 dt.Columns.Add(dc);
             }
             //構造行
