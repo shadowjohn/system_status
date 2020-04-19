@@ -216,8 +216,8 @@ namespace system_status.App_code
                     }
                     //型號
                     theform.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
-                    //Console.WriteLine(theform.my.json_encode(SmartDrive));
-                    //Console.WriteLine(SmartDrive.DriveLetters[0] + ","+ driverName);
+                    Console.WriteLine(theform.my.json_encode(SmartDrive));
+                    Console.WriteLine(SmartDrive.DriveLetters[0] + ","+ driverName);
                     foreach (var p in SmartDrive.SmartAttributes)
                     {
                         //Console.WriteLine(p.Name);
@@ -227,7 +227,16 @@ namespace system_status.App_code
                                 //溫度
                                 if (p.Register == 194)
                                 {
-                                    theform.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = p.Data;
+                                    string t = p.Data.ToString();
+                                    if (p.Data > 300)
+                                    {
+                                        //10進制轉16進制，取最後二碼，再還原10進制
+                                        //From : https://www.techiedelight.com/conversion-between-integer-and-hexadecimal-csharp/
+                                        string hex_str = p.Data.ToString("X");
+                                        hex_str = hex_str.Substring(hex_str.Length-2,2);
+                                        t = Int32.Parse(hex_str,System.Globalization.NumberStyles.HexNumber).ToString();
+                                    }
+                                    theform.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = t.ToString();
                                 }
                                 break;
                             case "Reallocated sector count":
