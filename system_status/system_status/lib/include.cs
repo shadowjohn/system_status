@@ -393,7 +393,7 @@ namespace utility
         public DataTable gridViewToDataTable(DataGridView grid)
         {
             //From : http://gisellemurmured.blogspot.com/2012/08/datatable-gridview.html
-            DataTable dt = new DataTable();            
+            DataTable dt = new DataTable();
             for (int i = 0; i < grid.Columns.Count; i++)
             {
                 DataColumn dc = new DataColumn();
@@ -412,6 +412,74 @@ namespace utility
                 dt.Rows.Add(dr);
             }
             return dt;
+        }
+        public string b2s(byte[] input)
+        {
+            return System.Text.Encoding.UTF8.GetString(input);
+        }
+        public byte[] file_get_contents_post(string url, string postData)
+        {
+            HttpWebRequest httpWReq =
+            (HttpWebRequest)WebRequest.Create(url);
+
+            //ASCIIEncoding encoding = new ASCIIEncoding();
+
+            byte[] data = Encoding.UTF8.GetBytes(postData);
+
+            httpWReq.Method = "POST";
+            httpWReq.ContentType = "application/x-www-form-urlencoded";
+            httpWReq.UserAgent = "user_agent','Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)";
+            httpWReq.Proxy = null;
+            httpWReq.Timeout = 60000;
+            httpWReq.Referer = null;// HttpContext.Current.Request.ServerVariables["SERVER_NAME"];
+            //httpWReq.Referer = url;//getSystemKey("HTTP_REFERER");
+            httpWReq.ContentLength = data.Length;
+
+            using (Stream stream = httpWReq.GetRequestStream())
+            {
+                stream.Write(data, 0, data.Length);
+                stream.Close();
+            }
+
+            HttpWebResponse response = (HttpWebResponse)httpWReq.GetResponse();
+
+            Stream streamD = response.GetResponseStream();
+            byte[] byteData = ReadStream(streamD, 32767);
+            response.Close();
+            streamD.Close();
+            return byteData;
+            //byte[] responseString = new StreamReader(response.GetResponseStream()).ToArray();
+
+        }
+        private byte[] ReadStream(Stream stream, int initialLength)
+        {
+            if (initialLength < 1)
+            {
+                initialLength = 32768;
+            }
+            byte[] buffer = new byte[initialLength];
+            int read = 0;
+            int chunk;
+            while ((chunk = stream.Read(buffer, read, buffer.Length - read)) > 0)
+            {
+                read += chunk;
+                if (read == buffer.Length)
+                {
+                    int nextByte = stream.ReadByte();
+                    if (nextByte == -1)
+                    {
+                        return buffer;
+                    }
+                    byte[] newBuffer = new byte[buffer.Length * 2];
+                    Array.Copy(buffer, newBuffer, buffer.Length);
+                    newBuffer[read] = (byte)nextByte;
+                    buffer = newBuffer;
+                    read++;
+                }
+            }
+            byte[] bytes = new byte[read];
+            Array.Copy(buffer, bytes, read);
+            return bytes;
         }
     }
 

@@ -123,6 +123,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="lib\include.cs" />
+    <Compile Include="lib\runThd.cs" />
     <Compile Include="lib\Smart.Net\Helper.cs" />
     <Compile Include="lib\Smart.Net\Objects.cs" />
     <Compile Include="lib\Smart.Net\Resource.cs" />

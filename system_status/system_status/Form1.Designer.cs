@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabs_host = new System.Windows.Forms.TabPage();
             this.system_grid = new System.Windows.Forms.DataGridView();
@@ -54,6 +55,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.tabControl1.SuspendLayout();
             this.tabs_host.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.system_grid)).BeginInit();
@@ -129,8 +131,8 @@
             this.hdd_grid.AllowUserToAddRows = false;
             this.hdd_grid.AllowUserToDeleteRows = false;
             this.hdd_grid.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(3);
-            this.hdd_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Padding = new System.Windows.Forms.Padding(3);
+            this.hdd_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             this.hdd_grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.hdd_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.hdd_grid.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -346,6 +348,12 @@
             this.toolStripProgressBar1.Size = new System.Drawing.Size(400, 16);
             this.toolStripProgressBar1.Step = 1;
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -357,6 +365,7 @@
             this.Name = "Form1";
             this.Text = "系統安全小工具";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             this.tabControl1.ResumeLayout(false);
             this.tabs_host.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.system_grid)).EndInit();
@@ -408,6 +417,7 @@
         public System.Windows.Forms.Label label1;
         public System.Windows.Forms.Button button1;
         public System.Windows.Forms.Button btnManual;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 

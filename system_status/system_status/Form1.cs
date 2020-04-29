@@ -81,6 +81,10 @@ namespace system_status
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+            notifyIcon1.BalloonTipText = "服務停止器已縮小 :D";
+            notifyIcon1.BalloonTipTitle = this.Text;
+            notifyIcon1.Text = this.Text;
+
             this.StartPosition = FormStartPosition.CenterScreen;
             this.TopMost = true;
             this.TopMost = false;
@@ -175,6 +179,23 @@ namespace system_status
             cHdd.init(this);
             output["HDD_INFO"] = my.gridViewToDataTable(hdd_grid);
             log(my.json_encode_formated(output));
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                ShowInTaskbar = false;
+                notifyIcon1.Visible = true;
+                notifyIcon1.ShowBalloonTip(1000);
+            }
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ShowInTaskbar = true;
+            notifyIcon1.Visible = false;
+            WindowState = FormWindowState.Normal;
         }
     }
 }
