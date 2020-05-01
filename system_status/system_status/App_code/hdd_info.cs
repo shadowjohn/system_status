@@ -16,20 +16,22 @@ namespace system_status.App_code
         public hdd_info()
         {
         }
+        private Form1 _form = null;
         public bool is_running = false;
         public void init(Form1 theform)
         {
+            _form = theform;
             is_running = true;
-            theform.setStatusBar("硬碟資訊載入開始...", 0);
+            _form.setStatusBar("硬碟資訊載入開始...", 0);
             //From : http://jengting.blogspot.com/2016/07/DataGridView-Sample.html
-            theform.hdd_grid.AutoGenerateColumns = false; //這啥
-            theform.hdd_grid.AllowUserToAddRows = false; //不能允許使用者自行調整
-            theform.hdd_grid.RowHeadersVisible = false; //左邊空欄移除
-            theform.hdd_grid.Dock = DockStyle.Fill; //自動展開到最大
-            theform.hdd_grid.AllowDrop = false;
-            theform.hdd_grid.ReadOnly = true;
+            _form.hdd_grid.AutoGenerateColumns = false; //這啥
+            _form.hdd_grid.AllowUserToAddRows = false; //不能允許使用者自行調整
+            _form.hdd_grid.RowHeadersVisible = false; //左邊空欄移除
+            _form.hdd_grid.Dock = DockStyle.Fill; //自動展開到最大
+            _form.hdd_grid.AllowDrop = false;
+            _form.hdd_grid.ReadOnly = true;
 
-            theform.hdd_grid.Columns.Clear();
+            _form.hdd_grid.Columns.Clear();
             string json_columns = @"
 [
     {   
@@ -79,73 +81,21 @@ namespace system_status.App_code
     }
 ]
             ";
-            var jdLists = theform.my.json_decode(json_columns);
-            foreach (JObject item in jdLists[0])
-            {
-                //var item_dict = item.ToObject<Dictionary<string, Dictionary< string, string>>>();                
-                //break;
-                foreach (JProperty p in item.Properties())
-                {
-                    //p.Name;
-                    //Console.WriteLine(item.ToString());
-                    //Console.WriteLine(p.Name);
-                    //Console.WriteLine(p.Value);
-                    string key = p.Name;
-                    string id = p.Value["id"].ToString();
-                    //string key = item_dict.Keys.;
-                    theform.hdd_grid.Columns.Add(new DataGridViewTextBoxColumn
-                    {
-                        DataPropertyName = id,
-                        Name = id,
-                        HeaderText = p.Value["name"].ToString(),
-                        Width = Convert.ToInt32(p.Value["width"]),
-                        Visible = Convert.ToBoolean(p.Value["display"])
-                    });
-
-                    //Console.WriteLine(p.Value["headerAlign"].ToString());
-                    //無法排序，標題才能置中
-                    theform.hdd_grid.Columns[key].SortMode = DataGridViewColumnSortMode.NotSortable;
-                    theform.hdd_grid.Columns[key].HeaderCell.Style.Font = new Font("微軟正黑體", 16); //標題字型大小
-                    switch (p.Value["headerAlign"].ToString())
-                    {
-                        case "left":
-                            theform.hdd_grid.Columns[key].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
-                            break;
-                        case "center":
-                            theform.hdd_grid.Columns[key].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                            break;
-                        case "right":
-                            theform.hdd_grid.Columns[key].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-                            break;
-                    }
-                    theform.hdd_grid.Columns[key].DefaultCellStyle.Font = new Font("@Fixedsys", 14); //標題字型大小
-                    switch (p.Value["cellAlign"].ToString())
-                    {
-                        case "left":
-                            theform.hdd_grid.Columns[key].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-                            break;
-                        case "center":
-                            theform.hdd_grid.Columns[key].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                            break;
-                        case "right":
-                            theform.hdd_grid.Columns[key].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                            break;
-                    }
-                }
-            }
-
-
+            //表格初始化
+            _form.my.grid_init(_form.hdd_grid, json_columns);
+            run();
+        }
+        void run()
+        {
             DriveInfo[] drives = DriveInfo.GetDrives();
 
             var SmartDrives = Simplified.IO.Smart.GetDrives();
             int step = 0;
             int total_step = drives.Count();
+            _form.hdd_grid.Rows.Clear();
             foreach (var drive in drives)
             {
-                
-     
-
-                theform.setStatusBar("硬碟資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
+                _form.setStatusBar("硬碟資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
                 step++;
                 //There are more attributes you can use.
                 //Check the MSDN link for a complete example.
@@ -161,44 +111,44 @@ namespace system_status.App_code
                 long freeSpace = drive.TotalFreeSpace;
                 long totalSize = drive.TotalSize;
                 long usageSize = totalSize - freeSpace;
-                theform.hdd_grid.Rows.Add();
-                int lastId = theform.hdd_grid.Rows.Count - 1;
-                theform.hdd_grid.Rows[lastId].Cells["hddID"].Value = driverName;
+                _form.hdd_grid.Rows.Add();
+                int lastId = _form.hdd_grid.Rows.Count - 1;
+                _form.hdd_grid.Rows[lastId].Cells["hddID"].Value = driverName;
 
-                theform.hdd_grid.Rows[lastId].Cells["hddType"].Value = driverType.ToString();
+                _form.hdd_grid.Rows[lastId].Cells["hddType"].Value = driverType.ToString();
 
-                theform.hdd_grid.Rows[lastId].Cells["hddFormatType"].Value = drive.DriveFormat;
+                _form.hdd_grid.Rows[lastId].Cells["hddFormatType"].Value = drive.DriveFormat;
 
-                theform.hdd_grid.Rows[lastId].Cells["hddTotalSpace"].Value = totalSize;
+                _form.hdd_grid.Rows[lastId].Cells["hddTotalSpace"].Value = totalSize;
 
-                theform.hdd_grid.Rows[lastId].Cells["hddTotalSpaceDisplay"].Value = theform.my.size_hum_read(totalSize);
+                _form.hdd_grid.Rows[lastId].Cells["hddTotalSpaceDisplay"].Value = _form.my.size_hum_read(totalSize);
 
-                theform.hdd_grid.Rows[lastId].Cells["hddUsageSpace"].Value = usageSize;
+                _form.hdd_grid.Rows[lastId].Cells["hddUsageSpace"].Value = usageSize;
 
-                theform.hdd_grid.Rows[lastId].Cells["hddUsageSpaceDisplay"].Value = theform.my.size_hum_read(usageSize);
-
-
-                theform.hdd_grid.Rows[lastId].Cells["hddFreeSpace"].Value = freeSpace;
+                _form.hdd_grid.Rows[lastId].Cells["hddUsageSpaceDisplay"].Value = _form.my.size_hum_read(usageSize);
 
 
-                theform.hdd_grid.Rows[lastId].Cells["hddFreeSpaceDisplay"].Value = theform.my.size_hum_read(freeSpace);
+                _form.hdd_grid.Rows[lastId].Cells["hddFreeSpace"].Value = freeSpace;
+
+
+                _form.hdd_grid.Rows[lastId].Cells["hddFreeSpaceDisplay"].Value = _form.my.size_hum_read(freeSpace);
 
                 double percent = (Convert.ToDouble(usageSize) / Convert.ToDouble(totalSize)) * 100.0;
-                theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Value = string.Format("{0:0.00}", percent) + " %";
-                //theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Value = string.Format("{0:0.00}", percent) + " %";
+                //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 if (percent < 60)
                 {
-                    theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Green;
+                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Green;
                 }
                 else if (percent >= 60 && percent < 85)
                 {
-                    theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Orange;
+                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Orange;
                 }
                 else
                 {
                     //剩很少空間
-                    theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Red;
-                    theform.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Font = new Font(theform.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold);
+                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Red;
+                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Font = new Font(_form.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold);
                 }
 
                 //接下來是跑 smart
@@ -208,20 +158,26 @@ namespace system_status.App_code
                     {
                         continue;
                     }
-                    
-                    if (SmartDrive.DriveLetters[0]!=driverName)
+
+                    if (!_form.my.in_array(driverName, SmartDrive.DriveLetters))
                     {
                         //同名才處理
                         continue;
                     }
+                    /*if (SmartDrive.DriveLetters[0] != driverName)
+                    {
+                        
+                        continue;
+                    }
+                    */
                     //型號
-                    theform.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
-                    Console.WriteLine(theform.my.json_encode(SmartDrive));
-                    Console.WriteLine(SmartDrive.DriveLetters[0] + ","+ driverName);
+                    _form.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
+                    Console.WriteLine(_form.my.json_encode(SmartDrive));
+                    Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
                     foreach (var p in SmartDrive.SmartAttributes)
                     {
                         //Console.WriteLine(p.Name);
-                        switch(p.Name)
+                        switch (p.Name)
                         {
                             case "Temperature":
                                 //溫度
@@ -233,29 +189,29 @@ namespace system_status.App_code
                                         //10進制轉16進制，取最後二碼，再還原10進制
                                         //From : https://www.techiedelight.com/conversion-between-integer-and-hexadecimal-csharp/
                                         string hex_str = p.Data.ToString("X");
-                                        hex_str = hex_str.Substring(hex_str.Length-2,2);
-                                        t = Int32.Parse(hex_str,System.Globalization.NumberStyles.HexNumber).ToString();
+                                        hex_str = hex_str.Substring(hex_str.Length - 2, 2);
+                                        t = Int32.Parse(hex_str, System.Globalization.NumberStyles.HexNumber).ToString();
                                     }
-                                    theform.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = t.ToString();
+                                    _form.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = t.ToString();
                                 }
                                 break;
                             case "Reallocated sector count":
                                 //壞軌數
-                                theform.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
+                                _form.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
                                 break;
                             case "Power-on hours count":
                                 //開機時數                                
-                                theform.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
+                                _form.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
                                 break;
                             case "Power cycle count":
                                 //開關機次數
-                                theform.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
+                                _form.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
                                 break;
                         }
                     }
                 }
             } // Drives
-            theform.setStatusBar("就緒", 0);
+            _form.setStatusBar("就緒", 0);
             is_running = false;
         }
     }

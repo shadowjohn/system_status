@@ -112,10 +112,11 @@
     <Compile Include="App_code\firewall_info.cs" />
     <Compile Include="App_code\hdd_info.cs" />
     <Compile Include="App_code\ini.cs" />
+    <Compile Include="App_code\PerformanceCounter.cs" />
+    <Compile Include="App_code\running_program.cs" />
     <Compile Include="App_code\system_info.cs" />
     <Compile Include="App_code\schedule.cs" />
     <Compile Include="App_code\system_service.cs" />
-    <Compile Include="App_code\tasks.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

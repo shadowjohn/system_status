@@ -18,6 +18,8 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Management;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Linq;
 
 namespace utility
 {
@@ -480,6 +482,83 @@ namespace utility
             byte[] bytes = new byte[read];
             Array.Copy(buffer, bytes, read);
             return bytes;
+        }
+        public bool in_array(string find_key, List<string> arr)
+        {
+            return arr.Contains(find_key);
+        }
+        public bool in_array(string find_key, string[] arr)
+        {
+            return arr.Contains(find_key);
+        }
+        public bool in_array(string find_key, ArrayList arr)
+        {
+            return arr.Contains(find_key);
+        }
+        public void grid_init(DataGridView g,string json_columns)
+        {
+            /*
+             針對哪個 DataGridView 初使化，json_columns 格式
+             [
+                {   
+                    ""taskID"":{""id"":""taskID"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+                }
+             ]
+            */
+            var jdLists = json_decode(json_columns);
+            foreach (JObject item in jdLists[0])
+            {
+                //var item_dict = item.ToObject<Dictionary<string, Dictionary< string, string>>>();                
+                //break;
+                foreach (JProperty p in item.Properties())
+                {
+                    //p.Name;
+                    //Console.WriteLine(item.ToString());
+                    //Console.WriteLine(p.Name);
+                    //Console.WriteLine(p.Value);
+                    string key = p.Name;
+                    string id = p.Value["id"].ToString();
+                    //string key = item_dict.Keys.;
+                    g.Columns.Add(new DataGridViewTextBoxColumn
+                    {
+                        DataPropertyName = id,
+                        Name = id,
+                        HeaderText = p.Value["name"].ToString(),
+                        Width = Convert.ToInt32(p.Value["width"]),
+                        Visible = Convert.ToBoolean(p.Value["display"])
+                    });
+
+                    //Console.WriteLine(p.Value["headerAlign"].ToString());
+                    //無法排序，標題才能置中
+                    g.Columns[key].SortMode = DataGridViewColumnSortMode.NotSortable;
+                    g.Columns[key].HeaderCell.Style.Font = new Font("微軟正黑體", 12); //標題字型大小
+                    switch (p.Value["headerAlign"].ToString())
+                    {
+                        case "left":
+                            g.Columns[key].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                            break;
+                        case "center":
+                            g.Columns[key].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                            break;
+                        case "right":
+                            g.Columns[key].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+                            break;
+                    }
+                    g.Columns[key].DefaultCellStyle.Font = new Font("@Fixedsys", 14); //標題字型大小
+                    switch (p.Value["cellAlign"].ToString())
+                    {
+                        case "left":
+                            g.Columns[key].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                            break;
+                        case "center":
+                            g.Columns[key].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                            break;
+                        case "right":
+                            g.Columns[key].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                            break;
+                    }
+                }
+            }
         }
     }
 

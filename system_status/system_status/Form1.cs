@@ -24,7 +24,7 @@ namespace system_status
         hdd_info cHdd = null;
         firewall_info cFirewall = null;
         system_service cSystemService = null;
-        tasks cTasks = null;
+        running_program cRunningProgram = null;
         schedule cSchedule = null;
         ini cIni = null;
         public IniData iniData = null; // 儲存 config 設定
@@ -74,6 +74,7 @@ namespace system_status
             theform = this;
             cSystem = new system_info();
             cHdd = new hdd_info();//硬碟資訊
+            cRunningProgram = new running_program(); //工作管理員
             cFirewall = new firewall_info();
             cSystemService = new system_service();
             cSchedule = new schedule();
@@ -93,7 +94,8 @@ namespace system_status
             cIni.ini_init(this);
             //預設看要帶哪一個
             //cHdd.init(this);
-            tabControl1.SelectTab("tabs_hdd");
+            cRunningProgram.init(this);
+            tabControl1.SelectTab("tabs_running_program");
             tabControl1_Click(new object(), new EventArgs());
             if (iniData["setting"]["NAME"] == "")
             {
@@ -128,7 +130,7 @@ namespace system_status
                     //執行緒
                     log("執行緒");
                     break;
-                case "tabs_task":
+                case "tabs_schedule":
                     //排程
                     log("排程");
                     break;
