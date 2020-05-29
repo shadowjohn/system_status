@@ -75,20 +75,18 @@ namespace system_status.App_code
              */
             //grid_init(json_columns);
             _form.my.grid_init(_form.running_program_grid, json_columns);
+            //allow sorting
+            foreach (DataGridViewColumn column in _form.running_program_grid.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
             run();
         }
 
         void run()
         {
-            //while (true)
-            //{
-            //Value++;
-            //Console.WriteLine("Value: {0}", Value);
-            //MessageBox.Show(Form1.setting_path);
-            //string data = _form.my.trim(_form.my.b2s(_form.my.file_get_contents(_form.setting_path)));
-            //string[] mdata = my.explode(",", data);
-            //Array.Sort<string>(mdata);
             _form.running_program_grid.Rows.Clear();
+            is_running = true;
             Process[] processlist = Process.GetProcesses();
             int step = 0;
             int total_step = processlist.Count();
@@ -109,61 +107,17 @@ namespace system_status.App_code
                 _form.running_program_grid.Rows[lastId].Cells["running_programCommandLine"].Value = o["CommandLine"];
             }
             _form.setStatusBar("執行緒資訊載入完成...", 100);
-            //foreach (Process theprocess in processlist)
-            /*
-            {
-                var process = Process.GetProcessesByName(theprocess.ProcessName).First();
-                string fullPath = process.GetMainModuleFileName();
-
-                _form.setStatusBar("執行緒資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
-                step++;
-                _form.running_program_grid.Rows.Add();
-                int lastId = _form.running_program_grid.Rows.Count - 1;
-                _form.running_program_grid.Rows[lastId].Cells["running_programID"].Value = step.ToString();
-                _form.running_program_grid.Rows[lastId].Cells["running_programName"].Value = _form.my.basename(fullPath);
-                _form.running_program_grid.Rows[lastId].Cells["running_programIsDanger"].Value = "";
-                _form.running_program_grid.Rows[lastId].Cells["running_programPath"].Value = fullPath;
-                _form.running_program_grid.Rows[lastId].Cells["running_programCPU"].Value = "";
-                _form.running_program_grid.Rows[lastId].Cells["running_programRAM"].Value = "";
-                _form.running_program_grid.Rows[lastId].Cells["running_programDISK"].Value = "";
-                try
-                {
-                    _form.running_program_grid.Rows[lastId].Cells["running_programNETWORK"].Value = new PerformanceCounter("Network Interface", "Bytes Total/sec", theprocess.ProcessName).NextValue();
-                }catch(Exception ex)
-                {
-                    _form.running_program_grid.Rows[lastId].Cells["running_programNETWORK"].Value = 0;
-                }
-                /*
-                for (int i = 0, max_i = mdata.Length; i < max_i; i++)
-                {
-                    if (_form.my.trim(_form.my.mainname(mdata[i])) == theprocess.ProcessName)
-                    {
-                        try
-                        {
-                            theprocess.Kill();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                        break;
-                    }
-                }
-                */
-            //}
-
-            //Thread.Sleep(100);
-            //}
+            is_running = false;
         }
-        ManagementObjectSearcher mos = null;
-        ManagementObjectCollection moc = null;
-        void GetProcessInfo()
+        private ManagementObjectSearcher mos = null;
+        private ManagementObjectCollection moc = null;
+        private void GetProcessInfo()
         {
             string Query = "SELECT ProcessID,ExecutablePath,CommandLine FROM Win32_Process ";
             mos = new ManagementObjectSearcher(Query);
             moc = mos.Get();
         }
-        Dictionary<string, string> GetProcessPath(int processId)
+        private Dictionary<string, string> GetProcessPath(int processId)
         {
 
             Dictionary<string, string> o = new Dictionary<string, string>();

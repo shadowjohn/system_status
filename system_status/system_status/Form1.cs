@@ -47,14 +47,16 @@ namespace system_status
                 return;
             }
             //https://dotblogs.com.tw/rainmaker/2016/09/04/232541 這樣寫就不會卡 UI 了
-            var task = Task.Run(() => {                
+            var task = Task.Run(() =>
+            {
                 Thread.Sleep(Convert.ToInt32(ms));
             });
-            task.ContinueWith((completedTask) => {
-                UpdateUI("就緒",toolStripStatusLabel1) ;
+            task.ContinueWith((completedTask) =>
+            {
+                UpdateUI("就緒", toolStripStatusLabel1);
             });
         }
-        private delegate void UpdateUICallBack( string value, ToolStripStatusLabel ctl);
+        private delegate void UpdateUICallBack(string value, ToolStripStatusLabel ctl);
         private void UpdateUI(string value, ToolStripStatusLabel ctl)
         {
             if (this.InvokeRequired)
@@ -82,7 +84,7 @@ namespace system_status
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            notifyIcon1.BalloonTipText = "服務停止器已縮小 :D";
+            notifyIcon1.BalloonTipText = "已縮小";
             notifyIcon1.BalloonTipTitle = this.Text;
             notifyIcon1.Text = this.Text;
 
@@ -94,8 +96,9 @@ namespace system_status
             cIni.ini_init(this);
             //預設看要帶哪一個
             //cHdd.init(this);
-            cRunningProgram.init(this);
-            tabControl1.SelectTab("tabs_running_program");
+            //cRunningProgram.init(this);
+            //tabControl1.SelectTab("tabs_running_program");
+            tabControl1.SelectTab("tabs_setting");
             tabControl1_Click(new object(), new EventArgs());
             if (iniData["setting"]["NAME"] == "")
             {
@@ -120,6 +123,7 @@ namespace system_status
                 case "tabs_host":
                     //本機資訊
                     log("本機資訊");
+                    cSystem.init(this);
                     break;
                 case "tabs_hdd":
                     //讀硬碟的
@@ -129,6 +133,7 @@ namespace system_status
                 case "tabs_running_program":
                     //執行緒
                     log("執行緒");
+                    cRunningProgram.init(this);
                     break;
                 case "tabs_schedule":
                     //排程
@@ -141,6 +146,7 @@ namespace system_status
                 case "tabs_firewall":
                     //防火牆
                     log("防火牆");
+                    cFirewall.init(this);
                     break;
                 case "tabs_IIS":
                     //IIS
@@ -196,8 +202,13 @@ namespace system_status
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             ShowInTaskbar = true;
-            notifyIcon1.Visible = false;
+            notifyIcon1.Visible = true;
             WindowState = FormWindowState.Normal;
+        }
+
+        private void Form1_Leave(object sender, EventArgs e)
+        {
+            notifyIcon1.Visible = false;
         }
     }
 }

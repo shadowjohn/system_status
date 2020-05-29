@@ -20,6 +20,7 @@ namespace system_status.App_code
         public bool is_running = false;
         public void init(Form1 theform)
         {
+           
             _form = theform;
             is_running = true;
             _form.setStatusBar("硬碟資訊載入開始...", 0);
@@ -83,6 +84,12 @@ namespace system_status.App_code
             ";
             //表格初始化
             _form.my.grid_init(_form.hdd_grid, json_columns);
+
+            //allow sorting
+            foreach (DataGridViewColumn column in _form.hdd_grid.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
             run();
         }
         void run()
@@ -172,8 +179,8 @@ namespace system_status.App_code
                     */
                     //型號
                     _form.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
-                    Console.WriteLine(_form.my.json_encode(SmartDrive));
-                    Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
+                    //Console.WriteLine(_form.my.json_encode(SmartDrive));
+                    //Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
                     foreach (var p in SmartDrive.SmartAttributes)
                     {
                         //Console.WriteLine(p.Name);

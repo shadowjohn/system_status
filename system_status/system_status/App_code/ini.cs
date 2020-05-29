@@ -34,6 +34,7 @@ namespace system_status.App_code
                 theform.my.copy(ini_path, ini_path + ".bak_"+t);
                 theform.my.unlink(ini_path);
                 ini_init(theform);
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
                 return;
             }
             if(theform.iniData["setting"]["NAME"] == null)

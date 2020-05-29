@@ -495,7 +495,24 @@ namespace utility
         {
             return arr.Contains(find_key);
         }
-        public void grid_init(DataGridView g,string json_columns)
+        public string preg_replace(String input, string[] pattern, string[] replacements)
+        {
+            if (replacements.Length != pattern.Length) return input; // throw new ArgumentException(“Replacement and Pattern Arrays must be balanced”);
+            for (var i = 0; i < pattern.Length; i++)
+            {
+                input = Regex.Replace(input, pattern[i], replacements[i]);
+            }
+            return input;
+        }
+        public string preg_replace(String input, string pattern, string replacements)
+        {
+            string[] p = new string[1];
+            p[0] = pattern;
+            string[] r = new string[1];
+            r[0] = replacements;
+            return preg_replace(input, p, r);
+        }
+        public void grid_init(DataGridView g, string json_columns)
         {
             /*
              針對哪個 DataGridView 初使化，json_columns 格式
