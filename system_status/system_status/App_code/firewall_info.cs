@@ -62,6 +62,9 @@ namespace system_status.App_code
         ""firewallProtocol"":{""id"":""firewallProtocol"",""name"":""Protocol"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
+        ""firewallAllowBlock"":{""id"":""firewallAllowBlock"",""name"":""允許／阻擋"",""width"":120,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },
+    {   
         ""firewallDirectionInOut"":{""id"":""firewallDirectionInOut"",""name"":""連入/連出"",""width"":120,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
@@ -69,17 +72,15 @@ namespace system_status.App_code
     },
     {   
         ""firewallRemotePorts"":{""id"":""firewallRemotePorts"",""name"":""RemotePorts"",""width"":160,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    }
-]";
-            /*
-,
+    },
     {   
         ""firewallLocalAddresses"":{""id"":""firewallLocalAddresses"",""name"":""LocalAddresses"",""width"":160,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {   
         ""firewallRemoteAddresses"":{""id"":""firewallRemoteAddresses"",""name"":""RemoteAddresses"",""width"":160,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     }
-             */
+]";
+
             //表格初始化
             _form.my.grid_init(_form.firewall_grid, json_columns);
 
@@ -126,6 +127,15 @@ namespace system_status.App_code
                         _form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "ICMPv6";
                         break;
                 }
+                switch (Convert.ToInt32(rule.Action))
+                {
+                    case 0: //Block
+                        _form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "阻擋";
+                        break;
+                    case 1: //Allow
+                        _form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "允許";
+                        break;
+                }
                 switch (Convert.ToInt32(rule.Direction))
                 {
                     case 1:
@@ -144,14 +154,14 @@ namespace system_status.App_code
                         //符合 TCP、UDP，要顯示 ports
                         _form.firewall_grid.Rows[lastId].Cells["firewallLocalPorts"].Value = rule.LocalPorts;
                         _form.firewall_grid.Rows[lastId].Cells["firewallRemotePorts"].Value = rule.RemotePorts;
-                        //_form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = rule.LocalAddresses;
-                        //_form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = rule.RemoteAddresses;
+                        _form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = rule.LocalAddresses;
+                        _form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = rule.RemoteAddresses;
                         break;
                     default:
                         _form.firewall_grid.Rows[lastId].Cells["firewallLocalPorts"].Value = "";
                         _form.firewall_grid.Rows[lastId].Cells["firewallRemotePorts"].Value = "";
-                        //_form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = "";
-                        //_form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = "";
+                        _form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = "";
+                        _form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = "";
                         break;
                 }
 

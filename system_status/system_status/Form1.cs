@@ -142,6 +142,7 @@ namespace system_status
                 case "tabs_service":
                     //服務
                     log("服務");
+                    cSystemService.init(this);
                     break;
                 case "tabs_firewall":
                     //防火牆
