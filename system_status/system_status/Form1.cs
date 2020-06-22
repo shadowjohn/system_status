@@ -189,35 +189,58 @@ namespace system_status
                     log("本機資訊");
                     //threads["tabs_host"] = new Thread(() => cSystem.init(this));
                     //threads["tabs_host"].Start();
-                    cSystem.init(this);
+                    if (cSystem.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cSystem.last_date) >= 5 * 60)
+                    {
+                        cSystem.init(this);
+                    }
                     break;
                 case "tabs_hdd":
                     //讀硬碟的
                     log("硬碟");
-                    cHdd.init(this);
+                    if (cHdd.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cHdd.last_date) >= 5 * 60)
+                    {
+                        cHdd.init(this);
+                    }
                     break;
                 case "tabs_running_program":
                     //執行緒
                     log("執行緒");
-                    cRunningProgram.init(this);
+                    if (cRunningProgram.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cRunningProgram.last_date) >= 5 * 60)
+                    {
+                        cRunningProgram.init(this);
+                    }
                     break;
                 case "tabs_schedule":
                     //排程
                     log("排程");
+                    if (cSchedule.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cSchedule.last_date) >= 5 * 60)
+                    {
+                        cSchedule.init(this);
+                    }
                     break;
                 case "tabs_service":
                     //服務
                     log("服務");
-                    cSystemService.init(this);
+                    if (cSystemService.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cSystemService.last_date) >= 5 * 60)
+                    {
+                        cSystemService.init(this);
+                    }
                     break;
                 case "tabs_firewall":
                     //防火牆
                     log("防火牆");
-                    cFirewall.init(this);
+                    if (cFirewall.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cFirewall.last_date) >= 5 * 60)
+                    {
+                        cFirewall.init(this);
+                    }
                     break;
                 case "tabs_IIS":
                     //IIS
                     log("IIS");
+                    //if (cFirewall.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cFirewall.last_date) >= 5 * 60)
+                    {
+
+                    }
                     break;
             }
         }

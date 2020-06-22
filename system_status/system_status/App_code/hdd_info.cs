@@ -19,6 +19,7 @@ namespace system_status.App_code
         }
         private Form1 _form = null;
         public bool is_running = false;
+        public string last_date = "";
         public void init(Form1 theform)
         {
            
@@ -29,6 +30,7 @@ namespace system_status.App_code
                 _form.threads["hdd_info"] = null;
             }
             is_running = true;
+            last_date = _form.my.time();
             _form.setStatusBar("硬碟資訊載入開始...", 0);
             //From : http://jengting.blogspot.com/2016/07/DataGridView-Sample.html
             _form.hdd_grid.AutoGenerateColumns = false; //這啥

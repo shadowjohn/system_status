@@ -16,6 +16,7 @@ namespace system_status.App_code
     {
         Form1 _form = null;
         public bool is_running = false;
+        public string last_date = "";
 
         public void init(Form1 theform)
         {
@@ -26,6 +27,7 @@ namespace system_status.App_code
                 _form.threads["running_program"] = null;
             }
             is_running = true;
+            last_date = _form.my.time();
             theform.setStatusBar("工作管理員資訊載入開始...", 0);
             //From : http://jengting.blogspot.com/2016/07/DataGridView-Sample.html
             theform.running_program_grid.AutoGenerateColumns = false; //這啥

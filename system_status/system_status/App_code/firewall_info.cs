@@ -12,6 +12,7 @@ namespace system_status.App_code
 
         Form1 _form = null;
         public bool is_running = false;
+        public string last_date = "";
         // Protocol
         // From : https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa364724(v=vs.85)
         private int NET_FW_IP_PROTOCOL_TCP = 6;
@@ -36,6 +37,7 @@ namespace system_status.App_code
                 _form.threads["firewall_info"] = null;
             }
             is_running = true;
+            last_date = _form.my.time();
             _form.firewall_grid.AutoGenerateColumns = false; //這啥
             _form.firewall_grid.AllowUserToAddRows = false; //不能允許使用者自行調整
             _form.firewall_grid.RowHeadersVisible = false; //左邊空欄移除

@@ -18,6 +18,7 @@ namespace system_status.App_code
     {
         Form1 _form = null;
         public bool is_running = false;
+        public string last_date = "";
         public void init(Form1 theform)
         {
             _form = theform;
@@ -28,6 +29,7 @@ namespace system_status.App_code
             }
             
             is_running = true;
+            last_date = _form.my.time();
             _form.system_grid.AutoGenerateColumns = false; //這啥
             _form.system_grid.AllowUserToAddRows = false; //不能允許使用者自行調整
             _form.system_grid.RowHeadersVisible = false; //左邊空欄移除
