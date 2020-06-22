@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using System.Threading;
 namespace system_status.App_code
 {
     class firewall_info
@@ -30,6 +30,11 @@ namespace system_status.App_code
         {
 
             _form = theform;
+            if (_form.threads.ContainsKey("firewall_info"))
+            {
+                _form.threads["firewall_info"].Abort();
+                _form.threads["firewall_info"] = null;
+            }
             is_running = true;
             _form.firewall_grid.AutoGenerateColumns = false; //這啥
             _form.firewall_grid.AllowUserToAddRows = false; //不能允許使用者自行調整
@@ -91,21 +96,24 @@ namespace system_status.App_code
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
             }
 
+            _form.threads["firewall_info"] = new Thread(() => run());
+            _form.threads["firewall_info"].Start();
 
-
-            run();
+            //run();
         }
         public void run()
         {
 
             
             int lastId = 0;
+            _form.UpdateUI_DataGridGrid(_form.firewall_grid, "clear", "", "", -1);
             Type tNetFwPolicy2 = Type.GetTypeFromProgID("HNetCfg.FwPolicy2");
             dynamic fwPolicy2 = Activator.CreateInstance(tNetFwPolicy2) as dynamic;
             IEnumerable Rules = fwPolicy2.Rules as IEnumerable;
             foreach (dynamic rule in Rules)
             {
-                _form.firewall_grid.Rows.Add();
+                //_form.firewall_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.firewall_grid, "add", "", "", -1);
                 lastId = _form.firewall_grid.Rows.Count - 1;
                 _form.firewall_grid.Rows[lastId].Cells["firewallID"].Value = (lastId + 1);
                 _form.firewall_grid.Rows[lastId].Cells["firewallName"].Value = rule.Name;

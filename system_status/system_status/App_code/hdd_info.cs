@@ -9,6 +9,7 @@ using System.Windows.Forms.VisualStyles;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Simplified.IO;
+using System.Threading;
 namespace system_status.App_code
 {
     class hdd_info
@@ -22,6 +23,11 @@ namespace system_status.App_code
         {
            
             _form = theform;
+            if (_form.threads.ContainsKey("hdd_info"))
+            {
+                _form.threads["hdd_info"].Abort();
+                _form.threads["hdd_info"] = null;
+            }
             is_running = true;
             _form.setStatusBar("硬碟資訊載入開始...", 0);
             //From : http://jengting.blogspot.com/2016/07/DataGridView-Sample.html
@@ -90,7 +96,9 @@ namespace system_status.App_code
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
             }
-            run();
+            _form.threads["hdd_info"] = new Thread(() => run());
+            _form.threads["hdd_info"].Start();
+            //run();
         }
         void run()
         {
@@ -99,7 +107,8 @@ namespace system_status.App_code
             var SmartDrives = Simplified.IO.Smart.GetDrives();
             int step = 0;
             int total_step = drives.Count();
-            _form.hdd_grid.Rows.Clear();
+            //_form.hdd_grid.Rows.Clear();
+            _form.UpdateUI_DataGridGrid(_form.hdd_grid, "clear", "", "", -1);
             foreach (var drive in drives)
             {
                 _form.setStatusBar("硬碟資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
@@ -118,7 +127,8 @@ namespace system_status.App_code
                 long freeSpace = drive.TotalFreeSpace;
                 long totalSize = drive.TotalSize;
                 long usageSize = totalSize - freeSpace;
-                _form.hdd_grid.Rows.Add();
+                //_form.hdd_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.hdd_grid, "add", "", "", -1);
                 int lastId = _form.hdd_grid.Rows.Count - 1;
                 _form.hdd_grid.Rows[lastId].Cells["hddID"].Value = driverName;
 
@@ -128,7 +138,8 @@ namespace system_status.App_code
 
                 _form.hdd_grid.Rows[lastId].Cells["hddTotalSpace"].Value = totalSize;
 
-                _form.hdd_grid.Rows[lastId].Cells["hddTotalSpaceDisplay"].Value = _form.my.size_hum_read(totalSize);
+                //_form.hdd_grid.Rows[lastId].Cells["hddTotalSpaceDisplay"].Value = _form.my.size_hum_read(totalSize);
+                _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddTotalSpaceDisplay", _form.my.size_hum_read(totalSize), lastId);
 
                 _form.hdd_grid.Rows[lastId].Cells["hddUsageSpace"].Value = usageSize;
 
@@ -138,7 +149,8 @@ namespace system_status.App_code
                 _form.hdd_grid.Rows[lastId].Cells["hddFreeSpace"].Value = freeSpace;
 
 
-                _form.hdd_grid.Rows[lastId].Cells["hddFreeSpaceDisplay"].Value = _form.my.size_hum_read(freeSpace);
+                //_form.hdd_grid.Rows[lastId].Cells["hddFreeSpaceDisplay"].Value = _form.my.size_hum_read(freeSpace);
+                _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddFreeSpaceDisplay", _form.my.size_hum_read(freeSpace), lastId);
 
                 double percent = (Convert.ToDouble(usageSize) / Convert.ToDouble(totalSize)) * 100.0;
                 _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Value = string.Format("{0:0.00}", percent) + " %";
@@ -155,7 +167,8 @@ namespace system_status.App_code
                 {
                     //剩很少空間
                     _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Red;
-                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Font = new Font(_form.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold);
+                    //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Font = new Font(_form.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold);
+                    _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_font", "hddUsagePercent", new Font(_form.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold), lastId);
                 }
 
                 //接下來是跑 smart
@@ -178,7 +191,8 @@ namespace system_status.App_code
                     }
                     */
                     //型號
-                    _form.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
+                    //_form.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
+                    _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddModel", SmartDrive.Model, lastId);
                     //Console.WriteLine(_form.my.json_encode(SmartDrive));
                     //Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
                     foreach (var p in SmartDrive.SmartAttributes)

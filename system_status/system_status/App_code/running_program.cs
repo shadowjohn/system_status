@@ -20,7 +20,11 @@ namespace system_status.App_code
         public void init(Form1 theform)
         {
             _form = theform;
-
+            if (_form.threads.ContainsKey("running_program"))
+            {
+                _form.threads["running_program"].Abort();
+                _form.threads["running_program"] = null;
+            }
             is_running = true;
             theform.setStatusBar("工作管理員資訊載入開始...", 0);
             //From : http://jengting.blogspot.com/2016/07/DataGridView-Sample.html
@@ -80,12 +84,15 @@ namespace system_status.App_code
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
             }
-            run();
+            _form.threads["running_program"] = new Thread(() => run());
+            _form.threads["running_program"].Start();
+            //run();
         }
 
         void run()
         {
-            _form.running_program_grid.Rows.Clear();
+            //_form.running_program_grid.Rows.Clear();
+            _form.UpdateUI_DataGridGrid(_form.running_program_grid, "clear", "", "", -1);
             is_running = true;
             Process[] processlist = Process.GetProcesses();
             int step = 0;
@@ -95,14 +102,15 @@ namespace system_status.App_code
             {
                 _form.setStatusBar("執行緒資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
                 step++;
-                _form.running_program_grid.Rows.Add();
+                //_form.running_program_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.running_program_grid, "add", "", "", -1);
                 int lastId = _form.running_program_grid.Rows.Count - 1;
                 int pid = theprocess.Id;
                 Dictionary<string, string> o = GetProcessPath(pid);
                 _form.running_program_grid.Rows[lastId].Cells["running_programID"].Value = step.ToString();
                 _form.running_program_grid.Rows[lastId].Cells["running_programPID"].Value = pid.ToString();
                 _form.running_program_grid.Rows[lastId].Cells["running_programName"].Value = theprocess.ProcessName;
-                _form.running_program_grid.Rows[lastId].Cells["running_programBaseName"].Value = _form.my.basename(o["fullPath"]); 
+                _form.running_program_grid.Rows[lastId].Cells["running_programBaseName"].Value = _form.my.basename(o["fullPath"]);
                 _form.running_program_grid.Rows[lastId].Cells["running_programPath"].Value = o["fullPath"];
                 _form.running_program_grid.Rows[lastId].Cells["running_programCommandLine"].Value = o["CommandLine"];
             }

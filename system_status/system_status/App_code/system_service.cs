@@ -5,7 +5,7 @@ using System.Text;
 using System.ServiceProcess;
 using System.Windows.Forms;
 using System.Management;
-
+using System.Threading;
 namespace system_status.App_code
 {
     class system_service
@@ -16,9 +16,13 @@ namespace system_status.App_code
         public void init(Form1 theform)
         {
             _form = theform;
+            if (_form.threads.ContainsKey("system_service"))
+            {
+                _form.threads["system_service"].Abort();
+                _form.threads["system_service"] = null;
+            }
             is_running = true;
-            _form = theform;
-            is_running = true;
+
             _form.system_service_grid.AutoGenerateColumns = false; //這啥
             _form.system_service_grid.AllowUserToAddRows = false; //不能允許使用者自行調整
             _form.system_service_grid.RowHeadersVisible = false; //左邊空欄移除
@@ -59,7 +63,9 @@ namespace system_status.App_code
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
             }
-            run();
+            _form.threads["system_service"] = new Thread(() => run());
+            _form.threads["system_service"].Start();
+            //run();
         }
         public void run()
         {
@@ -69,12 +75,15 @@ namespace system_status.App_code
             //https://www.csharp-examples.net/windows-service-list/
             ServiceController[] services = ServiceController.GetServices();
             // try to find service name
+
+            _form.UpdateUI_DataGridGrid(_form.system_service_grid, "clear", "", "", -1);
             foreach (ServiceController service in services)
             {
                 //if (service.ServiceName == serviceName)
                 //    return true;
                 Console.WriteLine(service.ServiceName + "," + service.DisplayName);
-                _form.system_service_grid.Rows.Add();
+                //_form.system_service_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.system_service_grid, "add", "", "", -1);
                 lastId = _form.system_service_grid.Rows.Count - 1;
                 _form.system_service_grid.Rows[lastId].Cells["system_serviceID"].Value = (lastId + 1);
                 _form.system_service_grid.Rows[lastId].Cells["system_serviceName"].Value = service.DisplayName;

@@ -30,10 +30,13 @@ namespace system_status
         public IniData iniData = null; // 儲存 config 設定
         public FileIniDataParser iniParser = new FileIniDataParser();
         static public Form theform;
+        public Dictionary<string, Thread> threads = new Dictionary<string, Thread>();
         public void setStatusBar(string title, int percent)
         {
-            toolStripStatusLabel1.Text = title;
-            toolStripProgressBar1.Value = percent;
+            //toolStripStatusLabel1.Text = title;
+            UpdateUI(title, toolStripStatusLabel1);
+            //toolStripProgressBar1.Value = percent;
+            UpdateUI_toolStripProgressBar(percent, toolStripProgressBar1);
         }
         public void setStatusBarTitle(string title)
         {
@@ -69,6 +72,66 @@ namespace system_status
                 ctl.Text = value;
             }
         }
+
+        private delegate void UpdateUICallBack_toolStripProgressBar(int value, ToolStripProgressBar ctl);
+        private void UpdateUI_toolStripProgressBar(int value, ToolStripProgressBar ctl)
+        {
+            if (this.InvokeRequired)
+            {
+                UpdateUICallBack_toolStripProgressBar uu = new UpdateUICallBack_toolStripProgressBar(UpdateUI_toolStripProgressBar);
+                this.Invoke(uu, value, ctl);
+            }
+            else
+            {
+                ctl.Value = value;
+            }
+        }
+
+        private delegate int UpdateUICallBack_DataGridGrid(DataGridView ctl, string kind, string key, object value, int index = -1);
+        public int UpdateUI_DataGridGrid(DataGridView ctl, string kind, string key, object value, int index = -1)
+        {
+            if (this.InvokeRequired)
+            {
+                UpdateUICallBack_DataGridGrid uu = new UpdateUICallBack_DataGridGrid(UpdateUI_DataGridGrid);
+                this.Invoke(uu, ctl, kind, key, value, index);
+                return -1;
+            }
+            else
+            {
+                switch (kind.ToLower())
+                {
+                    case "clear":
+                        ctl.Rows.Clear();
+                        return -1;
+                    case "add":
+                        ctl.Rows.Add();
+                        return ctl.Rows.Count - 1;
+                    case "set_cell":
+                        if (index != -1)
+                        {
+                            ctl.Rows[index].Cells[key].Value = value.ToString();
+                        }
+                        else
+                        {
+                            ctl.Rows[ctl.Rows.Count - 1].Cells[key].Value = value.ToString();
+                        }
+                        return -1;
+                    case "set_font":
+                        if (index != -1)
+                        {
+                            ctl.Rows[index].Cells[key].Style.Font = (Font)value;
+                        }
+                        else
+                        {
+                            ctl.Rows[ctl.Rows.Count - 1].Cells[key].Style.Font = (Font)value;
+                        }
+                        return -1;
+                    default:
+                        return -1;
+                }
+            }
+        }
+
         public Form1()
         {
             my = new myinclude();
@@ -81,6 +144,7 @@ namespace system_status
             cSystemService = new system_service();
             cSchedule = new schedule();
             cIni = new ini();
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -123,6 +187,8 @@ namespace system_status
                 case "tabs_host":
                     //本機資訊
                     log("本機資訊");
+                    //threads["tabs_host"] = new Thread(() => cSystem.init(this));
+                    //threads["tabs_host"].Start();
                     cSystem.init(this);
                     break;
                 case "tabs_hdd":

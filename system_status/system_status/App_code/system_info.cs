@@ -9,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using WUApiLib;
 namespace system_status.App_code
@@ -19,15 +20,20 @@ namespace system_status.App_code
         public bool is_running = false;
         public void init(Form1 theform)
         {
-
             _form = theform;
+            if (_form.threads.ContainsKey("system_info"))
+            {
+                _form.threads["system_info"].Abort();
+                _form.threads["system_info"] = null;
+            }
+            
             is_running = true;
             _form.system_grid.AutoGenerateColumns = false; //這啥
             _form.system_grid.AllowUserToAddRows = false; //不能允許使用者自行調整
             _form.system_grid.RowHeadersVisible = false; //左邊空欄移除
             _form.system_grid.Dock = DockStyle.Fill; //自動展開到最大
             _form.system_grid.AllowDrop = false;
-            _form.system_grid.ReadOnly = true;
+            //_form.system_grid.ReadOnly = true;
 
             _form.system_grid.Columns.Clear();
             string json_columns = @"
@@ -49,7 +55,9 @@ namespace system_status.App_code
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
             }
-            run();
+            _form.threads["system_info"] = new Thread(() => run());
+            _form.threads["system_info"].Start();
+            //run();
         }
         private string _getFrameWorkVersion()
         {
@@ -99,9 +107,12 @@ namespace system_status.App_code
         }
         void run()
         {
-
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "clear", "", "", -1);
             int lastId = 0;
-            _form.system_grid.Rows.Add();
+            //_form.system_grid.Rows.Add();
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+
+
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "回報系統名稱";
@@ -116,7 +127,8 @@ namespace system_status.App_code
                 if (managementObject["Caption"] != null)
                 {
                     //Console.WriteLine("Operating System Name  :  " + managementObject["Caption"].ToString());   //Display operating system caption
-                    _form.system_grid.Rows.Add();
+                    //_form.system_grid.Rows.Add();
+                    _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "作業系統";
@@ -125,7 +137,8 @@ namespace system_status.App_code
                 if (managementObject["OSArchitecture"] != null)
                 {
                     //Console.WriteLine("Operating System Architecture  :  " + managementObject["OSArchitecture"].ToString());   //Display operating system architecture.
-                    _form.system_grid.Rows.Add();
+                    //_form.system_grid.Rows.Add();
+                    _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "位元";
@@ -147,7 +160,8 @@ namespace system_status.App_code
                     string CPU_NAME = processor_name.GetValue("ProcessorNameString").ToString();
                     CPU_NAME = _form.my.preg_replace(CPU_NAME, "[ ]{2,}", " ");
                     CPU_NAME = CPU_NAME.Trim();
-                    _form.system_grid.Rows.Add();
+                    //_form.system_grid.Rows.Add();
+                    _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPU規格";
@@ -163,27 +177,31 @@ namespace system_status.App_code
             foreach (ManagementObject mo in mos.Get())
             {
                 //CPU核心數
-                _form.system_grid.Rows.Add();
+                //_form.system_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPU核心數";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["NumberOfLogicalProcessors"].ToString();
 
 
-                _form.system_grid.Rows.Add();
+                //_form.system_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "RAM大小";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.my.size_hum_read(Convert.ToInt64(mo["TotalPhysicalMemory"]));
 
 
-                _form.system_grid.Rows.Add();
+                //_form.system_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "網域名稱";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["Workgroup"].ToString();
 
-                _form.system_grid.Rows.Add();
+                //_form.system_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "使用者名稱";
@@ -196,7 +214,8 @@ namespace system_status.App_code
             var host = Dns.GetHostEntry(Dns.GetHostName());
 
 
-            _form.system_grid.Rows.Add();
+            //_form.system_grid.Rows.Add();
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "電腦名稱";
@@ -209,7 +228,8 @@ namespace system_status.App_code
 
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    _form.system_grid.Rows.Add();
+                    //_form.system_grid.Rows.Add();
+                    _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "IP_" + ip_step.ToString();
@@ -223,7 +243,8 @@ namespace system_status.App_code
         .FirstOrDefault();
             if (gateway_address != null)
             {
-                _form.system_grid.Rows.Add();
+                //_form.system_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "Gateway";
@@ -231,7 +252,8 @@ namespace system_status.App_code
             }
 
             //Framework 版本
-            _form.system_grid.Rows.Add();
+            //_form.system_grid.Rows.Add();
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "Framework版本";
@@ -242,29 +264,18 @@ namespace system_status.App_code
             //From : https://stackoverflow.com/questions/9215326/check-when-last-check-for-windows-updates-was-performed
             AutomaticUpdates auc = new AutomaticUpdates();
             //Console.WriteLine(auc.Results.LastInstallationSuccessDate);
-            if(auc.Results.LastInstallationSuccessDate is DateTime)
+            if (auc.Results.LastInstallationSuccessDate is DateTime)
             {
                 DateTime dt = new DateTime(((DateTime)auc.Results.LastInstallationSuccessDate).Ticks, DateTimeKind.Utc);
-                string strDt = _form.my.date("Y-m-d H:i:s",(Convert.ToInt32(_form.my.strtotime(dt.ToString("yyyy-MM-dd HH:mm:ss"))) + 8 * 60 * 60).ToString());
-                _form.system_grid.Rows.Add();
+                string strDt = _form.my.date("Y-m-d H:i:s", (Convert.ToInt32(_form.my.strtotime(dt.ToString("yyyy-MM-dd HH:mm:ss"))) + 8 * 60 * 60).ToString());
+                //_form.system_grid.Rows.Add();
+                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowsUpdateDate";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = strDt;
             }
-            /*
-            AutomaticUpdatesClass auc = new AutomaticUpdatesClass(); ;
-            auc.Results.
-            if (auc.Results.LastInstallationSuccessDate is DateTime)
-            {
-                DateTime? lastInstallationSuccessDateUtc = null;
-                lastInstallationSuccessDateUtc = (DateTime)auc.Results.LastInstallationSuccessDate;
-                string date_str = lastInstallationSuccessDateUtc.ToString();
-                Console.WriteLine("最後更新時間:");
-                Console.Write(date_str);
-            }
-            */
-            
+
 
 
 
