@@ -296,8 +296,17 @@ namespace system_status
             WindowState = FormWindowState.Normal;
         }
 
-        private void Form1_Leave(object sender, EventArgs e)
+       
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            foreach(var k in threads.Keys)
+            {
+                if(threads[k]!=null)
+                {
+                    threads[k].Abort();
+                }
+            }
             notifyIcon1.Visible = false;
         }
     }

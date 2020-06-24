@@ -38,8 +38,8 @@
             this.hdd_grid = new System.Windows.Forms.DataGridView();
             this.tabs_running_program = new System.Windows.Forms.TabPage();
             this.running_program_grid = new System.Windows.Forms.DataGridView();
-            this.tabs_task = new System.Windows.Forms.TabPage();
-            this.task_grid = new System.Windows.Forms.DataGridView();
+            this.tabs_schedule = new System.Windows.Forms.TabPage();
+            this.schedule_grid = new System.Windows.Forms.DataGridView();
             this.tabs_service = new System.Windows.Forms.TabPage();
             this.system_service_grid = new System.Windows.Forms.DataGridView();
             this.tabs_firewall = new System.Windows.Forms.TabPage();
@@ -64,8 +64,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.hdd_grid)).BeginInit();
             this.tabs_running_program.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.running_program_grid)).BeginInit();
-            this.tabs_task.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.task_grid)).BeginInit();
+            this.tabs_schedule.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.schedule_grid)).BeginInit();
             this.tabs_service.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.system_service_grid)).BeginInit();
             this.tabs_firewall.SuspendLayout();
@@ -81,7 +81,7 @@
             this.tabControl1.Controls.Add(this.tabs_host);
             this.tabControl1.Controls.Add(this.tabs_hdd);
             this.tabControl1.Controls.Add(this.tabs_running_program);
-            this.tabControl1.Controls.Add(this.tabs_task);
+            this.tabControl1.Controls.Add(this.tabs_schedule);
             this.tabControl1.Controls.Add(this.tabs_service);
             this.tabControl1.Controls.Add(this.tabs_firewall);
             this.tabControl1.Controls.Add(this.tabs_IIS);
@@ -166,25 +166,25 @@
             this.running_program_grid.Size = new System.Drawing.Size(800, 420);
             this.running_program_grid.TabIndex = 1;
             // 
-            // tabs_task
+            // tabs_schedule
             // 
-            this.tabs_task.Controls.Add(this.task_grid);
-            this.tabs_task.Location = new System.Drawing.Point(4, 22);
-            this.tabs_task.Name = "tabs_task";
-            this.tabs_task.Size = new System.Drawing.Size(800, 420);
-            this.tabs_task.TabIndex = 5;
-            this.tabs_task.Text = "排程";
-            this.tabs_task.UseVisualStyleBackColor = true;
+            this.tabs_schedule.Controls.Add(this.schedule_grid);
+            this.tabs_schedule.Location = new System.Drawing.Point(4, 22);
+            this.tabs_schedule.Name = "tabs_schedule";
+            this.tabs_schedule.Size = new System.Drawing.Size(800, 420);
+            this.tabs_schedule.TabIndex = 5;
+            this.tabs_schedule.Text = "排程";
+            this.tabs_schedule.UseVisualStyleBackColor = true;
             // 
-            // task_grid
+            // schedule_grid
             // 
-            this.task_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.task_grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.task_grid.Location = new System.Drawing.Point(0, 0);
-            this.task_grid.Name = "task_grid";
-            this.task_grid.RowTemplate.Height = 24;
-            this.task_grid.Size = new System.Drawing.Size(800, 420);
-            this.task_grid.TabIndex = 1;
+            this.schedule_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.schedule_grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.schedule_grid.Location = new System.Drawing.Point(0, 0);
+            this.schedule_grid.Name = "schedule_grid";
+            this.schedule_grid.RowTemplate.Height = 24;
+            this.schedule_grid.Size = new System.Drawing.Size(800, 420);
+            this.schedule_grid.TabIndex = 1;
             // 
             // tabs_service
             // 
@@ -365,8 +365,8 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "系統安全小工具";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.Leave += new System.EventHandler(this.Form1_Leave);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.tabControl1.ResumeLayout(false);
             this.tabs_host.ResumeLayout(false);
@@ -375,8 +375,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.hdd_grid)).EndInit();
             this.tabs_running_program.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.running_program_grid)).EndInit();
-            this.tabs_task.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.task_grid)).EndInit();
+            this.tabs_schedule.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.schedule_grid)).EndInit();
             this.tabs_service.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.system_service_grid)).EndInit();
             this.tabs_firewall.ResumeLayout(false);
@@ -400,13 +400,13 @@
         public System.Windows.Forms.TabPage tabs_firewall;
         public System.Windows.Forms.TabPage tabs_service;
         public System.Windows.Forms.TabPage tabs_running_program;
-        public System.Windows.Forms.TabPage tabs_task;
+        public System.Windows.Forms.TabPage tabs_schedule;
         public System.Windows.Forms.DataGridView system_grid;
         public System.Windows.Forms.DataGridView hdd_grid;
         public System.Windows.Forms.DataGridView firewall_grid;
         public System.Windows.Forms.DataGridView system_service_grid;
         public System.Windows.Forms.DataGridView running_program_grid;
-        public System.Windows.Forms.DataGridView task_grid;
+        public System.Windows.Forms.DataGridView schedule_grid;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         public System.Windows.Forms.StatusStrip statusStrip1;
         public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
