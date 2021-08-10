@@ -200,7 +200,8 @@ namespace system_status.App_code
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "網域名稱";
-                _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["Workgroup"].ToString();
+                //_form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["Workgroup"].ToString();
+                _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["Workgroup"] == null ? "" : mo["Workgroup"].ToString();
 
                 //_form.system_grid.Rows.Add();
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
