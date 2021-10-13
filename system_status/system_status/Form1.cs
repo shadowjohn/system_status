@@ -264,7 +264,7 @@ namespace system_status
                             setStatusBar("閒置中...", 0);
                             //每 10 分鐘傳一次
                             //Thread.Sleep(10 * 60);
-                            Thread.Sleep(30*1000);
+                            Thread.Sleep(30 * 1000);
                         }
                     });
                     threads["RUN_UPLOAD"].Start();
@@ -294,12 +294,39 @@ namespace system_status
             output["CPUID"] = my.getCPUId();
             setStatusBar("同步開始...取得系統資訊", 20);
 
-            cSystem.init(this);            
-            output["SYSTEM_INFO"] = my.gridViewToDataTable(system_grid);
-            setStatusBar("同步開始...取得硬碟資訊", 40);
+            cSystem.init(this);
             cHdd.init(this);
+            cEvents.init(this);
+            cFirewall.init(this);
+            cRunningProgram.init(this);
+            cSystemService.init(this);
+            cSchedule.init(this);
+            Thread.Sleep(3000);
+            while (
+                cSystem.is_running == true ||
+                cHdd.is_running == true ||
+                cEvents.is_running == true ||
+                cRunningProgram.is_running == true ||
+                cSystemService.is_running == true ||
+                cFirewall.is_running == true ||
+                cSchedule.is_running == true)
+            {
+                Thread.Sleep(1000);
+                setStatusBar("等待資料完成...", 0);
+            }
+
+            //setStatusBar("同步開始...取得硬碟資訊", 40);            
+            output["SYSTEM_INFO"] = my.gridViewToDataTable(system_grid);
+            output["SYSTEM_SERVICE_INFO"] = my.gridViewToDataTable(system_service_grid);
             output["HDD_INFO"] = my.gridViewToDataTable(hdd_grid);
+            output["FIREWALL_INFO"] = my.gridViewToDataTable(firewall_grid);
+            output["EVENTS_INFO"] = my.gridViewToDataTable(events_grid);
+            output["TASK_INFO"] = my.gridViewToDataTable(running_program_grid);
+            output["SCHEDULE_INFO"] = my.gridViewToDataTable(schedule_grid);
+
             logError(my.json_encode_formated(output));
+
+
         }
         private void Form1_Resize(object sender, EventArgs e)
         {
