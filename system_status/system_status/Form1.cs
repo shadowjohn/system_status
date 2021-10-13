@@ -19,10 +19,13 @@ namespace system_status
 {
     public partial class Form1 : Form
     {
+        public double VERSION = 1.0;
+        public string LOG_PATH = "";
         public myinclude my = null;
         system_info cSystem = null;
         hdd_info cHdd = null;
         firewall_info cFirewall = null;
+        events cEvents = null;
         system_service cSystemService = null;
         running_program cRunningProgram = null;
         schedule cSchedule = null;
@@ -143,35 +146,11 @@ namespace system_status
             cFirewall = new firewall_info();
             cSystemService = new system_service();
             cSchedule = new schedule();
+            cEvents = new events();
             cIni = new ini();
 
         }
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            notifyIcon1.BalloonTipText = "已縮小";
-            notifyIcon1.BalloonTipTitle = this.Text;
-            notifyIcon1.Text = this.Text;
 
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.TopMost = true;
-            this.TopMost = false;
-            this.CenterToScreen();
-            //載入設定檔
-            cIni.ini_init(this);
-            //預設看要帶哪一個
-            //cHdd.init(this);
-            //cRunningProgram.init(this);
-            //tabControl1.SelectTab("tabs_running_program");
-            tabControl1.SelectTab("tabs_setting");
-            tabControl1_Click(new object(), new EventArgs());
-            if (iniData["setting"]["NAME"] == "")
-            {
-                //首次使用，需先設定
-                tabControl1.SelectTab("tabs_setting");
-                tabControl1_Click(new object(), new EventArgs());
-            }
-
-        }
         void log(string input)
         {
             Console.WriteLine(input);
@@ -234,6 +213,14 @@ namespace system_status
                         cFirewall.init(this);
                     }
                     break;
+                case "tabs_events":
+                    //events
+                    log("事件");
+                    if (cEvents.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cEvents.last_date) >= 5 * 60)
+                    {
+                        cEvents.init(this);
+                    }
+                    break;
                 case "tabs_IIS":
                     //IIS
                     log("IIS");
@@ -257,10 +244,46 @@ namespace system_status
 
         private void button1_Click(object sender, EventArgs e)
         {
-            setStatusBarTitle(my.getCPUId(), 5000);
+            //setStatusBarTitle(my.getCPUId(), 5000);
         }
 
         private void btnManual_Click(object sender, EventArgs e)
+        {
+            switch (run_status_label.Text)
+            {
+                case "尚未啟動":
+
+                    run_status_label.Text = "啟動中...";
+                    run_status_label.ForeColor = Color.Green;
+                    threads["RUN_UPLOAD"] = new Thread(() =>
+                    {
+                        while (true)
+                        {
+                            setStatusBar("同步開始...", 0);
+                            run_upload();
+                            setStatusBar("閒置中...", 0);
+                            //每 10 分鐘傳一次
+                            //Thread.Sleep(10 * 60);
+                            Thread.Sleep(30*1000);
+                        }
+                    });
+                    threads["RUN_UPLOAD"].Start();
+
+                    break;
+                case "啟動中...":
+                    run_status_label.Text = "尚未啟動";
+                    run_status_label.ForeColor = Color.Red;
+                    setStatusBar("同步停止...", 0);
+                    if (threads.ContainsKey("RUN_UPLOAD"))
+                    {
+                        threads["RUN_UPLOAD"].Abort();
+                        threads["RUN_UPLOAD"] = null;
+                    }
+                    break;
+            }
+
+        }
+        private void run_upload()
         {
             //手動同步
             //收集所有 gridview 的內容
@@ -271,14 +294,13 @@ namespace system_status
             output["CPUID"] = my.getCPUId();
             setStatusBar("同步開始...取得系統資訊", 20);
 
-            cSystem.init(this);
+            cSystem.init(this);            
             output["SYSTEM_INFO"] = my.gridViewToDataTable(system_grid);
             setStatusBar("同步開始...取得硬碟資訊", 40);
             cHdd.init(this);
             output["HDD_INFO"] = my.gridViewToDataTable(hdd_grid);
-            log(my.json_encode_formated(output));
+            logError(my.json_encode_formated(output));
         }
-
         private void Form1_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
@@ -296,18 +318,69 @@ namespace system_status
             WindowState = FormWindowState.Normal;
         }
 
-       
+
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            foreach(var k in threads.Keys)
+            foreach (var k in threads.Keys)
             {
-                if(threads[k]!=null)
+                if (threads[k] != null)
                 {
                     threads[k].Abort();
                 }
             }
             notifyIcon1.Visible = false;
+        }
+        void create_log_dir()
+        {
+            if (!my.is_dir(LOG_PATH))
+            {
+                my.mkdir(LOG_PATH);
+            }
+        }
+        void logError(string data)
+        {
+            try
+            {
+                create_log_dir();
+                my.file_put_contents(LOG_PATH + "\\" + my.date("Y-m-d") + ".txt", my.date("Y-m-d H:i:s") + ":\r\n" + data + "\r\n", true);
+            }
+            catch
+            {
+
+            }
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.LOG_PATH = my.pwd() + "\\log";
+            create_log_dir();
+            this.Text += string.Format(" - 版本：{0:0.0}", VERSION);
+
+            notifyIcon1.BalloonTipText = "已縮小";
+            notifyIcon1.BalloonTipTitle = this.Text;
+            notifyIcon1.Text = this.Text;
+
+
+
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.TopMost = true;
+            this.TopMost = false;
+            this.CenterToScreen();
+            //載入設定檔
+            cIni.ini_init(this);
+            //預設看要帶哪一個
+            //cHdd.init(this);
+            //cRunningProgram.init(this);
+            //tabControl1.SelectTab("tabs_running_program");
+            tabControl1.SelectTab("tabs_setting");
+            tabControl1_Click(new object(), new EventArgs());
+            if (iniData["setting"]["NAME"] == "")
+            {
+                //首次使用，需先設定
+                tabControl1.SelectTab("tabs_setting");
+                tabControl1_Click(new object(), new EventArgs());
+            }
+
         }
     }
 }

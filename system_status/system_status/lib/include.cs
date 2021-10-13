@@ -20,6 +20,7 @@ using System.Management;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace utility
 {
@@ -28,7 +29,8 @@ namespace utility
 
         public string pwd()
         {
-            return Directory.GetCurrentDirectory();
+            //return Directory.GetCurrentDirectory();
+            return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
         }
         public bool is_dir(string path)
         {
@@ -319,25 +321,38 @@ namespace utility
             {
                 case true:
                     {
-                        FileStream myFile = null;
+                        FileMode FM = new FileMode();
                         if (!is_file(filepath))
                         {
-                            myFile = File.Open(@filepath, FileMode.Create);
+                            FM = FileMode.Create;
+                            using (FileStream myFile = File.Open(@filepath, FM, FileAccess.Write, FileShare.Read))
+                            {
+                                myFile.Seek(myFile.Length, SeekOrigin.Begin);
+                                myFile.Write(input, 0, input.Length);
+                                myFile.Dispose();
+                            }
                         }
                         else
                         {
-                            myFile = File.Open(@filepath, FileMode.Append);
+                            FM = FileMode.Append;
+                            using (FileStream myFile = File.Open(@filepath, FM, FileAccess.Write, FileShare.Read))
+                            {
+                                myFile.Seek(myFile.Length, SeekOrigin.Begin);
+                                myFile.Write(input, 0, input.Length);
+                                myFile.Dispose();
+                            }
                         }
-                        myFile.Seek(myFile.Length, SeekOrigin.Begin);
-                        myFile.Write(input, 0, input.Length);
-                        myFile.Dispose();
+
+
                     }
                     break;
                 case false:
                     {
-                        FileStream myFile = File.Open(@filepath, FileMode.Create);
-                        myFile.Write(input, 0, input.Length);
-                        myFile.Dispose();
+                        using (FileStream myFile = File.Open(@filepath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read))
+                        {
+                            myFile.Write(input, 0, input.Length);
+                            myFile.Dispose();
+                        };
                     }
                     break;
             }
@@ -419,6 +434,161 @@ namespace utility
         {
             return System.Text.Encoding.UTF8.GetString(input);
         }
+        public byte[] file_get_contents(string url)
+        {
+            if (url.ToLower().IndexOf("http:") > -1 || url.ToLower().IndexOf("https:") > -1)
+            {
+                // URL                 
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+                HttpWebRequest request = null;
+                HttpWebResponse response = null;
+                byte[] byteData = null;
+
+                request = (HttpWebRequest)WebRequest.Create(url);
+                request.Timeout = 60000;
+                request.Proxy = null;
+                request.UserAgent = "user_agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36";
+                //request.Referer = getSystemKey("HTTP_REFERER");
+                response = (HttpWebResponse)request.GetResponse();
+                Stream stream = response.GetResponseStream();
+                byteData = ReadStream(stream, 32765);
+                response.Close();
+                stream.Close();
+                return byteData;
+            }
+            else
+            {
+                /*System.IO.StreamReader sr = new System.IO.StreamReader(url);
+                
+                string sContents = sr.ReadToEnd();
+                sr.Close();
+                return s2b(sContents);
+                */
+                /*FileStream fs = new FileStream(url, FileMode.Open);
+                byte[] buffer = new byte[fs.Length];
+                fs.Read(buffer, 0, buffer.Length);
+                fs.Close();
+                return buffer;
+                */
+                byte[] data;
+
+                using (var fs = new FileStream(url, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    data = ReadStream(fs, 8192);
+                    /*using (StreamReader sr = new StreamReader(fs))
+                    {
+                        data = ReadStream(sr, 8192);
+                        /*using (MemoryStream ms = new MemoryStream())
+                        {
+                            sr.BaseStream.CopyTo(ms);
+                            data = ms.ToArray();
+                            ms.Close();
+                            ms.Dispose();
+                        }
+                        */
+                    //sr.Close();
+                    //sr.Dispose();
+
+                    //};
+                    fs.Close();
+                };
+
+                return data;
+            }
+        }
+        public byte[] file_get_contents_post(string URL, ConcurrentDictionary<string, string> posts)
+        {
+            //NameValueCollection postParameters = new NameValueCollection();
+            string[] mPostData = new string[posts.Keys.Count];
+            int step = 0;
+            foreach (string k in posts.Keys)
+            {
+                //postParameters.Add(k, posts[k]);
+                mPostData[step] = post_encode_string(k) + "=" + post_encode_string(posts[k]);
+                //file_put_contents("C:\\temp\\a.txt", mPostData[step], true);
+                step++;
+
+            }
+            return file_get_contents_post(URL, implode("&", mPostData));
+        }
+        public string implode(string keyword, string[] arrays)
+        {
+            return string.Join(keyword, arrays);
+        }
+        public string implode(string keyword, List<string> arrays)
+        {
+            return string.Join<string>(keyword, arrays);
+        }
+        public string implode(string keyword, ConcurrentDictionary<int, string> arrays)
+        {
+            string[] tmp = new String[arrays.Keys.Count];
+            int i = 0;
+            foreach (int k in arrays.Keys)
+            {
+                tmp[i++] = arrays[k];
+            }
+            return string.Join(keyword, tmp);
+        }
+        public string implode(string keyword, Dictionary<int, string> arrays)
+        {
+            string[] tmp = new String[arrays.Keys.Count];
+            int i = 0;
+            foreach (int k in arrays.Keys)
+            {
+                tmp[i++] = arrays[k];
+            }
+            return string.Join(keyword, tmp);
+        }
+        public string implode(string keyword, ConcurrentDictionary<string, string> arrays)
+        {
+            string[] tmp = new String[arrays.Keys.Count];
+            int i = 0;
+            foreach (string k in arrays.Keys)
+            {
+                tmp[i++] = arrays[k];
+            }
+            return string.Join(keyword, tmp);
+        }
+        public string implode(string keyword, Dictionary<string, string> arrays)
+        {
+            string[] tmp = new String[arrays.Keys.Count];
+            int i = 0;
+            foreach (string k in arrays.Keys)
+            {
+                tmp[i++] = arrays[k];
+            }
+            return string.Join(keyword, tmp);
+        }
+        public string implode(string keyword, ArrayList arrays)
+        {
+            string[] tmp = new String[arrays.Count];
+            for (int i = 0; i < arrays.Count; i++)
+            {
+                tmp[i] = arrays[i].ToString();
+            }
+            return string.Join(keyword, tmp);
+        }
+        private string post_encode_string(string value)
+        {
+            int limit = 2000;
+
+            StringBuilder sb = new StringBuilder();
+            int loops = value.Length / limit;
+
+            for (int i = 0; i <= loops; i++)
+            {
+                if (i < loops)
+                {
+                    sb.Append(Uri.EscapeDataString(value.Substring(limit * i, limit)));
+                }
+                else
+                {
+                    sb.Append(Uri.EscapeDataString(value.Substring(limit * i)));
+                }
+            }
+            return sb.ToString();
+        }
         public byte[] file_get_contents_post(string url, string postData)
         {
             HttpWebRequest httpWReq =
@@ -426,15 +596,18 @@ namespace utility
 
             //ASCIIEncoding encoding = new ASCIIEncoding();
 
-            byte[] data = Encoding.UTF8.GetBytes(postData);
 
-            httpWReq.Method = "POST";
-            httpWReq.ContentType = "application/x-www-form-urlencoded";
-            httpWReq.UserAgent = "user_agent','Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)";
+
+            httpWReq.UserAgent = "user_agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36";
             httpWReq.Proxy = null;
             httpWReq.Timeout = 60000;
             httpWReq.Referer = null;// HttpContext.Current.Request.ServerVariables["SERVER_NAME"];
             //httpWReq.Referer = url;//getSystemKey("HTTP_REFERER");
+
+
+            byte[] data = Encoding.UTF8.GetBytes(postData);
+            httpWReq.Method = "POST";
+            httpWReq.ContentType = "application/x-www-form-urlencoded";
             httpWReq.ContentLength = data.Length;
 
             using (Stream stream = httpWReq.GetRequestStream())
@@ -451,8 +624,8 @@ namespace utility
             streamD.Close();
             return byteData;
             //byte[] responseString = new StreamReader(response.GetResponseStream()).ToArray();
-
         }
+
         private byte[] ReadStream(Stream stream, int initialLength)
         {
             if (initialLength < 1)

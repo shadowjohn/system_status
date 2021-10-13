@@ -52,10 +52,12 @@ namespace system_status.App_code
 ]";
             //表格初始化
             _form.my.grid_init(_form.system_grid, json_columns);
+
             //allow sorting
             foreach (DataGridViewColumn column in _form.system_grid.Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             }
             _form.threads["system_info"] = new Thread(() => run());
             _form.threads["system_info"].Start();

@@ -44,7 +44,7 @@ namespace system_status.App_code
             _form.firewall_grid.Dock = DockStyle.Fill; //自動展開到最大
             _form.firewall_grid.AllowDrop = false;
             _form.firewall_grid.ReadOnly = true;
-            
+
 
             _form.firewall_grid.Columns.Clear();
             string json_columns = @"
@@ -91,11 +91,11 @@ namespace system_status.App_code
             //表格初始化
             _form.my.grid_init(_form.firewall_grid, json_columns);
 
-
             //allow sorting
             foreach (DataGridViewColumn column in _form.firewall_grid.Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             }
 
             _form.threads["firewall_info"] = new Thread(() => run());
@@ -106,7 +106,7 @@ namespace system_status.App_code
         public void run()
         {
 
-            
+
             int lastId = 0;
             _form.UpdateUI_DataGridGrid(_form.firewall_grid, "clear", "", "", -1);
             Type tNetFwPolicy2 = Type.GetTypeFromProgID("HNetCfg.FwPolicy2");
@@ -119,10 +119,10 @@ namespace system_status.App_code
                 lastId = _form.firewall_grid.Rows.Count - 1;
                 _form.firewall_grid.Rows[lastId].Cells["firewallID"].Value = (lastId + 1);
                 _form.firewall_grid.Rows[lastId].Cells["firewallName"].Value = rule.Name;
-                _form.firewall_grid.Rows[lastId].Cells["firewallApplicationName"].Value = rule.ApplicationName; 
-                _form.firewall_grid.Rows[lastId].Cells["firewallServiceName"].Value = rule.ServiceName; 
-                _form.firewall_grid.Rows[lastId].Cells["firewallEnabled"].Value = rule.Enabled; 
-                switch(Convert.ToInt32(rule.Protocol))
+                _form.firewall_grid.Rows[lastId].Cells["firewallApplicationName"].Value = rule.ApplicationName;
+                _form.firewall_grid.Rows[lastId].Cells["firewallServiceName"].Value = rule.ServiceName;
+                _form.firewall_grid.Rows[lastId].Cells["firewallEnabled"].Value = rule.Enabled;
+                switch (Convert.ToInt32(rule.Protocol))
                 {
                     case 6:
                         _form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "TCP";
@@ -176,11 +176,12 @@ namespace system_status.App_code
                 }
 
 
-                    //if (rule.Name == "My firewall rule")
-                    //{
+                //if (rule.Name == "My firewall rule")
+                //{
 
-                    //}
-                }
+                //}
+            }
+            _form.setStatusBar("就緒", 0);
             is_running = false;
         }
     }

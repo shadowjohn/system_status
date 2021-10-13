@@ -58,11 +58,11 @@ namespace system_status.App_code
             //表格初始化
             _form.my.grid_init(_form.system_service_grid, json_columns);
 
-
             //allow sorting
             foreach (DataGridViewColumn column in _form.system_service_grid.Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             }
             _form.threads["system_service"] = new Thread(() => run());
             _form.threads["system_service"].Start();
@@ -108,7 +108,7 @@ namespace system_status.App_code
                         _form.system_service_grid.Rows[lastId].Cells["system_serviceStatus"].Value = "停止";
                         break;
                 }
-                
+
                 var st = service.ServiceType;
 
                 /*
@@ -124,9 +124,9 @@ namespace system_status.App_code
 
 
                 //_form.system_service_grid.Rows[lastId].Cells["system_serviceLoginAccount"].Value = service.MachineName;
-                
+
             }
             is_running = false;
-        }        
+        }
     }
 }

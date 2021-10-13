@@ -81,10 +81,12 @@ namespace system_status.App_code
              */
             //grid_init(json_columns);
             _form.my.grid_init(_form.running_program_grid, json_columns);
+
             //allow sorting
             foreach (DataGridViewColumn column in _form.running_program_grid.Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             }
             _form.threads["running_program"] = new Thread(() => run());
             _form.threads["running_program"].Start();

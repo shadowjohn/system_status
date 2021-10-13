@@ -114,6 +114,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_code\events.cs" />
     <Compile Include="App_code\firewall_info.cs" />
     <Compile Include="App_code\hdd_info.cs" />
     <Compile Include="App_code\ini.cs" />

@@ -97,6 +97,7 @@ namespace system_status.App_code
             foreach (DataGridViewColumn column in _form.hdd_grid.Columns)
             {
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             }
             _form.threads["hdd_info"] = new Thread(() => run());
             _form.threads["hdd_info"].Start();

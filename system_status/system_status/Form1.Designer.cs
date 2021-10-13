@@ -29,9 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabs_setting = new System.Windows.Forms.TabPage();
+            this.btnManual = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.textSystemName = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabs_host = new System.Windows.Forms.TabPage();
             this.system_grid = new System.Windows.Forms.DataGridView();
             this.tabs_hdd = new System.Windows.Forms.TabPage();
@@ -44,20 +50,18 @@
             this.system_service_grid = new System.Windows.Forms.DataGridView();
             this.tabs_firewall = new System.Windows.Forms.TabPage();
             this.firewall_grid = new System.Windows.Forms.DataGridView();
+            this.tabs_events = new System.Windows.Forms.TabPage();
+            this.events_grid = new System.Windows.Forms.DataGridView();
             this.tabs_IIS = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tabs_setting = new System.Windows.Forms.TabPage();
-            this.btnManual = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.textSystemName = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.run_status_label = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
+            this.tabs_setting.SuspendLayout();
             this.tabs_host.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.system_grid)).BeginInit();
             this.tabs_hdd.SuspendLayout();
@@ -70,22 +74,24 @@
             ((System.ComponentModel.ISupportInitialize)(this.system_service_grid)).BeginInit();
             this.tabs_firewall.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.firewall_grid)).BeginInit();
+            this.tabs_events.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.events_grid)).BeginInit();
             this.tabs_IIS.SuspendLayout();
-            this.tabs_setting.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.tabs_setting);
             this.tabControl1.Controls.Add(this.tabs_host);
             this.tabControl1.Controls.Add(this.tabs_hdd);
             this.tabControl1.Controls.Add(this.tabs_running_program);
             this.tabControl1.Controls.Add(this.tabs_schedule);
             this.tabControl1.Controls.Add(this.tabs_service);
             this.tabControl1.Controls.Add(this.tabs_firewall);
+            this.tabControl1.Controls.Add(this.tabs_events);
             this.tabControl1.Controls.Add(this.tabs_IIS);
-            this.tabControl1.Controls.Add(this.tabs_setting);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
@@ -93,6 +99,71 @@
             this.tabControl1.Size = new System.Drawing.Size(808, 446);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.Click += new System.EventHandler(this.tabControl1_Click);
+            // 
+            // tabs_setting
+            // 
+            this.tabs_setting.Controls.Add(this.run_status_label);
+            this.tabs_setting.Controls.Add(this.btnManual);
+            this.tabs_setting.Controls.Add(this.button1);
+            this.tabs_setting.Controls.Add(this.btnSave);
+            this.tabs_setting.Controls.Add(this.textSystemName);
+            this.tabs_setting.Controls.Add(this.label1);
+            this.tabs_setting.Location = new System.Drawing.Point(4, 22);
+            this.tabs_setting.Name = "tabs_setting";
+            this.tabs_setting.Size = new System.Drawing.Size(800, 420);
+            this.tabs_setting.TabIndex = 7;
+            this.tabs_setting.Text = "功能設定";
+            this.tabs_setting.UseVisualStyleBackColor = true;
+            // 
+            // btnManual
+            // 
+            this.btnManual.Location = new System.Drawing.Point(54, 245);
+            this.btnManual.Name = "btnManual";
+            this.btnManual.Size = new System.Drawing.Size(103, 51);
+            this.btnManual.TabIndex = 4;
+            this.btnManual.Text = "監測回報開關";
+            this.btnManual.UseVisualStyleBackColor = true;
+            this.btnManual.Click += new System.EventHandler(this.btnManual_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(709, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnSave.Location = new System.Drawing.Point(519, 112);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(106, 36);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "儲存";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // textSystemName
+            // 
+            this.textSystemName.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.textSystemName.Location = new System.Drawing.Point(154, 112);
+            this.textSystemName.Name = "textSystemName";
+            this.textSystemName.Size = new System.Drawing.Size(359, 36);
+            this.textSystemName.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Location = new System.Drawing.Point(27, 124);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(130, 24);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "系統名稱：";
             // 
             // tabs_host
             // 
@@ -132,8 +203,8 @@
             this.hdd_grid.AllowUserToAddRows = false;
             this.hdd_grid.AllowUserToDeleteRows = false;
             this.hdd_grid.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(3);
-            this.hdd_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(3);
+            this.hdd_grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.hdd_grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.hdd_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.hdd_grid.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -226,6 +297,26 @@
             this.firewall_grid.Size = new System.Drawing.Size(800, 420);
             this.firewall_grid.TabIndex = 1;
             // 
+            // tabs_events
+            // 
+            this.tabs_events.Controls.Add(this.events_grid);
+            this.tabs_events.Location = new System.Drawing.Point(4, 22);
+            this.tabs_events.Name = "tabs_events";
+            this.tabs_events.Size = new System.Drawing.Size(800, 420);
+            this.tabs_events.TabIndex = 8;
+            this.tabs_events.Text = "事件紀錄表";
+            this.tabs_events.UseVisualStyleBackColor = true;
+            // 
+            // events_grid
+            // 
+            this.events_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.events_grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.events_grid.Location = new System.Drawing.Point(0, 0);
+            this.events_grid.Name = "events_grid";
+            this.events_grid.RowTemplate.Height = 24;
+            this.events_grid.Size = new System.Drawing.Size(800, 420);
+            this.events_grid.TabIndex = 2;
+            // 
             // tabs_IIS
             // 
             this.tabs_IIS.Controls.Add(this.groupBox1);
@@ -245,69 +336,6 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
-            // 
-            // tabs_setting
-            // 
-            this.tabs_setting.Controls.Add(this.btnManual);
-            this.tabs_setting.Controls.Add(this.button1);
-            this.tabs_setting.Controls.Add(this.btnSave);
-            this.tabs_setting.Controls.Add(this.textSystemName);
-            this.tabs_setting.Controls.Add(this.label1);
-            this.tabs_setting.Location = new System.Drawing.Point(4, 22);
-            this.tabs_setting.Name = "tabs_setting";
-            this.tabs_setting.Size = new System.Drawing.Size(800, 420);
-            this.tabs_setting.TabIndex = 7;
-            this.tabs_setting.Text = "功能設定";
-            this.tabs_setting.UseVisualStyleBackColor = true;
-            // 
-            // btnManual
-            // 
-            this.btnManual.Location = new System.Drawing.Point(652, 313);
-            this.btnManual.Name = "btnManual";
-            this.btnManual.Size = new System.Drawing.Size(75, 23);
-            this.btnManual.TabIndex = 4;
-            this.btnManual.Text = "手動同步";
-            this.btnManual.UseVisualStyleBackColor = true;
-            this.btnManual.Click += new System.EventHandler(this.btnManual_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(489, 313);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSave.Location = new System.Drawing.Point(476, 238);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(106, 34);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "儲存";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // textSystemName
-            // 
-            this.textSystemName.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.textSystemName.Location = new System.Drawing.Point(154, 112);
-            this.textSystemName.Name = "textSystemName";
-            this.textSystemName.Size = new System.Drawing.Size(359, 36);
-            this.textSystemName.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(27, 124);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 24);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "系統名稱：";
             // 
             // tableLayoutPanel1
             // 
@@ -356,6 +384,17 @@
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
+            // run_status_label
+            // 
+            this.run_status_label.AutoSize = true;
+            this.run_status_label.Font = new System.Drawing.Font("微軟正黑體", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.run_status_label.ForeColor = System.Drawing.Color.Red;
+            this.run_status_label.Location = new System.Drawing.Point(317, 208);
+            this.run_status_label.Name = "run_status_label";
+            this.run_status_label.Size = new System.Drawing.Size(434, 120);
+            this.run_status_label.TabIndex = 5;
+            this.run_status_label.Text = "尚未啟動";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -369,6 +408,8 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.tabControl1.ResumeLayout(false);
+            this.tabs_setting.ResumeLayout(false);
+            this.tabs_setting.PerformLayout();
             this.tabs_host.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.system_grid)).EndInit();
             this.tabs_hdd.ResumeLayout(false);
@@ -381,9 +422,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.system_service_grid)).EndInit();
             this.tabs_firewall.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.firewall_grid)).EndInit();
+            this.tabs_events.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.events_grid)).EndInit();
             this.tabs_IIS.ResumeLayout(false);
-            this.tabs_setting.ResumeLayout(false);
-            this.tabs_setting.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -420,6 +461,9 @@
         public System.Windows.Forms.Button button1;
         public System.Windows.Forms.Button btnManual;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.TabPage tabs_events;
+        public System.Windows.Forms.DataGridView events_grid;
+        private System.Windows.Forms.Label run_status_label;
     }
 }
 

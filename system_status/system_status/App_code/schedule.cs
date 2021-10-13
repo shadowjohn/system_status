@@ -59,7 +59,16 @@ namespace system_status.App_code
         ""scheduleNextDateTime"":{""id"":""scheduleNextDateTime"",""name"":""下次執行時間"",""width"":180,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     }
 ";
+            //表格初始化
             _form.my.grid_init(_form.schedule_grid, json_columns);
+
+            //allow sorting
+            foreach (DataGridViewColumn column in _form.schedule_grid.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            }
+
             _form.threads["schedule"] = new Thread(() => run());
             _form.threads["schedule"].Start();
         }
@@ -70,14 +79,16 @@ namespace system_status.App_code
             {
                 EnumFolderTasks(ts.RootFolder);
                 //Console.WriteLine(ts.RootFolder);
+                _form.setStatusBar("就緒", 0);
+                is_running = false;
             }
         }
         void EnumFolderTasks(TaskFolder fld)
         {
             foreach (Task task in fld.Tasks)
             {
-                var td = task.Definition;                
-                string path = string.Join(" ",td.Actions);
+                var td = task.Definition;
+                string path = string.Join(" ", td.Actions);
                 //ActOnTask(task);
                 //Console.WriteLine(task);
                 _form.UpdateUI_DataGridGrid(_form.schedule_grid, "add", "", "", -1);
