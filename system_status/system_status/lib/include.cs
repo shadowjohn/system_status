@@ -611,7 +611,7 @@ namespace utility
 
             httpWReq.UserAgent = "user_agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36";
             httpWReq.Proxy = null;
-            httpWReq.Timeout = 60000;
+            httpWReq.Timeout = 180000;
             httpWReq.Referer = null;// HttpContext.Current.Request.ServerVariables["SERVER_NAME"];
             //httpWReq.Referer = url;//getSystemKey("HTTP_REFERER");
 
