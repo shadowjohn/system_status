@@ -14,11 +14,16 @@ using system_status.App_code;
 using IniParser;
 using IniParser.Model;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Net;
 
 namespace system_status
 {
     public partial class Form1 : Form
     {
+        private FileStream s2 = null;
+        public string LOCK_FILE = "";
+        public bool GLOBAL_RUN_AT_START = false;
         public double VERSION = 1.0;
         public string LOG_PATH = "";
         public myinclude my = null;
@@ -61,6 +66,46 @@ namespace system_status
             {
                 UpdateUI("就緒", toolStripStatusLabel1);
             });
+        }
+        private void myCrash(object sender, UnhandledExceptionEventArgs args)
+        {
+            killAllThreads("ALL");
+            Application.Exit();
+        }
+        private void killAllThreads(string killSingleTime)
+        {
+            //killSingleTime 可以是 thread index name            
+            //killSingleTime 可以是 ALL
+            //remove all threads
+            //From : http://godleon.blogspot.com/2011/06/linq.html                        
+            foreach (string index in this.threads.Keys.ToArray())
+            {
+                //時間會放在最後 _ 如果 killSingleTime = "ALL" 就全刪
+                //平常就是看目前的秒 % killSingleTime
+                switch (killSingleTime.ToUpper())
+                {
+                    case "ALL":
+                        {
+                            try
+                            {
+                                threads[index].Abort();
+                            }
+                            catch { }
+                            threads[index] = null;
+                        }
+                        break;
+                    default:
+                        {
+                            //如果是直接指定 index 就刪直接刪
+                            if (index == killSingleTime)
+                            {
+                                threads[index].Abort();
+                                threads[index] = null;
+                            }
+                        }
+                        break;
+                }
+            }
         }
         private delegate void UpdateUICallBack(string value, ToolStripStatusLabel ctl);
         private void UpdateUI(string value, ToolStripStatusLabel ctl)
@@ -260,11 +305,13 @@ namespace system_status
                         while (true)
                         {
                             setStatusBar("同步開始...", 0);
+                            //上傳
                             run_upload();
                             setStatusBar("閒置中...", 0);
                             //每 10 分鐘傳一次
                             //Thread.Sleep(10 * 60);
-                            Thread.Sleep(30 * 1000);
+                            Thread.Sleep(Convert.ToInt32(my.getSystemKey("LOOP_MINUTE")) * 60 * 1000);
+                            //Thread.Sleep(30 * 1000);
                         }
                     });
                     threads["RUN_UPLOAD"].Start();
@@ -291,9 +338,7 @@ namespace system_status
             Dictionary<string, object> output = new Dictionary<string, object>();
             setStatusBar("同步開始...", 0);
             output["NAME"] = textSystemName.Text;
-            output["CPUID"] = my.getCPUId();
             setStatusBar("同步開始...取得系統資訊", 20);
-
             cSystem.init(this);
             cHdd.init(this);
             cEvents.init(this);
@@ -324,9 +369,24 @@ namespace system_status
             output["TASK_INFO"] = my.gridViewToDataTable(running_program_grid);
             output["SCHEDULE_INFO"] = my.gridViewToDataTable(schedule_grid);
 
-            logError(my.json_encode_formated(output));
-
-
+            //logError(my.json_encode_formated(output));
+            string URL = my.getSystemKey("REPORT_URL") + "?mode=updateStatus";
+            ConcurrentDictionary<string, string> o = new ConcurrentDictionary<string, string>();
+            o["data"] = my.base64_encode(my.Zip(my.json_encode(output)));
+            output = null;
+            try
+            {
+                string data = my.b2s(my.file_get_contents_post(URL, o));
+                if (data != "")
+                {
+                    logError(data);
+                }
+            }
+            catch (Exception ex)
+            {
+                logError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            o = null;
         }
         private void Form1_Resize(object sender, EventArgs e)
         {
@@ -349,14 +409,29 @@ namespace system_status
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            foreach (var k in threads.Keys)
+            /*foreach (var k in threads.Keys)
             {
                 if (threads[k] != null)
                 {
                     threads[k].Abort();
                 }
             }
+            */
+            try
+            {
+                killAllThreads("ALL");
+            }
+            catch
+            {
+
+            }
             notifyIcon1.Visible = false;
+            notifyIcon1.Dispose();
+            exit();
+        }
+        private void exit()
+        {
+            System.Environment.Exit(0);
         }
         void create_log_dir()
         {
@@ -377,8 +452,34 @@ namespace system_status
 
             }
         }
+        void CLog(string data)
+        {
+            Console.WriteLine(data);
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+            //嘗試當掉就中斷離開
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(myCrash);
+            this.LOCK_FILE = my.pwd() + "\\lock.txt";
+
+            if (!my.is_file(this.LOCK_FILE))
+            {
+                my.file_put_contents(this.LOCK_FILE, "");
+            }
+            if (my.is_file_lock(this.LOCK_FILE))
+            {
+                //如果目前已是 lock 就結束
+                CLog("Error ... Another zip process is running... ");
+                Form1_FormClosing(sender, null);
+                return;
+            }
+            //lock file
+            s2 = new FileStream(this.LOCK_FILE, FileMode.Open, FileAccess.Read, FileShare.None);
+
             this.LOG_PATH = my.pwd() + "\\log";
             create_log_dir();
             this.Text += string.Format(" - 版本：{0:0.0}", VERSION);
@@ -408,6 +509,25 @@ namespace system_status
                 tabControl1_Click(new object(), new EventArgs());
             }
 
+            switch (my.getSystemKey("RUN_AT_START").ToUpper())
+            {
+                case "YES":
+                    {
+                        GLOBAL_RUN_AT_START = true;
+                    }
+                    break;
+            }
+
+            if (GLOBAL_RUN_AT_START)
+            {
+                //自動按
+                btnManual_Click(sender, e);
+                //自動縮小
+                WindowState = FormWindowState.Minimized;
+                ShowInTaskbar = false;
+                notifyIcon1.Visible = true;
+                notifyIcon1.ShowBalloonTip(1000);
+            }
         }
     }
 }

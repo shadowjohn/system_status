@@ -21,6 +21,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
 using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
+using System.IO.Compression;
 
 namespace utility
 {
@@ -274,7 +276,7 @@ namespace utility
                         string line = reader.ReadLine();//每次读取一行  
                         while (!reader.EndOfStream)
                         {
-                            sb.Append(line).Append("<br />");//在Web中使用<br />换行  
+                            sb.Append(line).Append("\n");//在Web中使用<br />换行  
                             line = reader.ReadLine();
                         }
                         p.WaitForExit();//等待程序执行完退出进程  
@@ -589,6 +591,15 @@ namespace utility
             }
             return sb.ToString();
         }
+        public string base64_encode(string data)
+        {
+            return base64_encode(s2b(data));
+        }
+        public string base64_encode(byte[] data)
+        {
+            //base64編碼
+            return Convert.ToBase64String(data);
+        }
         public byte[] file_get_contents_post(string url, string postData)
         {
             HttpWebRequest httpWReq =
@@ -749,6 +760,74 @@ namespace utility
                     }
                 }
             }
+        }
+        public bool is_file_lock(string filePath)
+        {
+            try
+            {
+                using (File.Open(filePath, FileMode.Open)) { }
+            }
+            catch (IOException e)
+            {
+                //var errorCode = Marshal.GetHRForException(e) & ((1 << 16) - 1);
+                return true; // errorCode == 32 || errorCode == 33;
+            }
+            return false;
+        }
+        public void CopyTo(Stream src, Stream dest)
+        {
+            byte[] bytes = new byte[4096];
+
+            int cnt;
+
+            while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0)
+            {
+                dest.Write(bytes, 0, cnt);
+            }
+        }
+
+        public byte[] Zip(string str)
+        {
+            var bytes = Encoding.UTF8.GetBytes(str);
+
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                {
+                    //msi.CopyTo(gs);
+                    CopyTo(msi, gs);
+                }
+
+                return mso.ToArray();
+            }
+        }
+
+        public string Unzip(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    //gs.CopyTo(mso);
+                    CopyTo(gs, mso);
+                }
+
+                return Encoding.UTF8.GetString(mso.ToArray());
+            }
+        }
+        public string[] explode(string keyword, string data)
+        {
+            return data.Split(new string[] { keyword }, StringSplitOptions.None);
+        }
+        public string[] explode(string keyword, object data)
+        {
+            return data.ToString().Split(new string[] { keyword }, StringSplitOptions.None);
+        }
+        public string[] explode(string[] keyword, string data)
+        {
+            return data.Split(keyword, StringSplitOptions.None);
         }
     }
 

@@ -61,6 +61,15 @@ namespace system_status.App_code
     },
     {   
         ""running_programCommandLine"":{""id"":""running_programCommandLine"",""name"":""執行方法"",""width"":550,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+    },
+    {   
+        ""running_programStart_datetime"":{""id"":""running_programStart_datetime"",""name"":""開始時間"",""width"":150,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },
+    {   
+        ""running_programRun_times"":{""id"":""running_programRun_times"",""name"":""已跑多久"",""width"":120,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },
+    {   
+        ""running_programRun_user"":{""id"":""running_programRun_user"",""name"":""執行身分"",""width"":550,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     }
 ]
 ";
@@ -117,15 +126,38 @@ namespace system_status.App_code
                 _form.running_program_grid.Rows[lastId].Cells["running_programBaseName"].Value = _form.my.basename(o["fullPath"]);
                 _form.running_program_grid.Rows[lastId].Cells["running_programPath"].Value = o["fullPath"];
                 _form.running_program_grid.Rows[lastId].Cells["running_programCommandLine"].Value = o["CommandLine"];
+
+                _form.running_program_grid.Rows[lastId].Cells["running_programStart_datetime"].Value = o["CreationDate"];
+                _form.running_program_grid.Rows[lastId].Cells["running_programRun_times"].Value = o["ExcuteTimes"];
+                _form.running_program_grid.Rows[lastId].Cells["running_programRun_user"].Value = GetProcessOwner(pid);
             }
             _form.setStatusBar("執行緒資訊載入完成...", 100);
             is_running = false;
+        }
+        public string GetProcessOwner(int processId)
+        {
+            string query = "Select * From Win32_Process Where ProcessID = " + processId;
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+            ManagementObjectCollection processList = searcher.Get();
+
+            foreach (ManagementObject obj in processList)
+            {
+                string[] argList = new string[] { string.Empty, string.Empty };
+                int returnVal = Convert.ToInt32(obj.InvokeMethod("GetOwner", argList));
+                if (returnVal == 0)
+                {
+                    // return DOMAIN\user
+                    return argList[1] + "\\" + argList[0];
+                }
+            }
+
+            return "NO OWNER";
         }
         private ManagementObjectSearcher mos = null;
         private ManagementObjectCollection moc = null;
         private void GetProcessInfo()
         {
-            string Query = "SELECT ProcessID,ExecutablePath,CommandLine FROM Win32_Process ";
+            string Query = "SELECT ProcessID,ExecutablePath,CommandLine,CreationDate FROM Win32_Process ";
             mos = new ManagementObjectSearcher(Query);
             moc = mos.Get();
         }
@@ -135,6 +167,8 @@ namespace system_status.App_code
             Dictionary<string, string> o = new Dictionary<string, string>();
             o["fullPath"] = "";
             o["CommandLine"] = "";
+            o["CreationDate"] = ""; //start time
+            o["ExcuteTimes"] = ""; //run seconds
             foreach (ManagementObject searcher in moc)
             {
                 //Console.WriteLine(searcher);
@@ -147,6 +181,13 @@ namespace system_status.App_code
                     if (searcher["CommandLine"] != null)
                     {
                         o["CommandLine"] = searcher["CommandLine"].ToString();
+                    }
+                    if (searcher["CreationDate"] != null)
+                    {
+                        string t = _form.my.explode(".", searcher["CreationDate"].ToString())[0];
+                        o["CreationDate"] = _form.my.date("Y-m-d H:i:s", _form.my.strtotime(t.Substring(0, 4) + "-" + t.Substring(4, 2) + "-" + t.Substring(6, 2) + " " + t.Substring(8, 2) + ":" + t.Substring(10, 2) + ":" + t.Substring(12, 2)));
+                        //Console.WriteLine(o["CreationDate"]);
+                        o["ExcuteTimes"] = (Convert.ToInt64(_form.my.time()) - Convert.ToInt64(_form.my.strtotime(o["CreationDate"]))).ToString();
                     }
                 }
             }

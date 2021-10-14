@@ -7,6 +7,7 @@ using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -14,11 +15,45 @@ using System.Windows.Forms;
 using WUApiLib;
 namespace system_status.App_code
 {
+
     class system_info
     {
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        #region Obtain memory information API    
+        public static extern bool GlobalMemoryStatusEx(ref MEMORY_INFO mi);
+
+        //Define the information structure of memory
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MEMORY_INFO
+        {
+            public uint dwLength; //Current structure size
+            public uint dwMemoryLoad; //Current memory utilization
+            public ulong ullTotalPhys; //Total physical memory size
+            public ulong ullAvailPhys; //Available physical memory size
+            public ulong ullTotalPageFile; //Total Exchange File Size
+            public ulong ullAvailPageFile; //Total Exchange File Size
+            public ulong ullTotalVirtual; //Total virtual memory size
+            public ulong ullAvailVirtual; //Available virtual memory size
+            public ulong ullAvailExtendedVirtual; //Keep this value always zero
+        }
+        #endregion
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
+        private MEMORY_INFO GetMemoryStatus()
+        {
+            MEMORY_INFO mi = new MEMORY_INFO();
+            mi.dwLength = (uint)System.Runtime.InteropServices.Marshal.SizeOf(mi);
+            GlobalMemoryStatusEx(ref mi);
+            return mi;
+        }
+        private ulong GetUsedMemory()
+        {
+            //取得已用掉的 ram
+            MEMORY_INFO mi = GetMemoryStatus();
+            return (mi.ullTotalPhys - mi.ullAvailPhys);
+        }
         public void init(Form1 theform)
         {
             _form = theform;
@@ -27,7 +62,7 @@ namespace system_status.App_code
                 _form.threads["system_info"].Abort();
                 _form.threads["system_info"] = null;
             }
-            
+
             is_running = true;
             last_date = _form.my.time();
             _form.system_grid.AutoGenerateColumns = false; //這啥
@@ -175,7 +210,13 @@ namespace system_status.App_code
 
 
 
-            //取網域名稱
+            //cpu id
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+            lastId = _form.system_grid.Rows.Count - 1;
+            _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPUID";
+            _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.my.getCPUId();
+
             //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem
             mos = new ManagementObjectSearcher(@"root\CIMV2", @"SELECT * FROM Win32_ComputerSystem");
             foreach (ManagementObject mo in mos.Get())
@@ -194,7 +235,7 @@ namespace system_status.App_code
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "RAM大小";
-                _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.my.size_hum_read(Convert.ToInt64(mo["TotalPhysicalMemory"]));
+                _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["TotalPhysicalMemory"].ToString();
 
 
                 //_form.system_grid.Rows.Add();
@@ -281,7 +322,37 @@ namespace system_status.App_code
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = strDt;
             }
 
+            //已用的 ram
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+            lastId = _form.system_grid.Rows.Count - 1;
+            _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "UsedRam";
+            _form.system_grid.Rows[lastId].Cells["systemData"].Value = GetUsedMemory().ToString();
 
+            // windows defender
+            // From : https://github.com/MicrosoftDocs/windows-itpro-docs/issues/6092
+            string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion)\"";
+            string tmp = _form.my.system(CMD);
+            var mtmp = _form.my.explode("########", tmp);
+            string data = mtmp[mtmp.Count() - 1].Trim();
+            mtmp = _form.my.explode("\n", data);
+            for (int i = 0, max_i = mtmp.Length; i < max_i; i++)
+            {
+                var d = _form.my.explode(":", mtmp[i]);
+                if (d.Count() != 2) continue;
+                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+                lastId = _form.system_grid.Rows.Count - 1;
+                _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowDefender_" + d[0];
+                _form.system_grid.Rows[lastId].Cells["systemData"].Value = d[1];
+            }
+
+            //版本
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+            lastId = _form.system_grid.Rows.Count - 1;
+            _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "TOOL_VERSION";
+            _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.VERSION;
 
 
             _form.setStatusBar("就緒", 0);
