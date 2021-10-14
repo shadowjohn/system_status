@@ -34,8 +34,8 @@ namespace system_status
         system_service cSystemService = null;
         running_program cRunningProgram = null;
         schedule cSchedule = null;
-        ini cIni = null;
-        public IniData iniData = null; // 儲存 config 設定
+        //ini cIni = null;
+        //public IniData iniData = null; // 儲存 config 設定
         public FileIniDataParser iniParser = new FileIniDataParser();
         static public Form theform;
         public Dictionary<string, Thread> threads = new Dictionary<string, Thread>();
@@ -192,7 +192,7 @@ namespace system_status
             cSystemService = new system_service();
             cSchedule = new schedule();
             cEvents = new events();
-            cIni = new ini();
+            //cIni = new ini();
 
         }
 
@@ -280,7 +280,7 @@ namespace system_status
         private void btnSave_Click(object sender, EventArgs e)
         {
 
-            cIni.ini_save();
+            //cIni.ini_save();
         }
         public void alert(string message)
         {
@@ -331,7 +331,11 @@ namespace system_status
 
         }
         private void run_upload()
-        {
+        {            
+            if (textSystemName.Text=="")
+            {                
+                return;
+            }
             //手動同步
             //收集所有 gridview 的內容
             //組合成 json 加密後，上傳到伺服器
@@ -465,7 +469,7 @@ namespace system_status
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(myCrash);
             this.LOCK_FILE = my.pwd() + "\\lock.txt";
-
+            textSystemName.Text = my.getSystemKey("COMPUTER_NAME");
             if (!my.is_file(this.LOCK_FILE))
             {
                 my.file_put_contents(this.LOCK_FILE, "");
@@ -495,19 +499,22 @@ namespace system_status
             this.TopMost = false;
             this.CenterToScreen();
             //載入設定檔
-            cIni.ini_init(this);
+            //cIni.ini_init(this);
             //預設看要帶哪一個
             //cHdd.init(this);
             //cRunningProgram.init(this);
             //tabControl1.SelectTab("tabs_running_program");
             tabControl1.SelectTab("tabs_setting");
             tabControl1_Click(new object(), new EventArgs());
-            if (iniData["setting"]["NAME"] == "")
+
+
+            /*if (iniData["setting"]["NAME"] == "")
             {
                 //首次使用，需先設定
                 tabControl1.SelectTab("tabs_setting");
                 tabControl1_Click(new object(), new EventArgs());
             }
+            */
 
             switch (my.getSystemKey("RUN_AT_START").ToUpper())
             {
