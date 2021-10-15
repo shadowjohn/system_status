@@ -6,6 +6,8 @@ using System.ServiceProcess;
 using System.Windows.Forms;
 using System.Management;
 using System.Threading;
+using System.Data;
+
 namespace system_status.App_code
 {
     class system_service
@@ -13,6 +15,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
+        private DataTable dt = new DataTable();
 
         public void init(Form1 theform)
         {
@@ -57,6 +60,7 @@ namespace system_status.App_code
 ";
             //表格初始化
             _form.my.grid_init(_form.system_service_grid, json_columns);
+            dt = _form.my.datatable_init(json_columns);
 
             //allow sorting
             foreach (DataGridViewColumn column in _form.system_service_grid.Columns)
@@ -70,42 +74,52 @@ namespace system_status.App_code
         }
         public void run()
         {
-            int lastId = 0;
+            int step = 0;
+            DataRow row = dt.NewRow();
+            //int lastId = 0;
             // get list of Windows services
             //https://docs.microsoft.com/zh-tw/dotnet/api/system.serviceprocess.servicecontroller?view=dotnet-plat-ext-3.1
             //https://www.csharp-examples.net/windows-service-list/
             ServiceController[] services = ServiceController.GetServices();
             // try to find service name
 
-            _form.UpdateUI_DataGridGrid(_form.system_service_grid, "clear", "", "", -1);
+            //_form.UpdateUI_DataGridGrid(_form.system_service_grid, "clear", "", "", -1);
             foreach (ServiceController service in services)
             {
+                row = dt.NewRow();
                 //if (service.ServiceName == serviceName)
                 //    return true;
-                Console.WriteLine(service.ServiceName + "," + service.DisplayName);
+                //Console.WriteLine(service.ServiceName + "," + service.DisplayName);
                 //_form.system_service_grid.Rows.Add();
-                _form.UpdateUI_DataGridGrid(_form.system_service_grid, "add", "", "", -1);
-                lastId = _form.system_service_grid.Rows.Count - 1;
-                _form.system_service_grid.Rows[lastId].Cells["system_serviceID"].Value = (lastId + 1);
-                _form.system_service_grid.Rows[lastId].Cells["system_serviceName"].Value = service.DisplayName;
+                //_form.UpdateUI_DataGridGrid(_form.system_service_grid, "add", "", "", -1);
+                //lastId = _form.system_service_grid.Rows.Count - 1;
+                //_form.system_service_grid.Rows[lastId].Cells["system_serviceID"].Value = (lastId + 1);
+                row["system_serviceID"] = ++step;
+
+                //_form.system_service_grid.Rows[lastId].Cells["system_serviceName"].Value = service.DisplayName;
+                row["system_serviceName"] = service.DisplayName;
                 ManagementObject serviceObject = new ManagementObject(new ManagementPath(string.Format("Win32_Service.Name='{0}'", service.ServiceName)));
                 //https://stackoverflow.com/questions/16547216/read-the-description-of-a-windows-service
                 if (serviceObject["Description"] != null)
                 {
-                    _form.system_service_grid.Rows[lastId].Cells["system_serviceDescription"].Value = serviceObject["Description"].ToString();
+                    //_form.system_service_grid.Rows[lastId].Cells["system_serviceDescription"].Value = serviceObject["Description"].ToString();
+                    row["system_serviceDescription"] = serviceObject["Description"].ToString();
                 }
                 else
                 {
-                    _form.system_service_grid.Rows[lastId].Cells["system_serviceDescription"].Value = "";
+                    //_form.system_service_grid.Rows[lastId].Cells["system_serviceDescription"].Value = "";
+                    row["system_serviceDescription"] = "";
                 }
 
                 switch (service.Status.ToString())
                 {
                     case "Running":
-                        _form.system_service_grid.Rows[lastId].Cells["system_serviceStatus"].Value = "執行中";
+                        //_form.system_service_grid.Rows[lastId].Cells["system_serviceStatus"].Value = "執行中";
+                        row["system_serviceStatus"] = "執行中";
                         break;
                     case "Stopped":
-                        _form.system_service_grid.Rows[lastId].Cells["system_serviceStatus"].Value = "停止";
+                        //_form.system_service_grid.Rows[lastId].Cells["system_serviceStatus"].Value = "停止";
+                        row["system_serviceStatus"] = "停止";
                         break;
                 }
 
@@ -119,13 +133,17 @@ namespace system_status.App_code
                 System 	1 	
                 */
                 // From : https://www.itdaan.com/tw/753d0af27c5447f3eb5ca7ff90a5bd09
-                _form.system_service_grid.Rows[lastId].Cells["system_serviceStartupStatus"].Value = serviceObject.Properties["StartMode"].Value;
-                _form.system_service_grid.Rows[lastId].Cells["system_servicePathName"].Value = serviceObject.Properties["PathName"].Value;
+                //_form.system_service_grid.Rows[lastId].Cells["system_serviceStartupStatus"].Value = serviceObject.Properties["StartMode"].Value;
+                row["system_serviceStartupStatus"] = serviceObject.Properties["StartMode"].Value;
+                //_form.system_service_grid.Rows[lastId].Cells["system_servicePathName"].Value = serviceObject.Properties["PathName"].Value;
+                row["system_servicePathName"] = serviceObject.Properties["PathName"].Value;
 
 
                 //_form.system_service_grid.Rows[lastId].Cells["system_serviceLoginAccount"].Value = service.MachineName;
-
+                dt.Rows.Add(row);
             }
+            _form.updateDGVUI(_form.system_service_grid, dt);
+            _form.setStatusBar("就緒", 0);
             is_running = false;
         }
     }

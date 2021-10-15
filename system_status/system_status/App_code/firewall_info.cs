@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.Data;
+
 namespace system_status.App_code
 {
     class firewall_info
@@ -13,6 +15,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
+        private DataTable dt = new DataTable();
         // Protocol
         // From : https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa364724(v=vs.85)
         private int NET_FW_IP_PROTOCOL_TCP = 6;
@@ -90,7 +93,7 @@ namespace system_status.App_code
 
             //表格初始化
             _form.my.grid_init(_form.firewall_grid, json_columns);
-
+            dt = _form.my.datatable_init(json_columns);
             //allow sorting
             foreach (DataGridViewColumn column in _form.firewall_grid.Columns)
             {
@@ -105,54 +108,73 @@ namespace system_status.App_code
         }
         public void run()
         {
-
-
+            DataRow row = dt.NewRow();
+            int step = 0;
             int lastId = 0;
-            _form.UpdateUI_DataGridGrid(_form.firewall_grid, "clear", "", "", -1);
+            //_form.UpdateUI_DataGridGrid(_form.firewall_grid, "clear", "", "", -1);
             Type tNetFwPolicy2 = Type.GetTypeFromProgID("HNetCfg.FwPolicy2");
             dynamic fwPolicy2 = Activator.CreateInstance(tNetFwPolicy2) as dynamic;
             IEnumerable Rules = fwPolicy2.Rules as IEnumerable;
             foreach (dynamic rule in Rules)
             {
+                row = dt.NewRow();
                 //_form.firewall_grid.Rows.Add();
-                _form.UpdateUI_DataGridGrid(_form.firewall_grid, "add", "", "", -1);
-                lastId = _form.firewall_grid.Rows.Count - 1;
-                _form.firewall_grid.Rows[lastId].Cells["firewallID"].Value = (lastId + 1);
-                _form.firewall_grid.Rows[lastId].Cells["firewallName"].Value = rule.Name;
-                _form.firewall_grid.Rows[lastId].Cells["firewallApplicationName"].Value = rule.ApplicationName;
-                _form.firewall_grid.Rows[lastId].Cells["firewallServiceName"].Value = rule.ServiceName;
-                _form.firewall_grid.Rows[lastId].Cells["firewallEnabled"].Value = rule.Enabled;
+                //_form.UpdateUI_DataGridGrid(_form.firewall_grid, "add", "", "", -1);
+                //lastId = _form.firewall_grid.Rows.Count - 1;
+                //_form.firewall_grid.Rows[lastId].Cells["firewallID"].Value = (lastId + 1);
+                row["firewallID"] = ++step;
+
+                //_form.firewall_grid.Rows[lastId].Cells["firewallName"].Value = rule.Name;
+                row["firewallName"] = rule.Name;
+
+                //_form.firewall_grid.Rows[lastId].Cells["firewallApplicationName"].Value = rule.ApplicationName;
+                row["firewallApplicationName"] = rule.ApplicationName;
+
+                //_form.firewall_grid.Rows[lastId].Cells["firewallServiceName"].Value = rule.ServiceName;
+                row["firewallServiceName"] = rule.ServiceName;
+
+                //_form.firewall_grid.Rows[lastId].Cells["firewallEnabled"].Value = rule.Enabled;
+                row["firewallEnabled"] = rule.Enabled;
+
                 switch (Convert.ToInt32(rule.Protocol))
                 {
                     case 6:
-                        _form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "TCP";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "TCP";
+                        row["firewallProtocol"] = "TCP";
                         break;
                     case 17:
-                        _form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "UDP";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "UDP";
+                        row["firewallProtocol"] = "UDP";
                         break;
                     case 1:
-                        _form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "ICPMv4";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "ICPMv4";
+                        row["firewallProtocol"] = "ICPMv4";
                         break;
                     case 58:
-                        _form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "ICMPv6";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "ICMPv6";
+                        row["firewallProtocol"] = "ICMPv6";
                         break;
                 }
                 switch (Convert.ToInt32(rule.Action))
                 {
                     case 0: //Block
-                        _form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "阻擋";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "阻擋";
+                        row["firewallAllowBlock"] = "阻擋";
                         break;
                     case 1: //Allow
-                        _form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "允許";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "允許";
+                        row["firewallAllowBlock"] = "允許";
                         break;
                 }
                 switch (Convert.ToInt32(rule.Direction))
                 {
                     case 1:
-                        _form.firewall_grid.Rows[lastId].Cells["firewallDirectionInOut"].Value = "入";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallDirectionInOut"].Value = "入";
+                        row["firewallDirectionInOut"] = "入";
                         break;
                     case 2:
-                        _form.firewall_grid.Rows[lastId].Cells["firewallDirectionInOut"].Value = "出";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallDirectionInOut"].Value = "出";
+                        row["firewallDirectionInOut"] = "出";
                         break;
                 }
                 switch (Convert.ToInt32(rule.Protocol))
@@ -162,16 +184,30 @@ namespace system_status.App_code
                     case 1:
                     case 58:
                         //符合 TCP、UDP，要顯示 ports
-                        _form.firewall_grid.Rows[lastId].Cells["firewallLocalPorts"].Value = rule.LocalPorts;
-                        _form.firewall_grid.Rows[lastId].Cells["firewallRemotePorts"].Value = rule.RemotePorts;
-                        _form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = rule.LocalAddresses;
-                        _form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = rule.RemoteAddresses;
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallLocalPorts"].Value = rule.LocalPorts;
+                        row["firewallLocalPorts"] = rule.LocalPorts;
+
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallRemotePorts"].Value = rule.RemotePorts;
+                        row["firewallRemotePorts"] = rule.RemotePorts;
+
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = rule.LocalAddresses;
+                        row["firewallLocalAddresses"] = rule.LocalAddresses;
+
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = rule.RemoteAddresses;
+                        row["firewallRemoteAddresses"] = rule.RemoteAddresses;
                         break;
                     default:
-                        _form.firewall_grid.Rows[lastId].Cells["firewallLocalPorts"].Value = "";
-                        _form.firewall_grid.Rows[lastId].Cells["firewallRemotePorts"].Value = "";
-                        _form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = "";
-                        _form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = "";
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallLocalPorts"].Value = "";
+                        row["firewallLocalPorts"] = "";
+
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallRemotePorts"].Value = "";
+                        row["firewallRemotePorts"] = "";
+
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallLocalAddresses"].Value = "";
+                        row["firewallLocalAddresses"] = "";
+
+                        //_form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = "";
+                        row["firewallRemoteAddresses"] = "";
                         break;
                 }
 
@@ -180,7 +216,9 @@ namespace system_status.App_code
                 //{
 
                 //}
+                dt.Rows.Add(row);
             }
+            _form.updateDGVUI(_form.firewall_grid, dt);
             _form.setStatusBar("就緒", 0);
             is_running = false;
         }

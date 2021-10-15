@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
@@ -41,6 +42,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
+        private DataTable dt = new DataTable();
         private MEMORY_INFO GetMemoryStatus()
         {
             MEMORY_INFO mi = new MEMORY_INFO();
@@ -87,6 +89,7 @@ namespace system_status.App_code
 ]";
             //表格初始化
             _form.my.grid_init(_form.system_grid, json_columns);
+            dt = _form.my.datatable_init(json_columns);
 
             //allow sorting
             foreach (DataGridViewColumn column in _form.system_grid.Columns)
@@ -144,18 +147,41 @@ namespace system_status.App_code
             // that 4.5 or later is installed.
             return "No 4.5 or later version detected";
         }
+        Dictionary<string, string> getUsedCPU_RAM()
+        {
+            //cpu loading
+            PerformanceCounter cpuCounter;
+            PerformanceCounter ramCounter;
+
+            cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total", Environment.MachineName);
+            cpuCounter.NextValue();
+            System.Threading.Thread.Sleep(1000); //This avoid that answer always 0                
+            ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            output["CPU"] = cpuCounter.NextValue() + " %";
+            output["RAM"] = ramCounter.NextValue() + " MB";
+            return output;
+        }
         void run()
         {
+            int step = 0;
             _form.UpdateUI_DataGridGrid(_form.system_grid, "clear", "", "", -1);
-            int lastId = 0;
+            //int lastId = 0;
             //_form.system_grid.Rows.Add();
+            /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
-
-
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "回報系統名稱";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.textSystemName.Text.ToString();
+            */
+
+            DataRow row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "回報系統名稱";
+            row["systemData"] = _form.textSystemName.Text.ToString();
+            dt.Rows.Add(row);
+
 
 
             //From : https://stackoverflow.com/questions/4742389/get-pc-system-information-on-windows-machine
@@ -167,21 +193,38 @@ namespace system_status.App_code
                 {
                     //Console.WriteLine("Operating System Name  :  " + managementObject["Caption"].ToString());   //Display operating system caption
                     //_form.system_grid.Rows.Add();
+                    /*
                     _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "作業系統";
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = managementObject["Caption"].ToString();
+                    */
+
+                    row = dt.NewRow();
+                    row["systemID"] = ++step;
+                    row["systemName"] = "作業系統";
+                    row["systemData"] = managementObject["Caption"].ToString();
+                    dt.Rows.Add(row);
+
                 }
                 if (managementObject["OSArchitecture"] != null)
                 {
                     //Console.WriteLine("Operating System Architecture  :  " + managementObject["OSArchitecture"].ToString());   //Display operating system architecture.
                     //_form.system_grid.Rows.Add();
+                    /*
                     _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "位元";
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = managementObject["OSArchitecture"].ToString();
+                    */
+
+                    row = dt.NewRow();
+                    row["systemID"] = ++step;
+                    row["systemName"] = "位元";
+                    row["systemData"] = managementObject["OSArchitecture"].ToString();
+                    dt.Rows.Add(row);
                 }
                 if (managementObject["CSDVersion"] != null)
                 {
@@ -200,22 +243,39 @@ namespace system_status.App_code
                     CPU_NAME = _form.my.preg_replace(CPU_NAME, "[ ]{2,}", " ");
                     CPU_NAME = CPU_NAME.Trim();
                     //_form.system_grid.Rows.Add();
+                    /*
                     _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPU規格";
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = CPU_NAME;
+                    */
+
+                    row = dt.NewRow();
+                    row["systemID"] = ++step;
+                    row["systemName"] = "CPU規格";
+                    row["systemData"] = CPU_NAME;
+                    dt.Rows.Add(row);
                 }
             }
 
 
 
             //cpu id
+            string cpu_id = _form.my.getCPUId();
+            /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
-            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPUID";
-            _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.my.getCPUId();
+            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPUID";            
+            _form.system_grid.Rows[lastId].Cells["systemData"].Value = cpu_id;
+            */
+
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "CPUID";
+            row["systemData"] = cpu_id;
+            dt.Rows.Add(row);
 
             //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem
             mos = new ManagementObjectSearcher(@"root\CIMV2", @"SELECT * FROM Win32_ComputerSystem");
@@ -223,37 +283,62 @@ namespace system_status.App_code
             {
                 //CPU核心數
                 //_form.system_grid.Rows.Add();
+                /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPU核心數";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["NumberOfLogicalProcessors"].ToString();
+                */
 
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "CPU核心數";
+                row["systemData"] = mo["NumberOfLogicalProcessors"].ToString();
+                dt.Rows.Add(row);
 
-                //_form.system_grid.Rows.Add();
+                /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "RAM大小";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["TotalPhysicalMemory"].ToString();
+                */
 
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "RAM大小";
+                row["systemData"] = mo["TotalPhysicalMemory"].ToString();
+                dt.Rows.Add(row);
 
-                //_form.system_grid.Rows.Add();
+                /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
-                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "網域名稱";
-                //_form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["Workgroup"].ToString();
+                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "網域名稱";                
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["Workgroup"] == null ? "" : mo["Workgroup"].ToString();
+                */
 
-                //_form.system_grid.Rows.Add();
+
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "網域名稱";
+                row["systemData"] = mo["Workgroup"] == null ? "" : mo["Workgroup"].ToString();
+                dt.Rows.Add(row);
+
+                /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "使用者名稱";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["UserName"].ToString();
+                */
 
-
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "使用者名稱";
+                row["systemData"] = mo["UserName"].ToString();
+                dt.Rows.Add(row);
 
             }
 
@@ -261,11 +346,19 @@ namespace system_status.App_code
 
 
             //_form.system_grid.Rows.Add();
+            /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "電腦名稱";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = host.HostName.ToString();
+            */
+
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "電腦名稱";
+            row["systemData"] = host.HostName.ToString();
+            dt.Rows.Add(row);
             // 取本機 IP 
             // From : https://stackoverflow.com/questions/6803073/get-local-ip-address
             int ip_step = 1;
@@ -274,13 +367,23 @@ namespace system_status.App_code
 
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    //_form.system_grid.Rows.Add();
+                    /*
                     _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                     lastId = _form.system_grid.Rows.Count - 1;
                     _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "IP_" + ip_step.ToString();
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = ip.ToString();
+                    */
+
+                    row = dt.NewRow();
+                    row["systemID"] = ++step;
+                    row["systemName"] = "IP_" + ip_step.ToString();
+                    row["systemData"] = ip.ToString();
+                    dt.Rows.Add(row);
+
                     ip_step++;
+
+
                 }
             }
             var gateway_address = NetworkInterface.GetAllNetworkInterfaces()
@@ -289,22 +392,38 @@ namespace system_status.App_code
         .FirstOrDefault();
             if (gateway_address != null)
             {
-                //_form.system_grid.Rows.Add();
+                /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "Gateway";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = gateway_address.Address.ToString();
+                */
+
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "Gateway";
+                row["systemData"] = gateway_address.Address.ToString();
+                dt.Rows.Add(row);
             }
 
             //Framework 版本
             //_form.system_grid.Rows.Add();
+
+            string framework_version = _getFrameWorkVersion();
+            /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
-            lastId = _form.system_grid.Rows.Count - 1;
+            lastId = _form.system_grid.Rows.Count - 1;            
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "Framework版本";
-            _form.system_grid.Rows[lastId].Cells["systemData"].Value = _getFrameWorkVersion();
+            _form.system_grid.Rows[lastId].Cells["systemData"].Value = framework_version;
+            */
 
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "Framework版本";
+            row["systemData"] = framework_version;
+            dt.Rows.Add(row);
 
             //取系統最後更新時間
             //From : https://stackoverflow.com/questions/9215326/check-when-last-check-for-windows-updates-was-performed
@@ -312,22 +431,63 @@ namespace system_status.App_code
             //Console.WriteLine(auc.Results.LastInstallationSuccessDate);
             if (auc.Results.LastInstallationSuccessDate is DateTime)
             {
-                DateTime dt = new DateTime(((DateTime)auc.Results.LastInstallationSuccessDate).Ticks, DateTimeKind.Utc);
-                string strDt = _form.my.date("Y-m-d H:i:s", (Convert.ToInt32(_form.my.strtotime(dt.ToString("yyyy-MM-dd HH:mm:ss"))) + 8 * 60 * 60).ToString());
+                DateTime _dt = new DateTime(((DateTime)auc.Results.LastInstallationSuccessDate).Ticks, DateTimeKind.Utc);
+                string strDt = _form.my.date("Y-m-d H:i:s", (Convert.ToInt32(_form.my.strtotime(_dt.ToString("yyyy-MM-dd HH:mm:ss"))) + 8 * 60 * 60).ToString());
                 //_form.system_grid.Rows.Add();
+                /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowsUpdateDate";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = strDt;
+                */
+
+            row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "WindowsUpdateDate";
+                row["systemData"] = strDt;
+                dt.Rows.Add(row);
             }
 
+            var CPU_RAM = getUsedCPU_RAM();
+            /*
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+            lastId = _form.system_grid.Rows.Count - 1;
+            _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "UsedRam";
+            _form.system_grid.Rows[lastId].Cells["systemData"].Value = CPU_RAM["RAM"];
+            */
+
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "UsedRam";
+            row["systemData"] = CPU_RAM["RAM"];
+            dt.Rows.Add(row);
+
+            /*
+            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+            lastId = _form.system_grid.Rows.Count - 1;
+            _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "UsedCPU";
+            _form.system_grid.Rows[lastId].Cells["systemData"].Value = CPU_RAM["CPU"];
+            */
+
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "UsedCPU";
+            row["systemData"] = CPU_RAM["CPU"];
+            dt.Rows.Add(row);
+
             //已用的 ram
+            /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "UsedRam";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = GetUsedMemory().ToString();
+            */
+
+
 
             // windows defender
             // From : https://github.com/MicrosoftDocs/windows-itpro-docs/issues/6092
@@ -340,20 +500,37 @@ namespace system_status.App_code
             {
                 var d = _form.my.explode(":", mtmp[i]);
                 if (d.Count() != 2) continue;
+                /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
-                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowDefender_" + d[0];
-                _form.system_grid.Rows[lastId].Cells["systemData"].Value = d[1];
+                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowDefender_" + d[0].Trim();
+                _form.system_grid.Rows[lastId].Cells["systemData"].Value = d[1].Trim();
+                */
+
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "WindowDefender_" + d[0].Trim();
+                row["systemData"] = d[1].Trim();
+                dt.Rows.Add(row);
             }
 
             //版本
+            /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "TOOL_VERSION";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.VERSION;
+            */
 
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "TOOL_VERSION";
+            row["systemData"] = _form.VERSION;
+            dt.Rows.Add(row);
+
+            _form.updateDGVUI(_form.system_grid, dt);
 
             _form.setStatusBar("就緒", 0);
             is_running = false;

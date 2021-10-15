@@ -41,6 +41,7 @@ namespace system_status
         public Dictionary<string, Thread> threads = new Dictionary<string, Thread>();
         public void setStatusBar(string title, int percent)
         {
+            percent = (percent >= 100) ? 100 : percent;
             //toolStripStatusLabel1.Text = title;
             UpdateUI(title, toolStripStatusLabel1);
             //toolStripProgressBar1.Value = percent;
@@ -331,9 +332,9 @@ namespace system_status
 
         }
         private void run_upload()
-        {            
-            if (textSystemName.Text=="")
-            {                
+        {
+            if (textSystemName.Text == "")
+            {
                 return;
             }
             //手動同步
@@ -460,7 +461,19 @@ namespace system_status
         {
             Console.WriteLine(data);
         }
-
+        private delegate void UpdateUIDGVCallBack(DataGridView dgv, DataTable dt);
+        public void updateDGVUI(DataGridView dgv, DataTable dt)
+        {
+            if (this.InvokeRequired)
+            {
+                UpdateUIDGVCallBack uu = new UpdateUIDGVCallBack(updateDGVUI);
+                this.Invoke(uu, dgv, dt);
+            }
+            else
+            {
+                dgv.DataSource = dt;
+            }
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

@@ -696,6 +696,37 @@ namespace utility
             r[0] = replacements;
             return preg_replace(input, p, r);
         }
+        public DataTable datatable_init(string json_columns)
+        {
+            /*
+             針對哪個 DataGridView 初使化，json_columns 格式
+             [
+                {   
+                    ""taskID"":{""id"":""taskID"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+                }
+             ]
+            */
+            DataTable dt = new DataTable();
+            var jdLists = json_decode(json_columns);
+            foreach (JObject item in jdLists[0])
+            {
+                //var item_dict = item.ToObject<Dictionary<string, Dictionary< string, string>>>();                
+                //break;
+                foreach (JProperty p in item.Properties())
+                {
+                    //p.Name;
+                    //Console.WriteLine(item.ToString());
+                    //Console.WriteLine(p.Name);
+                    //Console.WriteLine(p.Value);
+                    string key = p.Name;
+                    string id = p.Value["id"].ToString();
+                    var newColumn = new System.Data.DataColumn(key, typeof(System.String));
+                    newColumn.DefaultValue = "";
+                    dt.Columns.Add(newColumn);                    
+                }
+            }
+            return dt;
+                }
         public void grid_init(DataGridView g, string json_columns)
         {
             /*

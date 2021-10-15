@@ -93,11 +93,10 @@
             this.tabControl1.Controls.Add(this.tabs_events);
             this.tabControl1.Controls.Add(this.tabs_IIS);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(4, 4);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1213, 670);
+            this.tabControl1.Size = new System.Drawing.Size(808, 446);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.Click += new System.EventHandler(this.tabControl1_Click);
             // 
@@ -109,10 +108,9 @@
             this.tabs_setting.Controls.Add(this.btnSave);
             this.tabs_setting.Controls.Add(this.textSystemName);
             this.tabs_setting.Controls.Add(this.label1);
-            this.tabs_setting.Location = new System.Drawing.Point(4, 28);
-            this.tabs_setting.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_setting.Location = new System.Drawing.Point(4, 22);
             this.tabs_setting.Name = "tabs_setting";
-            this.tabs_setting.Size = new System.Drawing.Size(1205, 638);
+            this.tabs_setting.Size = new System.Drawing.Size(800, 420);
             this.tabs_setting.TabIndex = 7;
             this.tabs_setting.Text = "功能設定";
             this.tabs_setting.UseVisualStyleBackColor = true;
@@ -122,19 +120,17 @@
             this.run_status_label.AutoSize = true;
             this.run_status_label.Font = new System.Drawing.Font("微軟正黑體", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.run_status_label.ForeColor = System.Drawing.Color.Red;
-            this.run_status_label.Location = new System.Drawing.Point(476, 312);
-            this.run_status_label.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.run_status_label.Location = new System.Drawing.Point(317, 208);
             this.run_status_label.Name = "run_status_label";
-            this.run_status_label.Size = new System.Drawing.Size(653, 182);
+            this.run_status_label.Size = new System.Drawing.Size(434, 120);
             this.run_status_label.TabIndex = 5;
             this.run_status_label.Text = "尚未啟動";
             // 
             // btnManual
             // 
-            this.btnManual.Location = new System.Drawing.Point(81, 368);
-            this.btnManual.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnManual.Location = new System.Drawing.Point(54, 245);
             this.btnManual.Name = "btnManual";
-            this.btnManual.Size = new System.Drawing.Size(154, 76);
+            this.btnManual.Size = new System.Drawing.Size(103, 51);
             this.btnManual.TabIndex = 4;
             this.btnManual.Text = "監測回報開關";
             this.btnManual.UseVisualStyleBackColor = true;
@@ -142,10 +138,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1064, 18);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button1.Location = new System.Drawing.Point(709, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(112, 34);
+            this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
             this.button1.Text = "test";
             this.button1.UseVisualStyleBackColor = true;
@@ -155,10 +150,9 @@
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSave.Location = new System.Drawing.Point(778, 168);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSave.Location = new System.Drawing.Point(519, 112);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(159, 54);
+            this.btnSave.Size = new System.Drawing.Size(106, 36);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "儲存";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -168,20 +162,19 @@
             // textSystemName
             // 
             this.textSystemName.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.textSystemName.Location = new System.Drawing.Point(225, 174);
-            this.textSystemName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textSystemName.Location = new System.Drawing.Point(150, 116);
             this.textSystemName.Name = "textSystemName";
-            this.textSystemName.Size = new System.Drawing.Size(536, 51);
+            this.textSystemName.ReadOnly = true;
+            this.textSystemName.Size = new System.Drawing.Size(359, 36);
             this.textSystemName.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(40, 186);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(27, 124);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(195, 36);
+            this.label1.Size = new System.Drawing.Size(130, 24);
             this.label1.TabIndex = 0;
             this.label1.Text = "系統名稱：";
             // 
@@ -189,11 +182,10 @@
             // 
             this.tabs_host.Controls.Add(this.system_grid);
             this.tabs_host.ImeMode = System.Windows.Forms.ImeMode.Off;
-            this.tabs_host.Location = new System.Drawing.Point(4, 28);
-            this.tabs_host.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_host.Location = new System.Drawing.Point(4, 22);
             this.tabs_host.Name = "tabs_host";
-            this.tabs_host.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabs_host.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_host.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabs_host.Size = new System.Drawing.Size(801, 421);
             this.tabs_host.TabIndex = 0;
             this.tabs_host.Text = "本機資訊";
             this.tabs_host.UseVisualStyleBackColor = true;
@@ -202,21 +194,19 @@
             // 
             this.system_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.system_grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.system_grid.Location = new System.Drawing.Point(4, 4);
-            this.system_grid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.system_grid.Location = new System.Drawing.Point(3, 3);
             this.system_grid.Name = "system_grid";
             this.system_grid.RowTemplate.Height = 24;
-            this.system_grid.Size = new System.Drawing.Size(1196, 629);
+            this.system_grid.Size = new System.Drawing.Size(795, 415);
             this.system_grid.TabIndex = 0;
             // 
             // tabs_hdd
             // 
             this.tabs_hdd.Controls.Add(this.hdd_grid);
-            this.tabs_hdd.Location = new System.Drawing.Point(4, 28);
-            this.tabs_hdd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_hdd.Location = new System.Drawing.Point(4, 22);
             this.tabs_hdd.Name = "tabs_hdd";
-            this.tabs_hdd.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabs_hdd.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_hdd.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabs_hdd.Size = new System.Drawing.Size(801, 421);
             this.tabs_hdd.TabIndex = 1;
             this.tabs_hdd.Text = "硬碟資訊";
             this.tabs_hdd.UseVisualStyleBackColor = true;
@@ -232,22 +222,20 @@
             this.hdd_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.hdd_grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hdd_grid.EnableHeadersVisualStyles = false;
-            this.hdd_grid.Location = new System.Drawing.Point(4, 4);
-            this.hdd_grid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.hdd_grid.Location = new System.Drawing.Point(3, 3);
             this.hdd_grid.MultiSelect = false;
             this.hdd_grid.Name = "hdd_grid";
             this.hdd_grid.RowTemplate.Height = 24;
             this.hdd_grid.ShowEditingIcon = false;
-            this.hdd_grid.Size = new System.Drawing.Size(1196, 629);
+            this.hdd_grid.Size = new System.Drawing.Size(795, 415);
             this.hdd_grid.TabIndex = 1;
             // 
             // tabs_running_program
             // 
             this.tabs_running_program.Controls.Add(this.running_program_grid);
-            this.tabs_running_program.Location = new System.Drawing.Point(4, 28);
-            this.tabs_running_program.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_running_program.Location = new System.Drawing.Point(4, 22);
             this.tabs_running_program.Name = "tabs_running_program";
-            this.tabs_running_program.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_running_program.Size = new System.Drawing.Size(801, 421);
             this.tabs_running_program.TabIndex = 4;
             this.tabs_running_program.Text = "執行緒";
             this.tabs_running_program.UseVisualStyleBackColor = true;
@@ -257,19 +245,17 @@
             this.running_program_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.running_program_grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.running_program_grid.Location = new System.Drawing.Point(0, 0);
-            this.running_program_grid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.running_program_grid.Name = "running_program_grid";
             this.running_program_grid.RowTemplate.Height = 24;
-            this.running_program_grid.Size = new System.Drawing.Size(1204, 637);
+            this.running_program_grid.Size = new System.Drawing.Size(801, 421);
             this.running_program_grid.TabIndex = 1;
             // 
             // tabs_schedule
             // 
             this.tabs_schedule.Controls.Add(this.schedule_grid);
-            this.tabs_schedule.Location = new System.Drawing.Point(4, 28);
-            this.tabs_schedule.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_schedule.Location = new System.Drawing.Point(4, 22);
             this.tabs_schedule.Name = "tabs_schedule";
-            this.tabs_schedule.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_schedule.Size = new System.Drawing.Size(801, 421);
             this.tabs_schedule.TabIndex = 5;
             this.tabs_schedule.Text = "排程";
             this.tabs_schedule.UseVisualStyleBackColor = true;
@@ -279,19 +265,17 @@
             this.schedule_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.schedule_grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.schedule_grid.Location = new System.Drawing.Point(0, 0);
-            this.schedule_grid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.schedule_grid.Name = "schedule_grid";
             this.schedule_grid.RowTemplate.Height = 24;
-            this.schedule_grid.Size = new System.Drawing.Size(1204, 637);
+            this.schedule_grid.Size = new System.Drawing.Size(801, 421);
             this.schedule_grid.TabIndex = 1;
             // 
             // tabs_service
             // 
             this.tabs_service.Controls.Add(this.system_service_grid);
-            this.tabs_service.Location = new System.Drawing.Point(4, 28);
-            this.tabs_service.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_service.Location = new System.Drawing.Point(4, 22);
             this.tabs_service.Name = "tabs_service";
-            this.tabs_service.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_service.Size = new System.Drawing.Size(801, 421);
             this.tabs_service.TabIndex = 3;
             this.tabs_service.Text = "系統服務";
             this.tabs_service.UseVisualStyleBackColor = true;
@@ -301,19 +285,17 @@
             this.system_service_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.system_service_grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.system_service_grid.Location = new System.Drawing.Point(0, 0);
-            this.system_service_grid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.system_service_grid.Name = "system_service_grid";
             this.system_service_grid.RowTemplate.Height = 24;
-            this.system_service_grid.Size = new System.Drawing.Size(1204, 637);
+            this.system_service_grid.Size = new System.Drawing.Size(801, 421);
             this.system_service_grid.TabIndex = 1;
             // 
             // tabs_firewall
             // 
             this.tabs_firewall.Controls.Add(this.firewall_grid);
-            this.tabs_firewall.Location = new System.Drawing.Point(4, 28);
-            this.tabs_firewall.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_firewall.Location = new System.Drawing.Point(4, 22);
             this.tabs_firewall.Name = "tabs_firewall";
-            this.tabs_firewall.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_firewall.Size = new System.Drawing.Size(801, 421);
             this.tabs_firewall.TabIndex = 2;
             this.tabs_firewall.Text = "防火牆資訊";
             this.tabs_firewall.UseVisualStyleBackColor = true;
@@ -323,19 +305,17 @@
             this.firewall_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.firewall_grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.firewall_grid.Location = new System.Drawing.Point(0, 0);
-            this.firewall_grid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.firewall_grid.Name = "firewall_grid";
             this.firewall_grid.RowTemplate.Height = 24;
-            this.firewall_grid.Size = new System.Drawing.Size(1204, 637);
+            this.firewall_grid.Size = new System.Drawing.Size(801, 421);
             this.firewall_grid.TabIndex = 1;
             // 
             // tabs_events
             // 
             this.tabs_events.Controls.Add(this.events_grid);
-            this.tabs_events.Location = new System.Drawing.Point(4, 28);
-            this.tabs_events.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_events.Location = new System.Drawing.Point(4, 22);
             this.tabs_events.Name = "tabs_events";
-            this.tabs_events.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_events.Size = new System.Drawing.Size(801, 421);
             this.tabs_events.TabIndex = 8;
             this.tabs_events.Text = "事件紀錄表";
             this.tabs_events.UseVisualStyleBackColor = true;
@@ -345,31 +325,27 @@
             this.events_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.events_grid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.events_grid.Location = new System.Drawing.Point(0, 0);
-            this.events_grid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.events_grid.Name = "events_grid";
             this.events_grid.RowTemplate.Height = 24;
-            this.events_grid.Size = new System.Drawing.Size(1204, 637);
+            this.events_grid.Size = new System.Drawing.Size(801, 421);
             this.events_grid.TabIndex = 2;
             // 
             // tabs_IIS
             // 
             this.tabs_IIS.Controls.Add(this.groupBox1);
-            this.tabs_IIS.Location = new System.Drawing.Point(4, 28);
-            this.tabs_IIS.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabs_IIS.Location = new System.Drawing.Point(4, 22);
             this.tabs_IIS.Name = "tabs_IIS";
-            this.tabs_IIS.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabs_IIS.Size = new System.Drawing.Size(1204, 637);
+            this.tabs_IIS.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabs_IIS.Size = new System.Drawing.Size(801, 421);
             this.tabs_IIS.TabIndex = 6;
             this.tabs_IIS.Text = "IIS檢測";
             this.tabs_IIS.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(870, 56);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Location = new System.Drawing.Point(580, 37);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Size = new System.Drawing.Size(321, 366);
+            this.groupBox1.Size = new System.Drawing.Size(214, 244);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
@@ -378,17 +354,16 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.statusStrip1, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 76F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1221, 754);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(814, 503);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // statusStrip1
@@ -397,24 +372,23 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolStripProgressBar1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 715);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 475);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1221, 39);
+            this.statusStrip1.Size = new System.Drawing.Size(814, 28);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(46, 34);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(31, 23);
             this.toolStripStatusLabel1.Text = "就緒";
             // 
             // toolStripProgressBar1
             // 
             this.toolStripProgressBar1.AutoSize = false;
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(600, 33);
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(400, 22);
             this.toolStripProgressBar1.Step = 1;
             // 
             // notifyIcon1
@@ -426,11 +400,10 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1221, 754);
+            this.ClientSize = new System.Drawing.Size(814, 503);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "系統安全小工具";

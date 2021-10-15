@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Simplified.IO;
 using System.Threading;
+using System.Data;
+
 namespace system_status.App_code
 {
     class hdd_info
@@ -20,6 +22,8 @@ namespace system_status.App_code
         private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
+        private DataTable dt = new DataTable();
+
         public void init(Form1 theform)
         {
            
@@ -92,6 +96,7 @@ namespace system_status.App_code
             ";
             //表格初始化
             _form.my.grid_init(_form.hdd_grid, json_columns);
+            dt = _form.my.datatable_init(json_columns);
 
             //allow sorting
             foreach (DataGridViewColumn column in _form.hdd_grid.Columns)
@@ -105,17 +110,21 @@ namespace system_status.App_code
         }
         void run()
         {
-            DriveInfo[] drives = DriveInfo.GetDrives();
-
-            var SmartDrives = Simplified.IO.Smart.GetDrives();
+            DataRow row = dt.NewRow();
             int step = 0;
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            
+            var SmartDrives = Simplified.IO.Smart.GetDrives();
+            int _stephdd = 0;
+            
             int total_step = drives.Count();
             //_form.hdd_grid.Rows.Clear();
-            _form.UpdateUI_DataGridGrid(_form.hdd_grid, "clear", "", "", -1);
+            //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "clear", "", "", -1);
             foreach (var drive in drives)
             {
-                _form.setStatusBar("硬碟資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
-                step++;
+                row = dt.NewRow();
+                _form.setStatusBar("硬碟資訊載入中...", Convert.ToInt32((Convert.ToDouble(_stephdd) / Convert.ToDouble(total_step)) * 100.0));
+                _stephdd++;
                 //There are more attributes you can use.
                 //Check the MSDN link for a complete example.
                 //Console.WriteLine(drive.Name);
@@ -131,47 +140,60 @@ namespace system_status.App_code
                 long totalSize = drive.TotalSize;
                 long usageSize = totalSize - freeSpace;
                 //_form.hdd_grid.Rows.Add();
-                _form.UpdateUI_DataGridGrid(_form.hdd_grid, "add", "", "", -1);
-                int lastId = _form.hdd_grid.Rows.Count - 1;
-                _form.hdd_grid.Rows[lastId].Cells["hddID"].Value = driverName;
+                //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "add", "", "", -1);
+                //int lastId = _form.hdd_grid.Rows.Count - 1;
+                //_form.hdd_grid.Rows[lastId].Cells["hddID"].Value = driverName;
+                row["hddID"] = driverName;
 
-                _form.hdd_grid.Rows[lastId].Cells["hddType"].Value = driverType.ToString();
+                //_form.hdd_grid.Rows[lastId].Cells["hddType"].Value = driverType.ToString();
+                row["hddType"] = driverType.ToString();
 
-                _form.hdd_grid.Rows[lastId].Cells["hddFormatType"].Value = drive.DriveFormat;
+                //_form.hdd_grid.Rows[lastId].Cells["hddFormatType"].Value = drive.DriveFormat;
+                row["hddFormatType"] = drive.DriveFormat;
 
-                _form.hdd_grid.Rows[lastId].Cells["hddTotalSpace"].Value = totalSize;
+                //_form.hdd_grid.Rows[lastId].Cells["hddTotalSpace"].Value = totalSize;
+                row["hddTotalSpace"] = totalSize;
 
                 //_form.hdd_grid.Rows[lastId].Cells["hddTotalSpaceDisplay"].Value = _form.my.size_hum_read(totalSize);
-                _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddTotalSpaceDisplay", _form.my.size_hum_read(totalSize), lastId);
+                //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddTotalSpaceDisplay", _form.my.size_hum_read(totalSize), lastId);
+                row["hddTotalSpaceDisplay"] = _form.my.size_hum_read(totalSize);
 
-                _form.hdd_grid.Rows[lastId].Cells["hddUsageSpace"].Value = usageSize;
+                //_form.hdd_grid.Rows[lastId].Cells["hddUsageSpace"].Value = usageSize;
+                row["hddUsageSpace"] = usageSize;
 
-                _form.hdd_grid.Rows[lastId].Cells["hddUsageSpaceDisplay"].Value = _form.my.size_hum_read(usageSize);
+                //_form.hdd_grid.Rows[lastId].Cells["hddUsageSpaceDisplay"].Value = _form.my.size_hum_read(usageSize);
+                row["hddUsageSpaceDisplay"] = _form.my.size_hum_read(usageSize);
 
 
-                _form.hdd_grid.Rows[lastId].Cells["hddFreeSpace"].Value = freeSpace;
+                //_form.hdd_grid.Rows[lastId].Cells["hddFreeSpace"].Value = freeSpace;
+                row["hddFreeSpace"] = freeSpace;
 
 
                 //_form.hdd_grid.Rows[lastId].Cells["hddFreeSpaceDisplay"].Value = _form.my.size_hum_read(freeSpace);
-                _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddFreeSpaceDisplay", _form.my.size_hum_read(freeSpace), lastId);
+                //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddFreeSpaceDisplay", _form.my.size_hum_read(freeSpace), lastId);
+                row["hddFreeSpaceDisplay"] = _form.my.size_hum_read(freeSpace);
 
                 double percent = (Convert.ToDouble(usageSize) / Convert.ToDouble(totalSize)) * 100.0;
-                _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Value = string.Format("{0:0.00}", percent) + " %";
+                //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Value = string.Format("{0:0.00}", percent) + " %";
+                row["hddUsagePercent"] = string.Format("{0:0.00}", percent) + " %";
+
+
                 //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 if (percent < 60)
                 {
-                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Green;
+                    //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Green;
+
                 }
                 else if (percent >= 60 && percent < 85)
                 {
-                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Orange;
+                    //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Orange;
                 }
                 else
                 {
                     //剩很少空間
-                    _form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Red;
+                    //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Red;
                     //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Font = new Font(_form.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold);
-                    _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_font", "hddUsagePercent", new Font(_form.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold), lastId);
+                    //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_font", "hddUsagePercent", new Font(_form.hdd_grid.Columns["hddUsagePercent"].DefaultCellStyle.Font, FontStyle.Bold), lastId);
                 }
 
                 //接下來是跑 smart
@@ -195,7 +217,9 @@ namespace system_status.App_code
                     */
                     //型號
                     //_form.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
-                    _form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddModel", SmartDrive.Model, lastId);
+                    //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddModel", SmartDrive.Model, lastId);
+                    row["hddModel"] = SmartDrive.Model;
+
                     //Console.WriteLine(_form.my.json_encode(SmartDrive));
                     //Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
                     foreach (var p in SmartDrive.SmartAttributes)
@@ -216,25 +240,32 @@ namespace system_status.App_code
                                         hex_str = hex_str.Substring(hex_str.Length - 2, 2);
                                         t = Int32.Parse(hex_str, System.Globalization.NumberStyles.HexNumber).ToString();
                                     }
-                                    _form.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = t.ToString();
+                                    //_form.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = t.ToString();
+                                    row["hddTemperature"] = t.ToString();
                                 }
                                 break;
                             case "Reallocated sector count":
                                 //壞軌數
-                                _form.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
+                                //_form.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
+                                row["hddBadSectors"] = p.Data;
                                 break;
                             case "Power-on hours count":
                                 //開機時數                                
-                                _form.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
+                                //_form.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
+                                row["hddUsageHour"] = p.Data;
                                 break;
                             case "Power cycle count":
                                 //開關機次數
-                                _form.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
+                                //_form.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
+                                row["hddOnOffTimes"] = p.Data;
                                 break;
                         }
                     }
                 }
+
+                dt.Rows.Add(row);
             } // Drives
+            _form.updateDGVUI(_form.hdd_grid, dt);
             _form.setStatusBar("就緒", 0);
             is_running = false;
         }

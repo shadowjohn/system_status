@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
@@ -17,7 +18,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
-
+        private DataTable dt = new DataTable();
         public void init(Form1 theform)
         {
             _form = theform;
@@ -73,23 +74,9 @@ namespace system_status.App_code
     }
 ]
 ";
-            /*
-           
-    {   
-        ""running_programCPU"":{""id"":""running_programCPU"",""name"":""CPU"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },
-    {   
-        ""running_programRAM"":{""id"":""running_programRAM"",""name"":""記憶體"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },
-    {   
-        ""running_programDISK"":{""id"":""running_programDISK"",""name"":""磁碟"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },
-    {   
-        ""running_programNETWORK"":{""id"":""running_programNETWORK"",""name"":""網路"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    }
-             */
             //grid_init(json_columns);
             _form.my.grid_init(_form.running_program_grid, json_columns);
+            dt = _form.my.datatable_init(json_columns);
 
             //allow sorting
             foreach (DataGridViewColumn column in _form.running_program_grid.Columns)
@@ -104,8 +91,10 @@ namespace system_status.App_code
 
         void run()
         {
+            DataRow row = dt.NewRow();
+            
             //_form.running_program_grid.Rows.Clear();
-            _form.UpdateUI_DataGridGrid(_form.running_program_grid, "clear", "", "", -1);
+            //_form.UpdateUI_DataGridGrid(_form.running_program_grid, "clear", "", "", -1);
             is_running = true;
             Process[] processlist = Process.GetProcesses();
             int step = 0;
@@ -113,14 +102,15 @@ namespace system_status.App_code
             GetProcessInfo();
             foreach (Process theprocess in processlist)
             {
+                row = dt.NewRow();
                 _form.setStatusBar("執行緒資訊載入中...", Convert.ToInt32((Convert.ToDouble(step) / Convert.ToDouble(total_step)) * 100.0));
                 step++;
                 //_form.running_program_grid.Rows.Add();
-                _form.UpdateUI_DataGridGrid(_form.running_program_grid, "add", "", "", -1);
-                int lastId = _form.running_program_grid.Rows.Count - 1;
+                //_form.UpdateUI_DataGridGrid(_form.running_program_grid, "add", "", "", -1);
+                //int lastId = _form.running_program_grid.Rows.Count - 1;
                 int pid = theprocess.Id;
                 Dictionary<string, string> o = GetProcessPath(pid);
-                _form.running_program_grid.Rows[lastId].Cells["running_programID"].Value = step.ToString();
+                /*_form.running_program_grid.Rows[lastId].Cells["running_programID"].Value = step.ToString();
                 _form.running_program_grid.Rows[lastId].Cells["running_programPID"].Value = pid.ToString();
                 _form.running_program_grid.Rows[lastId].Cells["running_programName"].Value = theprocess.ProcessName;
                 _form.running_program_grid.Rows[lastId].Cells["running_programBaseName"].Value = _form.my.basename(o["fullPath"]);
@@ -130,7 +120,20 @@ namespace system_status.App_code
                 _form.running_program_grid.Rows[lastId].Cells["running_programStart_datetime"].Value = o["CreationDate"];
                 _form.running_program_grid.Rows[lastId].Cells["running_programRun_times"].Value = o["ExcuteTimes"];
                 _form.running_program_grid.Rows[lastId].Cells["running_programRun_user"].Value = GetProcessOwner(pid);
+                */
+                row["running_programID"] = ++step;
+                row["running_programPID"] = pid.ToString();
+                row["running_programName"] = theprocess.ProcessName;
+                row["running_programBaseName"] = _form.my.basename(o["fullPath"]);
+                row["running_programPath"] = o["fullPath"];
+                row["running_programCommandLine"] = o["CommandLine"];
+                row["running_programStart_datetime"] = o["CreationDate"];
+                row["running_programRun_times"] = o["ExcuteTimes"];
+                row["running_programRun_user"] = GetProcessOwner(pid);
+
+                dt.Rows.Add(row);
             }
+            _form.updateDGVUI(_form.running_program_grid, dt);
             _form.setStatusBar("執行緒資訊載入完成...", 100);
             is_running = false;
         }

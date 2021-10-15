@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
+        private DataTable dt = new DataTable();
         public void init(Form1 theform)
         {
             _form = theform;
@@ -54,6 +56,7 @@ namespace system_status.App_code
 ";
             //表格初始化
             _form.my.grid_init(_form.events_grid, json_columns);
+            dt = _form.my.datatable_init(json_columns);
 
             //allow sorting
             foreach (DataGridViewColumn column in _form.events_grid.Columns)
@@ -67,11 +70,12 @@ namespace system_status.App_code
         }
         public void run()
         {
-            _form.UpdateUI_DataGridGrid(_form.events_grid, "clear", "", "", -1);
+            //_form.UpdateUI_DataGridGrid(_form.events_grid, "clear", "", "", -1);
             string eventLogName = "Application";
             EventLog eventLog = new EventLog();
             eventLog.Log = eventLogName;
             int step = 0;
+            DataRow row = dt.NewRow();
             for (int i = eventLog.Entries.Count - 1; i >= 0; i--)
             {
                 EventLogEntry log = eventLog.Entries[i];
@@ -80,22 +84,41 @@ namespace system_status.App_code
                 //d["Category"] = log.Category;
                 //d["Message"] = log.Message;
                 //d["DateTime"] = log.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss");
+                string eventDateTime = log.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss");
+                //改成現在時間跟上一次回報的時間之間才傳
+                if (Convert.ToInt64(_form.my.strtotime(eventDateTime)) < Convert.ToInt64(_form.my.time()) - Convert.ToInt64(_form.my.getSystemKey("LOOP_MINUTE")) * 60)
+                {
+                    continue;
+                }
 
-
+                /*
                 _form.UpdateUI_DataGridGrid(_form.events_grid, "add", "", "", -1);
                 int lastId = _form.events_grid.Rows.Count - 1;
                 _form.UpdateUI_DataGridGrid(_form.events_grid, "set_cell", "eventsID", (lastId + 1).ToString(), lastId);
                 _form.UpdateUI_DataGridGrid(_form.events_grid, "set_cell", "eventsIndex", log.Index.ToString(), lastId);
                 _form.UpdateUI_DataGridGrid(_form.events_grid, "set_cell", "eventsCategory", log.Category, lastId);
                 _form.UpdateUI_DataGridGrid(_form.events_grid, "set_cell", "eventsMessage", log.Message, lastId);
-                _form.UpdateUI_DataGridGrid(_form.events_grid, "set_cell", "eventsDateTime", log.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss"), lastId);                
+                _form.UpdateUI_DataGridGrid(_form.events_grid, "set_cell", "eventsDateTime", eventDateTime, lastId);
+                */
+
+                row = dt.NewRow();
+                row["eventsID"] = ++step;
+                row["eventsIndex"] = log.Index.ToString();
+                row["eventsCategory"] = log.Category;
+                row["eventsMessage"] = log.Message;
+                row["eventsDateTime"] = eventDateTime;
+                dt.Rows.Add(row);
+
+
+
                 //my.echo(log.Message + "\n");
-                step++;
-                if (step >= 200)
-                {
-                    break;
-                }
+                //step++;
+                //if (step >= 200)
+                //{
+                //    break;
+                //}
             }
+            _form.updateDGVUI(_form.events_grid, dt);
             _form.setStatusBar("就緒", 0);
             is_running = false;
         }

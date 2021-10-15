@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,6 +14,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
+        private DataTable dt = new DataTable();
 
         public void init(Form1 theform)
         {
@@ -61,6 +63,7 @@ namespace system_status.App_code
 ";
             //表格初始化
             _form.my.grid_init(_form.schedule_grid, json_columns);
+            dt = _form.my.datatable_init(json_columns);
 
             //allow sorting
             foreach (DataGridViewColumn column in _form.schedule_grid.Columns)
@@ -74,10 +77,13 @@ namespace system_status.App_code
         }
         public void run()
         {
-            _form.UpdateUI_DataGridGrid(_form.schedule_grid, "clear", "", "", -1);
+            //_form.UpdateUI_DataGridGrid(_form.schedule_grid, "clear", "", "", -1);
             using (TaskService ts = new TaskService())
             {
+
                 EnumFolderTasks(ts.RootFolder);
+                _form.updateDGVUI(_form.schedule_grid, dt);
+
                 //Console.WriteLine(ts.RootFolder);
                 _form.setStatusBar("就緒", 0);
                 is_running = false;
@@ -85,12 +91,15 @@ namespace system_status.App_code
         }
         void EnumFolderTasks(TaskFolder fld)
         {
+            DataRow row = dt.NewRow();
+            int step = 0;
             foreach (Task task in fld.Tasks)
             {
                 var td = task.Definition;
                 string path = string.Join(" ", td.Actions);
                 //ActOnTask(task);
                 //Console.WriteLine(task);
+                /*
                 _form.UpdateUI_DataGridGrid(_form.schedule_grid, "add", "", "", -1);
                 int lastId = _form.schedule_grid.Rows.Count - 1;
                 _form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleID", (lastId + 1).ToString(), lastId);
@@ -99,29 +108,38 @@ namespace system_status.App_code
                 _form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleFolder", task.Folder, lastId);
                 _form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "schedulePath", path, lastId);
                 _form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "schedulePrevDateTime", task.LastRunTime.ToString("yyyy-MM-dd HH:mm:ss"), lastId);
-                /*_form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleName", task.Name, lastId);
-                _form.schedule_grid.Rows[lastId].Cells["scheduleName"].Value = task.Name;
-                _form.schedule_grid.Rows[lastId].Cells["scheduleEnable"].Value = (task.IsActive) ? "是" : "否";
-                _form.schedule_grid.Rows[lastId].Cells["scheduleFolder"].Value = task.Folder;
-                _form.schedule_grid.Rows[lastId].Cells["schedulePath"].Value = task.Path;
-                _form.schedule_grid.Rows[lastId].Cells["schedulePrevDateTime"].Value = task.LastRunTime.ToString("yyyy-MM-dd HH:mm:ss");
+
                 */
+                row = dt.NewRow();
+                row["scheduleID"] = ++step;
+                row["scheduleName"] = task.Name;
+                row["scheduleEnable"] = (task.IsActive) ? "是" : "否";
+                row["scheduleFolder"] = task.Folder;
+                row["schedulePath"] = path;
+                row["schedulePrevDateTime"] = task.LastRunTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+
                 if (!task.IsActive)
                 {
-                    _form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleNextDateTime", "--", lastId);
+                    //_form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleNextDateTime", "--", lastId);
+                    row["scheduleNextDateTime"] = "--";
                 }
                 else
                 {
                     string nt = task.NextRunTime.ToString("yyyy-MM-dd HH:mm:ss");
                     if (nt == "0001-01-01 00:00:00")
                     {
-                        _form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleNextDateTime", "--", lastId);
+                        //_form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleNextDateTime", "--", lastId);
+                        row["scheduleNextDateTime"] = "--";
                     }
                     else
                     {
-                        _form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleNextDateTime", task.NextRunTime.ToString("yyyy-MM-dd HH:mm:ss"), lastId);
+                        //_form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleNextDateTime", task.NextRunTime.ToString("yyyy-MM-dd HH:mm:ss"), lastId);
+                        row["scheduleNextDateTime"] = task.NextRunTime.ToString("yyyy-MM-dd HH:mm:ss");
                     }
                 }
+                dt.Rows.Add(row);
 
             }
             foreach (TaskFolder sfld in fld.SubFolders)
