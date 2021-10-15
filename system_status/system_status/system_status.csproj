@@ -90,6 +90,10 @@
     <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
       <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Administration, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Win32.TaskScheduler, Version=2.8.20.0, Culture=neutral, PublicKeyToken=c416bc1b32d97233, processorArchitecture=MSIL">
       <HintPath>..\packages\TaskScheduler.2.8.20\lib\net452\Microsoft.Win32.TaskScheduler.dll</HintPath>
     </Reference>
@@ -117,6 +121,7 @@
     <Compile Include="App_code\events.cs" />
     <Compile Include="App_code\firewall_info.cs" />
     <Compile Include="App_code\hdd_info.cs" />
+    <Compile Include="App_code\iis.cs" />
     <Compile Include="App_code\ini.cs" />
     <Compile Include="App_code\PerformanceCounter.cs" />
     <Compile Include="App_code\running_program.cs" />
@@ -183,6 +188,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\Microsoft.Web.Administration.dll" />
     <Content Include="lib\Smart.Net\readme.txt" />
     <Content Include="pic\icon.ico" />
     <Content Include="pic\icon.png" />

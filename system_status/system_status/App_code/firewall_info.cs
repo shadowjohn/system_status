@@ -16,6 +16,7 @@ namespace system_status.App_code
         public bool is_running = false;
         public string last_date = "";
         private DataTable dt = new DataTable();
+        private bool isGridInit = false;
         // Protocol
         // From : https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa364724(v=vs.85)
         private int NET_FW_IP_PROTOCOL_TCP = 6;
@@ -49,7 +50,7 @@ namespace system_status.App_code
             _form.firewall_grid.ReadOnly = true;
 
 
-            _form.firewall_grid.Columns.Clear();
+            //_form.firewall_grid.Columns.Clear();
             string json_columns = @"
 [
     {   
@@ -92,7 +93,11 @@ namespace system_status.App_code
 ]";
 
             //表格初始化
-            _form.my.grid_init(_form.firewall_grid, json_columns);
+            if (isGridInit == false)
+            {
+                _form.my.grid_init(_form.firewall_grid, json_columns);
+                isGridInit = true;
+            }
             dt = _form.my.datatable_init(json_columns);
             //allow sorting
             foreach (DataGridViewColumn column in _form.firewall_grid.Columns)

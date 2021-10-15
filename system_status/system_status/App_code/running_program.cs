@@ -19,6 +19,7 @@ namespace system_status.App_code
         public bool is_running = false;
         public string last_date = "";
         private DataTable dt = new DataTable();
+        private bool isGridInit = false;
         public void init(Form1 theform)
         {
             _form = theform;
@@ -38,7 +39,7 @@ namespace system_status.App_code
             theform.running_program_grid.AllowDrop = false;
             theform.running_program_grid.ReadOnly = true;
 
-            theform.running_program_grid.Columns.Clear();
+            //theform.running_program_grid.Columns.Clear();
             is_running = false;
             string json_columns = @"
 [
@@ -75,7 +76,12 @@ namespace system_status.App_code
 ]
 ";
             //grid_init(json_columns);
-            _form.my.grid_init(_form.running_program_grid, json_columns);
+            //表格初始化
+            if (isGridInit == false)
+            {
+                _form.my.grid_init(_form.running_program_grid, json_columns);
+                isGridInit = true;
+            }
             dt = _form.my.datatable_init(json_columns);
 
             //allow sorting

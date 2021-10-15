@@ -34,6 +34,7 @@ namespace system_status
         system_service cSystemService = null;
         running_program cRunningProgram = null;
         schedule cSchedule = null;
+        iis cIis = null;
         //ini cIni = null;
         //public IniData iniData = null; // 儲存 config 設定
         public FileIniDataParser iniParser = new FileIniDataParser();
@@ -193,6 +194,7 @@ namespace system_status
             cSystemService = new system_service();
             cSchedule = new schedule();
             cEvents = new events();
+            cIis = new iis();
             //cIni = new ini();
 
         }
@@ -270,9 +272,9 @@ namespace system_status
                 case "tabs_IIS":
                     //IIS
                     log("IIS");
-                    //if (cFirewall.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cFirewall.last_date) >= 5 * 60)
+                    if (cIis.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cIis.last_date) >= 5 * 60)
                     {
-
+                        cIis.init(this);
                     }
                     break;
             }
@@ -351,6 +353,7 @@ namespace system_status
             cRunningProgram.init(this);
             cSystemService.init(this);
             cSchedule.init(this);
+            cIis.init(this);
             Thread.Sleep(3000);
             while (
                 cSystem.is_running == true ||
@@ -359,7 +362,8 @@ namespace system_status
                 cRunningProgram.is_running == true ||
                 cSystemService.is_running == true ||
                 cFirewall.is_running == true ||
-                cSchedule.is_running == true)
+                cSchedule.is_running == true ||
+                cIis.is_running == true)
             {
                 Thread.Sleep(1000);
                 setStatusBar("等待資料完成...", 0);
@@ -373,6 +377,7 @@ namespace system_status
             output["EVENTS_INFO"] = my.gridViewToDataTable(events_grid);
             output["TASK_INFO"] = my.gridViewToDataTable(running_program_grid);
             output["SCHEDULE_INFO"] = my.gridViewToDataTable(schedule_grid);
+            output["IIS"] = my.gridViewToDataTable(iis_grid);
 
             //logError(my.json_encode_formated(output));
             string URL = my.getSystemKey("REPORT_URL") + "?mode=updateStatus";

@@ -54,12 +54,12 @@
             this.tabs_events = new System.Windows.Forms.TabPage();
             this.events_grid = new System.Windows.Forms.DataGridView();
             this.tabs_IIS = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.iis_grid = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
             this.tabs_setting.SuspendLayout();
             this.tabs_host.SuspendLayout();
@@ -79,6 +79,7 @@
             this.tabs_IIS.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iis_grid)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -315,7 +316,7 @@
             this.tabs_events.Controls.Add(this.events_grid);
             this.tabs_events.Location = new System.Drawing.Point(4, 22);
             this.tabs_events.Name = "tabs_events";
-            this.tabs_events.Size = new System.Drawing.Size(801, 421);
+            this.tabs_events.Size = new System.Drawing.Size(800, 420);
             this.tabs_events.TabIndex = 8;
             this.tabs_events.Text = "事件紀錄表";
             this.tabs_events.UseVisualStyleBackColor = true;
@@ -327,28 +328,19 @@
             this.events_grid.Location = new System.Drawing.Point(0, 0);
             this.events_grid.Name = "events_grid";
             this.events_grid.RowTemplate.Height = 24;
-            this.events_grid.Size = new System.Drawing.Size(801, 421);
+            this.events_grid.Size = new System.Drawing.Size(800, 420);
             this.events_grid.TabIndex = 2;
             // 
             // tabs_IIS
             // 
-            this.tabs_IIS.Controls.Add(this.groupBox1);
+            this.tabs_IIS.Controls.Add(this.iis_grid);
             this.tabs_IIS.Location = new System.Drawing.Point(4, 22);
             this.tabs_IIS.Name = "tabs_IIS";
             this.tabs_IIS.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabs_IIS.Size = new System.Drawing.Size(801, 421);
+            this.tabs_IIS.Size = new System.Drawing.Size(800, 420);
             this.tabs_IIS.TabIndex = 6;
             this.tabs_IIS.Text = "IIS檢測";
             this.tabs_IIS.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(580, 37);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(214, 244);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
             // 
             // tableLayoutPanel1
             // 
@@ -398,6 +390,16 @@
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
+            // iis_grid
+            // 
+            this.iis_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.iis_grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.iis_grid.Location = new System.Drawing.Point(3, 3);
+            this.iis_grid.Name = "iis_grid";
+            this.iis_grid.RowTemplate.Height = 24;
+            this.iis_grid.Size = new System.Drawing.Size(794, 414);
+            this.iis_grid.TabIndex = 3;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -432,6 +434,7 @@
             this.tableLayoutPanel1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iis_grid)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -456,7 +459,6 @@
         public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         public System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         public System.Windows.Forms.TabPage tabs_IIS;
-        public System.Windows.Forms.GroupBox groupBox1;
         public System.Windows.Forms.TabPage tabs_setting;
         public System.Windows.Forms.Button btnSave;
         public System.Windows.Forms.TextBox textSystemName;
@@ -467,6 +469,7 @@
         private System.Windows.Forms.TabPage tabs_events;
         public System.Windows.Forms.DataGridView events_grid;
         private System.Windows.Forms.Label run_status_label;
+        public System.Windows.Forms.DataGridView iis_grid;
     }
 }
 

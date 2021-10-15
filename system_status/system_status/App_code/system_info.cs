@@ -43,6 +43,7 @@ namespace system_status.App_code
         public bool is_running = false;
         public string last_date = "";
         private DataTable dt = new DataTable();
+        private bool isGridInit = false;
         private MEMORY_INFO GetMemoryStatus()
         {
             MEMORY_INFO mi = new MEMORY_INFO();
@@ -74,7 +75,7 @@ namespace system_status.App_code
             _form.system_grid.AllowDrop = false;
             //_form.system_grid.ReadOnly = true;
 
-            _form.system_grid.Columns.Clear();
+            //_form.system_grid.Columns.Clear();
             string json_columns = @"
 [
     {   
@@ -88,7 +89,11 @@ namespace system_status.App_code
     }
 ]";
             //表格初始化
-            _form.my.grid_init(_form.system_grid, json_columns);
+            if (isGridInit == false)
+            {
+                _form.my.grid_init(_form.system_grid, json_columns);
+                isGridInit = true;
+            }
             dt = _form.my.datatable_init(json_columns);
 
             //allow sorting
@@ -165,7 +170,7 @@ namespace system_status.App_code
         void run()
         {
             int step = 0;
-            _form.UpdateUI_DataGridGrid(_form.system_grid, "clear", "", "", -1);
+            //_form.UpdateUI_DataGridGrid(_form.system_grid, "clear", "", "", -1);
             //int lastId = 0;
             //_form.system_grid.Rows.Add();
             /*
