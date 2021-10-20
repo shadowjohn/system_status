@@ -35,7 +35,7 @@ namespace system_status.App_code
             _form.iis_grid.AllowDrop = false;
             //_form.iis_grid.ReadOnly = true;
 
-           // _form.iis_grid.Columns.Clear();
+            // _form.iis_grid.Columns.Clear();
             string json_columns = @"
 [
     {   
@@ -49,7 +49,11 @@ namespace system_status.App_code
     }, 
     {   
         ""Path"":{""id"":""Path"",""name"":""Path"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
-    },            
+    }, 
+    {   
+        ""IsWebconfigEncrypt"":{""id"":""IsWebconfigEncrypt"",""IsWebconfigEncrypt"":""Path"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+    }
+
 ]
 ";
             //表格初始化
@@ -85,11 +89,45 @@ namespace system_status.App_code
                 row["name"] = site.Name;
                 row["PhysicalPath"] = site.Applications["/"].VirtualDirectories["/"].PhysicalPath;
                 row["Path"] = site.Applications["/"].Path;
+                row["IsWebconfigEncrypt"] = "--";
+                string webconfig = row["PhysicalPath"] + "\\web.config";
+                if (_form.my.is_file(webconfig))
+                {
+                    if (_form.my.is_istring_like(_form.my.b2s(_form.my.file_get_contents(webconfig)), "EncryptedKey"))
+                    {
+                        row["IsWebconfigEncrypt"] = "Y";
+                    }
+                    else
+                    {
+                        row["IsWebconfigEncrypt"] = "N";
+                    }
+                }
                 dt.Rows.Add(row);
+                foreach (Microsoft.Web.Administration.Application app in iisManager.Sites[site.Name].Applications)
+                {
+                    row = dt.NewRow();
+                    row["site_id"] = site.Id;
+                    row["name"] = app.ApplicationPoolName;
+                    row["PhysicalPath"] = site.Applications["/"].VirtualDirectories["/"].PhysicalPath + app.Path.Replace("/", "\\");
+                    row["Path"] = app.Path.Replace("/", "\\");
+                    webconfig = row["PhysicalPath"] + "\\web.config";
+                    if (_form.my.is_file(webconfig))
+                    {
+                        if (_form.my.is_istring_like(_form.my.b2s(_form.my.file_get_contents(webconfig)), "EncryptedKey"))
+                        {
+                            row["IsWebconfigEncrypt"] = "Y";
+                        }
+                        else
+                        {
+                            row["IsWebconfigEncrypt"] = "N";
+                        }
+                    }
+                    dt.Rows.Add(row);
+                }
             }
             //
 
-            
+
 
             _form.updateDGVUI(_form.iis_grid, dt);
             _form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", _form.my.json_encode(dt));

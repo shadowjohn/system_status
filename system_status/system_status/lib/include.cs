@@ -722,11 +722,11 @@ namespace utility
                     string id = p.Value["id"].ToString();
                     var newColumn = new System.Data.DataColumn(key, typeof(System.String));
                     newColumn.DefaultValue = "";
-                    dt.Columns.Add(newColumn);                    
+                    dt.Columns.Add(newColumn);
                 }
             }
             return dt;
-                }
+        }
         public void grid_init(DataGridView g, string json_columns)
         {
             /*
@@ -859,6 +859,26 @@ namespace utility
         public string[] explode(string[] keyword, string data)
         {
             return data.Split(keyword, StringSplitOptions.None);
+        }
+        public string get_between(string data, string s_begin, string s_end)
+        {
+            //http://stackoverflow.com/questions/378415/how-do-i-extract-a-string-of-text-that-lies-between-two-parenthesis-using-net
+            //string a = "abcdefg";
+            //MessageBox.Show(my.get_between(a, "cde", "g"));
+            //return f;
+            string s = data;
+            int start = s.IndexOf(s_begin);
+            if (start < 0)
+            {
+                return "";
+            }
+            string new_s = data.Substring(start + s_begin.Length);
+            int end = new_s.IndexOf(s_end);
+            if (end < 0)
+            {
+                return "";
+            }
+            return s.Substring(start + s_begin.Length, end);
         }
     }
 

@@ -492,7 +492,34 @@ namespace system_status.App_code
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = GetUsedMemory().ToString();
             */
 
+            //ping
+            string CMD_PING = "ping 8.8.8.8 -n 1 -w 1";
+            string CMD_PING_TMP = _form.my.system(CMD_PING);
+            if (_form.my.is_string_like(CMD_PING_TMP, "要求等候逾時"))
+            {
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "ping8888";
+                row["systemData"] = "timeout";
+                dt.Rows.Add(row);
+            }
+            else
+            {
+                row = dt.NewRow();
+                row["systemID"] = ++step;
+                row["systemName"] = "ping8888";
+                /*
+Ping 8.8.8.8 (使用 32 位元組的資料):
+回覆自 8.8.8.8: 位元組=32 時間=4ms TTL=116
 
+8.8.8.8 的 Ping 統計資料:
+    封包: 已傳送 = 1，已收到 = 1, 已遺失 = 0 (0% 遺失)，
+大約的來回時間 (毫秒):
+    最小值 = 4ms，最大值 = 4ms，平均 = 4ms
+                */
+                row["systemData"] = _form.my.get_between(CMD_PING_TMP, "時間=", "ms");
+                dt.Rows.Add(row);
+            }
 
             // windows defender
             // From : https://github.com/MicrosoftDocs/windows-itpro-docs/issues/6092
