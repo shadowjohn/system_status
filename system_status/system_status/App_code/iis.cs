@@ -48,7 +48,7 @@ namespace system_status.App_code
         ""iis_ApplicationPoolName"":{""id"":""iis_ApplicationPoolName"",""name"":""iis_ApplicationPoolName"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },            
     {   
-        ""iis_name"":{""id"":""iis_name"",""name"":""名稱"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+        ""iis_site_name"":{""id"":""iis_site_name"",""name"":""站台名稱"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },            
     {   
         ""iis_PhysicalPath"":{""id"":""iis_PhysicalPath"",""name"":""PhysicalPath"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
@@ -104,8 +104,8 @@ namespace system_status.App_code
                 row = dt.NewRow();
                 //_form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", sites[i]., true);
                 row["iis_site_id"] = site.Id;
-                row["iis_name"] = site.Name;
-                row["iis_name"] = site.Applications["/"].ApplicationPoolName;
+                row["iis_site_name"] = site.Name;
+                //row["iis_site_name"] = site.Applications["/"].ApplicationPoolName;
                 row["iis_Path"] = site.Applications["/"].Path;
                 row["iis_PhysicalPath"] = site.Applications["/"].VirtualDirectories["/"].PhysicalPath;
                 row["iis_PhysicalPath"] = row["iis_PhysicalPath"].ToString().Replace("%SystemDrive%", _form.my.getenv("SystemDrive"));
@@ -206,7 +206,7 @@ namespace system_status.App_code
                         }
                     }
                 }
-                string check_same_concat = row["iis_name"].ToString() + row["iis_PhysicalPath"].ToString() + row["iis_Path"].ToString();
+                string check_same_concat = row["iis_site_name"].ToString() + row["iis_PhysicalPath"].ToString() + row["iis_Path"].ToString();
                 //如果 name、PhysicalPath、Path 相同，就跳過
                 if (!_form.my.in_array(check_same_concat, field_same_arr))
                 {
@@ -218,7 +218,7 @@ namespace system_status.App_code
                     row = dt.NewRow();
                     row["iis_site_id"] = site.Id;
                     row["iis_ApplicationPoolName"] = app.ApplicationPoolName;
-                    row["iis_name"] = app.Path;
+                    row["iis_site_name"] = site.Name;
                     row["iis_Path"] = app.Path;
                     if (row["iis_Path"] == null) continue;
                     row["iis_PhysicalPath"] = site.Applications[row["iis_Path"].ToString()].VirtualDirectories["/"].PhysicalPath;
@@ -340,8 +340,8 @@ namespace system_status.App_code
                         }
                     }
 
-                    //如果 name、PhysicalPath、Path 相同，就跳過
-                    check_same_concat = row["iis_name"].ToString() + row["iis_PhysicalPath"].ToString() + row["iis_Path"].ToString();
+                    //如果 site_name、PhysicalPath、Path 相同，就跳過
+                    check_same_concat = row["iis_site_name"].ToString() + row["iis_PhysicalPath"].ToString() + row["iis_Path"].ToString();
                     if (!_form.my.in_array(check_same_concat, field_same_arr))
                     {
                         field_same_arr.Add(check_same_concat);
