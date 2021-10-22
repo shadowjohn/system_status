@@ -43,6 +43,9 @@ namespace system_status.App_code
 [
     {   
         ""iis_site_id"":{""id"":""iis_site_id"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },  
+    {   
+        ""iis_ApplicationPoolName"":{""id"":""iis_ApplicationPoolName"",""name"":""iis_ApplicationPoolName"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },            
     {   
         ""iis_name"":{""id"":""iis_name"",""name"":""名稱"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
@@ -102,6 +105,7 @@ namespace system_status.App_code
                 //_form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", sites[i]., true);
                 row["iis_site_id"] = site.Id;
                 row["iis_name"] = site.Name;
+                row["iis_name"] = site.Applications["/"].ApplicationPoolName;
                 row["iis_Path"] = site.Applications["/"].Path;
                 row["iis_PhysicalPath"] = site.Applications["/"].VirtualDirectories["/"].PhysicalPath;
                 row["iis_PhysicalPath"] = row["iis_PhysicalPath"].ToString().Replace("%SystemDrive%", _form.my.getenv("SystemDrive"));
@@ -213,7 +217,8 @@ namespace system_status.App_code
                 {
                     row = dt.NewRow();
                     row["iis_site_id"] = site.Id;
-                    row["iis_name"] = app.ApplicationPoolName;
+                    row["iis_ApplicationPoolName"] = app.ApplicationPoolName;
+                    row["iis_name"] = app.Path;
                     row["iis_Path"] = app.Path;
                     if (row["iis_Path"] == null) continue;
                     row["iis_PhysicalPath"] = site.Applications[row["iis_Path"].ToString()].VirtualDirectories["/"].PhysicalPath;
