@@ -387,8 +387,6 @@ namespace system_status.App_code
                     dt.Rows.Add(row);
 
                     ip_step++;
-
-
                 }
             }
             var gateway_address = NetworkInterface.GetAllNetworkInterfaces()
@@ -493,7 +491,7 @@ namespace system_status.App_code
             */
 
             //ping
-            string CMD_PING = "ping 8.8.8.8 -n 1 -w 1";
+            string CMD_PING = "ping 8.8.8.8 -n 1 -w 1 && exit";
             string CMD_PING_TMP = _form.my.system(CMD_PING);
             if (_form.my.is_string_like(CMD_PING_TMP, "要求等候逾時"))
             {
@@ -523,7 +521,7 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
 
             // windows defender
             // From : https://github.com/MicrosoftDocs/windows-itpro-docs/issues/6092
-            string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion)\"";
+            string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion)\" && echo '' && exit";
             string tmp = _form.my.system(CMD);
             var mtmp = _form.my.explode("########", tmp);
             string data = mtmp[mtmp.Count() - 1].Trim();

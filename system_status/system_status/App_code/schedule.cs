@@ -119,6 +119,14 @@ namespace system_status.App_code
                 row["scheduleName"] = task.Name;
                 row["scheduleEnable"] = (task.IsActive) ? "是" : "否";
                 row["scheduleFolder"] = task.Folder;
+
+                //把環境變數換成實際路徑
+                for (int i = 0; i < 10; i++)
+                {
+                    string p = _form.my.get_between(path, "%", "%");
+                    path = path.Replace("%" + p + "%", _form.my.getenv(p));
+                }
+
                 row["schedulePath"] = path;
                 row["schedulePrevDateTime"] = task.LastRunTime.ToString("yyyy-MM-dd HH:mm:ss");
 

@@ -29,6 +29,10 @@ namespace utility
     public class myinclude
     {
 
+        public string getenv(string key)
+        {
+            return Environment.GetEnvironmentVariable(key);
+        }
         public string pwd()
         {
             //return Directory.GetCurrentDirectory();

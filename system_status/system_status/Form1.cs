@@ -72,6 +72,8 @@ namespace system_status
         private void myCrash(object sender, UnhandledExceptionEventArgs args)
         {
             killAllThreads("ALL");
+            notifyIcon1.Visible = false;
+            notifyIcon1.Dispose();
             Application.Exit();
         }
         private void killAllThreads(string killSingleTime)
@@ -377,7 +379,7 @@ namespace system_status
             output["EVENTS_INFO"] = my.gridViewToDataTable(events_grid);
             output["TASK_INFO"] = my.gridViewToDataTable(running_program_grid);
             output["SCHEDULE_INFO"] = my.gridViewToDataTable(schedule_grid);
-            output["IIS"] = my.gridViewToDataTable(iis_grid);
+            output["IIS_INFO"] = my.gridViewToDataTable(iis_grid);
 
             //logError(my.json_encode_formated(output));
             string URL = my.getSystemKey("REPORT_URL") + "?mode=updateStatus";

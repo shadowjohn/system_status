@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
+using System.Web;
+using System.Net;
 
 namespace system_status.App_code
 {
@@ -39,21 +42,32 @@ namespace system_status.App_code
             string json_columns = @"
 [
     {   
-        ""site_id"":{""id"":""site_id"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+        ""iis_site_id"":{""id"":""iis_site_id"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },            
     {   
-        ""name"":{""id"":""name"",""name"":""名稱"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+        ""iis_name"":{""id"":""iis_name"",""name"":""名稱"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },            
     {   
-        ""PhysicalPath"":{""id"":""PhysicalPath"",""name"":""PhysicalPath"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+        ""iis_PhysicalPath"":{""id"":""iis_PhysicalPath"",""name"":""PhysicalPath"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     }, 
     {   
-        ""Path"":{""id"":""Path"",""name"":""Path"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+        ""iis_Path"":{""id"":""iis_Path"",""name"":""Path"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     }, 
     {   
-        ""IsWebconfigEncrypt"":{""id"":""IsWebconfigEncrypt"",""IsWebconfigEncrypt"":""Path"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+        ""iis_IsWebconfigEncrypt"":{""id"":""iis_IsWebconfigEncrypt"",""name"":""Web.config是否加密"",""width"":180,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },
+    {   
+        ""iis_customErrors"":{""id"":""iis_customErrors"",""name"":""customErrors設定"",""width"":180,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },
+    {   
+        ""iis_sessionTimeout"":{""id"":""iis_sessionTimeout"",""name"":""sessionTimeout"",""width"":130,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
+    },
+    {
+        ""iis_mimeMap"":{""id"":""iis_mimeMap"",""name"":""mimeMap"",""width"":250,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
+    },
+    {
+        ""iis_defaultDocument"":{""id"":""iis_defaultDocument"",""name"":""defaultDocument"",""width"":250,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     }
-
 ]
 ";
             //表格初始化
@@ -80,49 +94,254 @@ namespace system_status.App_code
             //https://stackoverflow.com/questions/4593412/list-all-websites-in-iis-c-sharp
             var iisManager = new ServerManager();
             SiteCollection sites = iisManager.Sites;
-            _form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", "");
-            foreach (Site site in sites)
+            //_form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", "");
+            List<string> field_same_arr = new List<string>();
+            foreach (Microsoft.Web.Administration.Site site in sites)
             {
                 row = dt.NewRow();
                 //_form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", sites[i]., true);
-                row["site_id"] = site.Id;
-                row["name"] = site.Name;
-                row["PhysicalPath"] = site.Applications["/"].VirtualDirectories["/"].PhysicalPath;
-                row["Path"] = site.Applications["/"].Path;
-                row["IsWebconfigEncrypt"] = "--";
-                string webconfig = row["PhysicalPath"] + "\\web.config";
+                row["iis_site_id"] = site.Id;
+                row["iis_name"] = site.Name;
+                row["iis_Path"] = site.Applications["/"].Path;
+                row["iis_PhysicalPath"] = site.Applications["/"].VirtualDirectories["/"].PhysicalPath;
+                row["iis_PhysicalPath"] = row["iis_PhysicalPath"].ToString().Replace("%SystemDrive%", _form.my.getenv("SystemDrive"));
+                //row["iis_Path"] = row["iis_Path"].ToString().Replace("/", "\\");
+                row["iis_IsWebconfigEncrypt"] = "檔案不存在";
+                row["iis_customErrors"] = "檔案不存在";
+                row["iis_sessionTimeout"] = "檔案不存在";
+                row["iis_mimeMap"] = "檔案不存在";
+                row["iis_defaultDocument"] = "檔案不存在";
+                string webconfig = row["iis_PhysicalPath"] + "\\web.config";
                 if (_form.my.is_file(webconfig))
                 {
-                    if (_form.my.is_istring_like(_form.my.b2s(_form.my.file_get_contents(webconfig)), "EncryptedKey"))
+                    string data = _form.my.b2s(_form.my.file_get_contents(webconfig));
+                    var m = _form.my.explode("\n", data);
+                    if (_form.my.is_istring_like(data, "EncryptedKey"))
                     {
-                        row["IsWebconfigEncrypt"] = "Y";
+                        row["iis_IsWebconfigEncrypt"] = "Y";
                     }
                     else
                     {
-                        row["IsWebconfigEncrypt"] = "N";
+                        row["iis_IsWebconfigEncrypt"] = "N";
+                    }
+                    if (_form.my.is_istring_like(data, "customErrors"))
+                    {
+                        row["iis_customErrors"] = "Y";
+                    }
+                    else
+                    {
+                        row["iis_customErrors"] = "N";
+                    }
+                    if (!_form.my.is_istring_like(data, "sessionState"))
+                    {
+                        row["iis_sessionTimeout"] = "未設定";
+                    }
+                    else
+                    {
+                        row["iis_sessionTimeout"] = "未設定";
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(webconfig);
+                        if (doc != null)
+                        {
+                            if (doc.GetElementsByTagName("sessionState").Count != 0)
+                            {
+                                if (doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"] != null)
+                                {
+                                    row["iis_sessionTimeout"] = doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"].Value;
+                                }
+                            }
+                        }
+                    }
+                    if (!_form.my.is_istring_like(data, "mimeMap"))
+                    {
+                        row["iis_mimeMap"] = "未設定";
+                    }
+                    else
+                    {
+                        row["iis_mimeMap"] = "未設定";
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(webconfig);
+                        if (doc != null)
+                        {
+                            List<string> mimeMapArr = new List<string>();
+                            for (int i = 0; i < doc.GetElementsByTagName("mimeMap").Count; i++)
+                            {
+                                string d = doc.GetElementsByTagName("mimeMap")[i].Attributes["fileExtension"].Value + "|" + doc.GetElementsByTagName("mimeMap")[i].Attributes["mimeType"].Value;
+                                mimeMapArr.Add(d);
+                            }
+                            row["iis_mimeMap"] = _form.my.implode("|||", mimeMapArr);
+                        }
+                    }
+                    if (!_form.my.is_istring_like(data, "defaultDocument"))
+                    {
+                        row["iis_defaultDocument"] = "未設定";
+                    }
+                    else
+                    {
+                        row["iis_defaultDocument"] = "未設定";
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(webconfig);
+                        if (doc != null)
+                        {
+                            XmlNodeList f = doc.SelectNodes("configuration/system.webServer/defaultDocument/files/add");
+                            List<string> mm = new List<string>();
+                            for (int i = 0; i < f.Count; i++)
+                            {
+                                XmlElement element = (XmlElement)f[i];
+                                //XmlAttribute attribute = element.GetAttributeNode("value")
+                                XmlAttributeCollection attributes = element.Attributes;
+                                foreach (XmlAttribute item in attributes)
+                                {
+                                    if (item.Name == "value")
+                                    {
+                                        mm.Add(item.Value);
+                                    }
+                                }
+                            }
+                            row["iis_defaultDocument"] = _form.my.implode("|||", mm);
+                        }
                     }
                 }
-                dt.Rows.Add(row);
+                string check_same_concat = row["iis_name"].ToString() + row["iis_PhysicalPath"].ToString() + row["iis_Path"].ToString();
+                //如果 name、PhysicalPath、Path 相同，就跳過
+                if (!_form.my.in_array(check_same_concat, field_same_arr))
+                {
+                    field_same_arr.Add(check_same_concat);
+                    dt.Rows.Add(row);
+                }
                 foreach (Microsoft.Web.Administration.Application app in iisManager.Sites[site.Name].Applications)
                 {
                     row = dt.NewRow();
-                    row["site_id"] = site.Id;
-                    row["name"] = app.ApplicationPoolName;
-                    row["PhysicalPath"] = site.Applications["/"].VirtualDirectories["/"].PhysicalPath + app.Path.Replace("/", "\\");
-                    row["Path"] = app.Path.Replace("/", "\\");
-                    webconfig = row["PhysicalPath"] + "\\web.config";
+                    row["iis_site_id"] = site.Id;
+                    row["iis_name"] = app.ApplicationPoolName;
+                    row["iis_Path"] = app.Path;
+                    if (row["iis_Path"] == null) continue;
+                    row["iis_PhysicalPath"] = site.Applications[row["iis_Path"].ToString()].VirtualDirectories["/"].PhysicalPath;
+                    row["iis_PhysicalPath"] = row["iis_PhysicalPath"].ToString().Replace("%SystemDrive%", Environment.GetEnvironmentVariable("SystemDrive"));
+
+                    //if (row["iis_PhysicalPath"].ToString().Substring(row["iis_PhysicalPath"].ToString().Length - 1, 1) == "\\")
+                    //{
+                    //    row["iis_PhysicalPath"] = row["iis_PhysicalPath"].ToString().Substring(0, row["iis_PhysicalPath"].ToString().Length - 1);
+                    //}
+
+                    webconfig = row["iis_PhysicalPath"] + "\\web.config";
+                    row["iis_IsWebconfigEncrypt"] = "檔案不存在";
+                    row["iis_customErrors"] = "檔案不存在";
+                    row["iis_sessionTimeout"] = "檔案不存在";
+                    row["iis_mimeMap"] = "檔案不存在";
+                    row["iis_defaultDocument"] = "檔案不存在";
                     if (_form.my.is_file(webconfig))
                     {
-                        if (_form.my.is_istring_like(_form.my.b2s(_form.my.file_get_contents(webconfig)), "EncryptedKey"))
+                        string data = _form.my.b2s(_form.my.file_get_contents(webconfig));
+                        data = data.Replace("\r", "");
+                        var m = _form.my.explode("\n", data);
+                        if (_form.my.is_istring_like(data, "EncryptedKey"))
                         {
-                            row["IsWebconfigEncrypt"] = "Y";
+                            row["iis_IsWebconfigEncrypt"] = "Y";
                         }
                         else
                         {
-                            row["IsWebconfigEncrypt"] = "N";
+                            row["iis_IsWebconfigEncrypt"] = "N";
+                        }
+                        if (_form.my.is_istring_like(data, "customErrors"))
+                        {
+                            row["iis_customErrors"] = "Y";
+                        }
+                        else
+                        {
+                            row["iis_customErrors"] = "N";
+                        }
+                        if (!_form.my.is_istring_like(data, "sessionState"))
+                        {
+                            row["iis_sessionTimeout"] = "未設定";
+                        }
+                        else
+                        {
+                            row["iis_sessionTimeout"] = "未設定";
+                            XmlDocument doc = new XmlDocument();
+                            doc.Load(webconfig);
+                            if (doc != null)
+                            {
+                                if (doc.GetElementsByTagName("sessionState").Count != 0)
+                                {
+                                    if (doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"] != null)
+                                    {
+                                        row["iis_sessionTimeout"] = doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"].Value;
+                                    }
+                                }
+                                //row["iis_sessionTimeout"] = (doc.GetElementsByTagName("sessionState") != null) ?
+                                //(doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"] == null) ? row["iis_sessionTimeout"] : doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"].ToString() :
+                                //row["iis_sessionTimeout"];
+                            }
+                            /*                            
+                            for (int i = 0, max_i = m.Count(); i < max_i; i++)
+                            {
+                                if (_form.my.is_istring_like(m[i], "<sessionState"))
+                                {
+                                    row["iis_sessionTimeout"] = _form.my.get_between(m[i], "timeout=\"", "\"");
+                                    break;
+                                }
+                            }
+                            */
+                        }
+                        if (!_form.my.is_istring_like(data, "mimeMap"))
+                        {
+                            row["iis_mimeMap"] = "未設定";
+                        }
+                        else
+                        {
+                            row["iis_mimeMap"] = "未設定";
+                            XmlDocument doc = new XmlDocument();
+                            doc.Load(webconfig);
+                            if (doc != null)
+                            {
+                                List<string> mimeMapArr = new List<string>();
+                                for (int i = 0; i < doc.GetElementsByTagName("mimeMap").Count; i++)
+                                {
+                                    string d = doc.GetElementsByTagName("mimeMap")[i].Attributes["fileExtension"].Value + "|" + doc.GetElementsByTagName("mimeMap")[i].Attributes["mimeType"].Value;
+                                    mimeMapArr.Add(d);
+                                }
+                                row["iis_mimeMap"] = _form.my.implode("|||", mimeMapArr);
+                            }
+                        }
+                        if (!_form.my.is_istring_like(data, "defaultDocument"))
+                        {
+                            row["iis_defaultDocument"] = "未設定";
+                        }
+                        else
+                        {
+                            row["iis_defaultDocument"] = "未設定";
+                            XmlDocument doc = new XmlDocument();
+                            doc.Load(webconfig);
+                            if (doc != null)
+                            {
+                                XmlNodeList f = doc.SelectNodes("configuration/system.webServer/defaultDocument/files/add");
+                                List<string> mm = new List<string>();
+                                for (int i = 0; i < f.Count; i++)
+                                {
+                                    XmlElement element = (XmlElement)f[i];
+                                    //XmlAttribute attribute = element.GetAttributeNode("value")
+                                    XmlAttributeCollection attributes = element.Attributes;
+                                    foreach (XmlAttribute item in attributes)
+                                    {
+                                        if (item.Name == "value")
+                                        {
+                                            mm.Add(item.Value);
+                                        }
+                                    }
+                                }
+                                row["iis_defaultDocument"] = _form.my.implode("|||", mm);
+                            }
                         }
                     }
-                    dt.Rows.Add(row);
+
+                    //如果 name、PhysicalPath、Path 相同，就跳過
+                    check_same_concat = row["iis_name"].ToString() + row["iis_PhysicalPath"].ToString() + row["iis_Path"].ToString();
+                    if (!_form.my.in_array(check_same_concat, field_same_arr))
+                    {
+                        field_same_arr.Add(check_same_concat);
+                        dt.Rows.Add(row);
+                    }
                 }
             }
             //
@@ -130,7 +349,7 @@ namespace system_status.App_code
 
 
             _form.updateDGVUI(_form.iis_grid, dt);
-            _form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", _form.my.json_encode(dt));
+            //_form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", _form.my.json_encode(dt));
             _form.setStatusBar("就緒", 0);
             is_running = false;
         }
