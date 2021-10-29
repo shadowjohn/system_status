@@ -27,7 +27,7 @@ namespace system_status.App_code
 
         public void init(Form1 theform)
         {
-           
+
             _form = theform;
             if (_form.threads.ContainsKey("hdd_info"))
             {
@@ -118,10 +118,17 @@ namespace system_status.App_code
             DataRow row = dt.NewRow();
             int step = 0;
             DriveInfo[] drives = DriveInfo.GetDrives();
-            
-            var SmartDrives = Simplified.IO.Smart.GetDrives();
+
+            DriveCollection SmartDrives = null;
+            try
+            {
+                SmartDrives = Simplified.IO.Smart.GetDrives();
+            }
+            catch
+            {
+            }
             int _stephdd = 0;
-            
+
             int total_step = drives.Count();
             //_form.hdd_grid.Rows.Clear();
             //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "clear", "", "", -1);
@@ -202,70 +209,77 @@ namespace system_status.App_code
                 }
 
                 //接下來是跑 smart
-                foreach (var SmartDrive in SmartDrives)
+                try
                 {
-                    if (SmartDrive.DriveLetters.Count == 0)
+                    foreach (var SmartDrive in SmartDrives)
                     {
-                        continue;
-                    }
-
-                    if (!_form.my.in_array(driverName, SmartDrive.DriveLetters))
-                    {
-                        //同名才處理
-                        continue;
-                    }
-                    /*if (SmartDrive.DriveLetters[0] != driverName)
-                    {
-                        
-                        continue;
-                    }
-                    */
-                    //型號
-                    //_form.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
-                    //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddModel", SmartDrive.Model, lastId);
-                    row["hddModel"] = SmartDrive.Model;
-
-                    //Console.WriteLine(_form.my.json_encode(SmartDrive));
-                    //Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
-                    foreach (var p in SmartDrive.SmartAttributes)
-                    {
-                        //Console.WriteLine(p.Name);
-                        switch (p.Name)
+                        if (SmartDrive.DriveLetters.Count == 0)
                         {
-                            case "Temperature":
-                                //溫度
-                                if (p.Register == 194)
-                                {
-                                    string t = p.Data.ToString();
-                                    if (p.Data > 300)
+                            continue;
+                        }
+
+                        if (!_form.my.in_array(driverName, SmartDrive.DriveLetters))
+                        {
+                            //同名才處理
+                            continue;
+                        }
+                        /*if (SmartDrive.DriveLetters[0] != driverName)
+                        {
+
+                            continue;
+                        }
+                        */
+                        //型號
+                        //_form.hdd_grid.Rows[lastId].Cells["hddModel"].Value = SmartDrive.Model;
+                        //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddModel", SmartDrive.Model, lastId);
+                        row["hddModel"] = SmartDrive.Model;
+
+                        //Console.WriteLine(_form.my.json_encode(SmartDrive));
+                        //Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
+                        foreach (var p in SmartDrive.SmartAttributes)
+                        {
+                            //Console.WriteLine(p.Name);
+                            switch (p.Name)
+                            {
+                                case "Temperature":
+                                    //溫度
+                                    if (p.Register == 194)
                                     {
-                                        //10進制轉16進制，取最後二碼，再還原10進制
-                                        //From : https://www.techiedelight.com/conversion-between-integer-and-hexadecimal-csharp/
-                                        string hex_str = p.Data.ToString("X");
-                                        hex_str = hex_str.Substring(hex_str.Length - 2, 2);
-                                        t = Int32.Parse(hex_str, System.Globalization.NumberStyles.HexNumber).ToString();
+                                        string t = p.Data.ToString();
+                                        if (p.Data > 300)
+                                        {
+                                            //10進制轉16進制，取最後二碼，再還原10進制
+                                            //From : https://www.techiedelight.com/conversion-between-integer-and-hexadecimal-csharp/
+                                            string hex_str = p.Data.ToString("X");
+                                            hex_str = hex_str.Substring(hex_str.Length - 2, 2);
+                                            t = Int32.Parse(hex_str, System.Globalization.NumberStyles.HexNumber).ToString();
+                                        }
+                                        //_form.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = t.ToString();
+                                        row["hddTemperature"] = t.ToString();
                                     }
-                                    //_form.hdd_grid.Rows[lastId].Cells["hddTemperature"].Value = t.ToString();
-                                    row["hddTemperature"] = t.ToString();
-                                }
-                                break;
-                            case "Reallocated sector count":
-                                //壞軌數
-                                //_form.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
-                                row["hddBadSectors"] = p.Data;
-                                break;
-                            case "Power-on hours count":
-                                //開機時數                                
-                                //_form.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
-                                row["hddUsageHour"] = p.Data;
-                                break;
-                            case "Power cycle count":
-                                //開關機次數
-                                //_form.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
-                                row["hddOnOffTimes"] = p.Data;
-                                break;
+                                    break;
+                                case "Reallocated sector count":
+                                    //壞軌數
+                                    //_form.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
+                                    row["hddBadSectors"] = p.Data;
+                                    break;
+                                case "Power-on hours count":
+                                    //開機時數                                
+                                    //_form.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
+                                    row["hddUsageHour"] = p.Data;
+                                    break;
+                                case "Power cycle count":
+                                    //開關機次數
+                                    //_form.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
+                                    row["hddOnOffTimes"] = p.Data;
+                                    break;
+                            }
                         }
                     }
+                }
+                catch
+                {
+
                 }
 
                 dt.Rows.Add(row);

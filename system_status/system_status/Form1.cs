@@ -452,7 +452,7 @@ namespace system_status
                 my.mkdir(LOG_PATH);
             }
         }
-        void logError(string data)
+        public void logError(string data)
         {
             try
             {

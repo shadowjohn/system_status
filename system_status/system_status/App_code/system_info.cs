@@ -267,7 +267,12 @@ namespace system_status.App_code
 
 
             //cpu id
-            string cpu_id = _form.my.getCPUId();
+            string cpu_id = "";
+            try
+            {
+                cpu_id = _form.my.getCPUId();
+            }
+            catch { }
             /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
@@ -445,7 +450,7 @@ namespace system_status.App_code
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = strDt;
                 */
 
-            row = dt.NewRow();
+                row = dt.NewRow();
                 row["systemID"] = ++step;
                 row["systemName"] = "WindowsUpdateDate";
                 row["systemData"] = strDt;
@@ -523,26 +528,29 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
             // From : https://github.com/MicrosoftDocs/windows-itpro-docs/issues/6092
             string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion)\" && echo '' && exit";
             string tmp = _form.my.system(CMD);
-            var mtmp = _form.my.explode("########", tmp);
-            string data = mtmp[mtmp.Count() - 1].Trim();
-            mtmp = _form.my.explode("\n", data);
-            for (int i = 0, max_i = mtmp.Length; i < max_i; i++)
+            if (!_form.my.is_string_like(tmp, "無法辨識"))
             {
-                var d = _form.my.explode(":", mtmp[i]);
-                if (d.Count() != 2) continue;
-                /*
-                _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
-                lastId = _form.system_grid.Rows.Count - 1;
-                _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
-                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowDefender_" + d[0].Trim();
-                _form.system_grid.Rows[lastId].Cells["systemData"].Value = d[1].Trim();
-                */
+                var mtmp = _form.my.explode("########", tmp);
+                string data = mtmp[mtmp.Count() - 1].Trim();
+                mtmp = _form.my.explode("\n", data);
+                for (int i = 0, max_i = mtmp.Length; i < max_i; i++)
+                {
+                    var d = _form.my.explode(":", mtmp[i]);
+                    if (d.Count() != 2) continue;
+                    /*
+                    _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+                    lastId = _form.system_grid.Rows.Count - 1;
+                    _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+                    _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowDefender_" + d[0].Trim();
+                    _form.system_grid.Rows[lastId].Cells["systemData"].Value = d[1].Trim();
+                    */
 
-                row = dt.NewRow();
-                row["systemID"] = ++step;
-                row["systemName"] = "WindowDefender_" + d[0].Trim();
-                row["systemData"] = d[1].Trim();
-                dt.Rows.Add(row);
+                    row = dt.NewRow();
+                    row["systemID"] = ++step;
+                    row["systemName"] = "WindowDefender_" + d[0].Trim();
+                    row["systemData"] = d[1].Trim();
+                    dt.Rows.Add(row);
+                }
             }
 
             //版本
