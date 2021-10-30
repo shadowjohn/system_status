@@ -22,7 +22,7 @@ namespace system_status.App_code
         private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
-        private DataTable dt = new DataTable();
+        public DataTable dt = new DataTable();
         private bool isGridInit = false;
 
         public void init(Form1 theform)
@@ -235,6 +235,8 @@ namespace system_status.App_code
                         row["hddModel"] = SmartDrive.Model;
 
                         //Console.WriteLine(_form.my.json_encode(SmartDrive));
+                        //查看有哪些屬性
+                        //_form.logError(_form.my.json_encode(SmartDrive));
                         //Console.WriteLine(SmartDrive.DriveLetters[0] + "," + driverName);
                         foreach (var p in SmartDrive.SmartAttributes)
                         {
@@ -266,6 +268,7 @@ namespace system_status.App_code
                                 case "Power-on hours count":
                                     //開機時數                                
                                     //_form.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
+                                    
                                     row["hddUsageHour"] = p.Data;
                                     break;
                                 case "Power cycle count":

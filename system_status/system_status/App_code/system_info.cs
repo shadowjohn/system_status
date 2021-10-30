@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -42,7 +43,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
-        private DataTable dt = new DataTable();
+        public DataTable dt = new DataTable();
         private bool isGridInit = false;
         private MEMORY_INFO GetMemoryStatus()
         {
@@ -89,9 +90,14 @@ namespace system_status.App_code
     }
 ]";
             //表格初始化
+
             if (isGridInit == false)
             {
-                _form.my.grid_init(_form.system_grid, json_columns);
+                try
+                {
+                    _form.my.grid_init(_form.system_grid, json_columns);
+                }
+                catch { }
                 isGridInit = true;
             }
             dt = _form.my.datatable_init(json_columns);
@@ -187,7 +193,8 @@ namespace system_status.App_code
             row["systemData"] = _form.textSystemName.Text.ToString();
             dt.Rows.Add(row);
 
-
+            
+            //_form.logError("System info:1");
 
             //From : https://stackoverflow.com/questions/4742389/get-pc-system-information-on-windows-machine
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
@@ -205,7 +212,7 @@ namespace system_status.App_code
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "作業系統";
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = managementObject["Caption"].ToString();
                     */
-
+                    //_form.logError("System info:2");
                     row = dt.NewRow();
                     row["systemID"] = ++step;
                     row["systemName"] = "作業系統";
@@ -224,7 +231,7 @@ namespace system_status.App_code
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "位元";
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = managementObject["OSArchitecture"].ToString();
                     */
-
+                    //_form.logError("System info:3");
                     row = dt.NewRow();
                     row["systemID"] = ++step;
                     row["systemName"] = "位元";
@@ -236,6 +243,7 @@ namespace system_status.App_code
                     Console.WriteLine("Operating System Service Pack   :  " + managementObject["CSDVersion"].ToString());     //Display operating system version.
                 }
             }
+            //_form.logError("System info:4");
             Console.WriteLine("\n\nDisplaying Processor Name....");
             RegistryKey processor_name = Registry.LocalMachine.OpenSubKey(@"Hardware\Description\System\CentralProcessor\0", RegistryKeyPermissionCheck.ReadSubTree);   //This registry entry contains entry for processor info.
 
@@ -255,7 +263,7 @@ namespace system_status.App_code
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPU規格";
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = CPU_NAME;
                     */
-
+                    //_form.logError("System info:5");
                     row = dt.NewRow();
                     row["systemID"] = ++step;
                     row["systemName"] = "CPU規格";
@@ -270,9 +278,15 @@ namespace system_status.App_code
             string cpu_id = "";
             try
             {
+                //_form.logError("System info:6");
                 cpu_id = _form.my.getCPUId();
+                //_form.logError("System info:7");
             }
-            catch { }
+            catch
+            {
+                //_form.logError("System info:8");
+            }
+            //_form.logError("System info:9");
             /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
@@ -286,9 +300,10 @@ namespace system_status.App_code
             row["systemName"] = "CPUID";
             row["systemData"] = cpu_id;
             dt.Rows.Add(row);
-
+            //_form.logError("System info:10");
             //https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem
             mos = new ManagementObjectSearcher(@"root\CIMV2", @"SELECT * FROM Win32_ComputerSystem");
+            //_form.logError("System info:11");
             foreach (ManagementObject mo in mos.Get())
             {
                 //CPU核心數
@@ -300,13 +315,13 @@ namespace system_status.App_code
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPU核心數";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["NumberOfLogicalProcessors"].ToString();
                 */
-
+                //_form.logError("System info:12");
                 row = dt.NewRow();
                 row["systemID"] = ++step;
                 row["systemName"] = "CPU核心數";
                 row["systemData"] = mo["NumberOfLogicalProcessors"].ToString();
                 dt.Rows.Add(row);
-
+                //_form.logError("System info:13");
                 /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
@@ -320,7 +335,7 @@ namespace system_status.App_code
                 row["systemName"] = "RAM大小";
                 row["systemData"] = mo["TotalPhysicalMemory"].ToString();
                 dt.Rows.Add(row);
-
+                //_form.logError("System info:14");
                 /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
@@ -335,7 +350,7 @@ namespace system_status.App_code
                 row["systemName"] = "網域名稱";
                 row["systemData"] = mo["Workgroup"] == null ? "" : mo["Workgroup"].ToString();
                 dt.Rows.Add(row);
-
+                //_form.logError("System info:15");
                 /*
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
@@ -349,11 +364,11 @@ namespace system_status.App_code
                 row["systemName"] = "使用者名稱";
                 row["systemData"] = mo["UserName"].ToString();
                 dt.Rows.Add(row);
-
+                //_form.logError("System info:16");
             }
-
+            //_form.logError("System info:17");
             var host = Dns.GetHostEntry(Dns.GetHostName());
-
+            //_form.logError("System info:18");
 
             //_form.system_grid.Rows.Add();
             /*
@@ -369,12 +384,13 @@ namespace system_status.App_code
             row["systemName"] = "電腦名稱";
             row["systemData"] = host.HostName.ToString();
             dt.Rows.Add(row);
+            //_form.logError("System info:19");
             // 取本機 IP 
             // From : https://stackoverflow.com/questions/6803073/get-local-ip-address
             int ip_step = 1;
             foreach (var ip in host.AddressList)
             {
-
+                //_form.logError("System info:20");
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
                     /*
@@ -390,7 +406,7 @@ namespace system_status.App_code
                     row["systemName"] = "IP_" + ip_step.ToString();
                     row["systemData"] = ip.ToString();
                     dt.Rows.Add(row);
-
+                    //_form.logError("System info:21");
                     ip_step++;
                 }
             }
@@ -398,6 +414,7 @@ namespace system_status.App_code
         .Where(e => e.OperationalStatus == OperationalStatus.Up)
         .SelectMany(e => e.GetIPProperties().GatewayAddresses)
         .FirstOrDefault();
+            //_form.logError("System info:22");
             if (gateway_address != null)
             {
                 /*
@@ -407,12 +424,13 @@ namespace system_status.App_code
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "Gateway";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = gateway_address.Address.ToString();
                 */
-
+                //_form.logError("System info:23");
                 row = dt.NewRow();
                 row["systemID"] = ++step;
                 row["systemName"] = "Gateway";
                 row["systemData"] = gateway_address.Address.ToString();
                 dt.Rows.Add(row);
+                //_form.logError("System info:24");
             }
 
             //Framework 版本
@@ -426,12 +444,13 @@ namespace system_status.App_code
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "Framework版本";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = framework_version;
             */
-
+            //_form.logError("System info:25");
             row = dt.NewRow();
             row["systemID"] = ++step;
             row["systemName"] = "Framework版本";
             row["systemData"] = framework_version;
             dt.Rows.Add(row);
+            //_form.logError("System info:26");
 
             //取系統最後更新時間
             //From : https://stackoverflow.com/questions/9215326/check-when-last-check-for-windows-updates-was-performed
@@ -439,6 +458,7 @@ namespace system_status.App_code
             //Console.WriteLine(auc.Results.LastInstallationSuccessDate);
             if (auc.Results.LastInstallationSuccessDate is DateTime)
             {
+                //_form.logError("System info:27");
                 DateTime _dt = new DateTime(((DateTime)auc.Results.LastInstallationSuccessDate).Ticks, DateTimeKind.Utc);
                 string strDt = _form.my.date("Y-m-d H:i:s", (Convert.ToInt32(_form.my.strtotime(_dt.ToString("yyyy-MM-dd HH:mm:ss"))) + 8 * 60 * 60).ToString());
                 //_form.system_grid.Rows.Add();
@@ -449,15 +469,17 @@ namespace system_status.App_code
                 _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowsUpdateDate";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = strDt;
                 */
-
+                //_form.logError("System info:28");
                 row = dt.NewRow();
                 row["systemID"] = ++step;
                 row["systemName"] = "WindowsUpdateDate";
                 row["systemData"] = strDt;
                 dt.Rows.Add(row);
+                //_form.logError("System info:29");
             }
-
+            //_form.logError("System info:30");
             var CPU_RAM = getUsedCPU_RAM();
+            //_form.logError("System info:31");
             /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
@@ -471,6 +493,7 @@ namespace system_status.App_code
             row["systemName"] = "UsedRam";
             row["systemData"] = CPU_RAM["RAM"];
             dt.Rows.Add(row);
+            //_form.logError("System info:32");
 
             /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
@@ -485,7 +508,7 @@ namespace system_status.App_code
             row["systemName"] = "UsedCPU";
             row["systemData"] = CPU_RAM["CPU"];
             dt.Rows.Add(row);
-
+            //_form.logError("System info:33");
             //已用的 ram
             /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
@@ -497,17 +520,20 @@ namespace system_status.App_code
 
             //ping
             string CMD_PING = "ping 8.8.8.8 -n 1 -w 1 && exit";
-            string CMD_PING_TMP = _form.my.system(CMD_PING);
+            string CMD_PING_TMP = _form.my.system(CMD_PING,-1);
             if (_form.my.is_string_like(CMD_PING_TMP, "要求等候逾時"))
             {
+                //_form.logError("System info:34");
                 row = dt.NewRow();
                 row["systemID"] = ++step;
                 row["systemName"] = "ping8888";
                 row["systemData"] = "timeout";
                 dt.Rows.Add(row);
+                //_form.logError("System info:35");
             }
             else
             {
+                //_form.logError("System info:36");
                 row = dt.NewRow();
                 row["systemID"] = ++step;
                 row["systemName"] = "ping8888";
@@ -522,14 +548,28 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
                 */
                 row["systemData"] = _form.my.get_between(CMD_PING_TMP, "時間=", "ms");
                 dt.Rows.Add(row);
+                //_form.logError("System info:37");
             }
 
             // windows defender
             // From : https://github.com/MicrosoftDocs/windows-itpro-docs/issues/6092
-            string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion)\" && echo '' && exit";
-            string tmp = _form.my.system(CMD);
+            //_form.logError("System info:38");
+            string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion); exit(1);\" ; exit ; echo '' ; exit";            
+            string tmp = "";
+            try
+            {
+                tmp = _form.my.system(CMD, 10 * 1000);
+            }
+            catch
+            {
+                tmp = "無法辨識";
+            }
+            
+            
+            //_form.logError("System info:39");
             if (!_form.my.is_string_like(tmp, "無法辨識"))
             {
+                //_form.logError("System info:40");
                 var mtmp = _form.my.explode("########", tmp);
                 string data = mtmp[mtmp.Count() - 1].Trim();
                 mtmp = _form.my.explode("\n", data);
@@ -544,12 +584,13 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
                     _form.system_grid.Rows[lastId].Cells["systemName"].Value = "WindowDefender_" + d[0].Trim();
                     _form.system_grid.Rows[lastId].Cells["systemData"].Value = d[1].Trim();
                     */
-
+                    //_form.logError("System info:42");
                     row = dt.NewRow();
                     row["systemID"] = ++step;
                     row["systemName"] = "WindowDefender_" + d[0].Trim();
                     row["systemData"] = d[1].Trim();
                     dt.Rows.Add(row);
+                    //_form.logError("System info:43");
                 }
             }
 
@@ -561,13 +602,22 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "TOOL_VERSION";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = _form.VERSION;
             */
-
+            //_form.logError("System info:44");
             row = dt.NewRow();
             row["systemID"] = ++step;
             row["systemName"] = "TOOL_VERSION";
             row["systemData"] = _form.VERSION;
             dt.Rows.Add(row);
 
+            //主機板
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "BASEBOARD";
+            string baseboard = _form.my.trim(_form.my.system("wmic baseboard get product,Manufacturer && exit",3*1000));
+            baseboard = _form.my.explode("\n", baseboard).Last<string>();
+            row["systemData"] = baseboard;
+            dt.Rows.Add(row);
+            //_form.logError("System info:45");
             _form.updateDGVUI(_form.system_grid, dt);
 
             _form.setStatusBar("就緒", 0);

@@ -346,6 +346,7 @@ namespace system_status
             //組合成 json 加密後，上傳到伺服器
             Dictionary<string, object> output = new Dictionary<string, object>();
             setStatusBar("同步開始...", 0);
+            logError("同步開始...");
             output["NAME"] = textSystemName.Text;
             setStatusBar("同步開始...取得系統資訊", 20);
             cSystem.init(this);
@@ -372,14 +373,54 @@ namespace system_status
             }
 
             //setStatusBar("同步開始...取得硬碟資訊", 40);            
-            output["SYSTEM_INFO"] = my.gridViewToDataTable(system_grid);
-            output["SYSTEM_SERVICE_INFO"] = my.gridViewToDataTable(system_service_grid);
-            output["HDD_INFO"] = my.gridViewToDataTable(hdd_grid);
-            output["FIREWALL_INFO"] = my.gridViewToDataTable(firewall_grid);
-            output["EVENTS_INFO"] = my.gridViewToDataTable(events_grid);
-            output["TASK_INFO"] = my.gridViewToDataTable(running_program_grid);
-            output["SCHEDULE_INFO"] = my.gridViewToDataTable(schedule_grid);
-            output["IIS_INFO"] = my.gridViewToDataTable(iis_grid);
+            try
+            {
+                //output["SYSTEM_INFO"] = my.gridViewToDataTable(system_grid);
+                output["SYSTEM_INFO"] = cSystem.dt;
+            }
+            catch { }
+            try
+            {
+                //output["SYSTEM_SERVICE_INFO"] = my.gridViewToDataTable(system_service_grid);
+                output["SYSTEM_SERVICE_INFO"] = cSystemService.dt;
+            }
+            catch { }
+            try
+            {
+                //output["HDD_INFO"] = my.gridViewToDataTable(hdd_grid);
+                output["HDD_INFO"] = cHdd.dt;
+            }
+            catch { }
+            try
+            {
+                //output["FIREWALL_INFO"] = my.gridViewToDataTable(firewall_grid);
+                output["FIREWALL_INFO"] = cFirewall.dt;
+            }
+            catch { }
+            try
+            {
+                //output["EVENTS_INFO"] = my.gridViewToDataTable(events_grid);
+                output["EVENTS_INFO"] = cEvents.dt;
+            }
+            catch { }
+            try
+            {
+                //output["TASK_INFO"] = my.gridViewToDataTable(running_program_grid);
+                output["TASK_INFO"] = cRunningProgram.dt;
+            }
+            catch { }
+            try
+            {
+                //output["SCHEDULE_INFO"] = my.gridViewToDataTable(schedule_grid);
+                output["SCHEDULE_INFO"] = cSchedule.dt;
+            }
+            catch { }
+            try
+            {
+                //output["IIS_INFO"] = my.gridViewToDataTable(iis_grid);
+                output["IIS_INFO"] = cIis.dt;
+            }
+            catch { }
 
             //logError(my.json_encode_formated(output));
             string URL = my.getSystemKey("REPORT_URL") + "?mode=updateStatus";
@@ -485,6 +526,10 @@ namespace system_status
         {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+
+            //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+
             //嘗試當掉就中斷離開
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(myCrash);

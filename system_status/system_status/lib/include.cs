@@ -255,11 +255,12 @@ namespace utility
             }
             return cpuInfo;
         }
-        public string system(string command)
+
+        public string system(string command, int waitms)
         {
             StringBuilder sb = new StringBuilder();
             string version = System.Environment.OSVersion.VersionString;//读取操作系统版本  
-            if (version.Contains("Windows"))
+            if (version.ToLower().Contains("windows"))
             {
                 using (Process p = new Process())
                 {
@@ -271,6 +272,32 @@ namespace utility
                     p.StartInfo.CreateNoWindow = true;//不显示dos命令行窗口  
 
                     p.Start();//启动cmd.exe  
+                    Thread t = new Thread(() =>
+                    {
+                        Thread.Sleep(waitms);
+                        try
+                        {
+                            p.StandardInput.WriteLine("exit");//退出cmd.exe  
+                        }
+                        catch { }
+                        try
+                        {
+                            p.StandardInput.WriteLine("exit");//退出cmd.exe  
+                        }
+
+                        catch { }
+                        try
+                        {
+                            p.Close();
+                        }
+                        catch { }
+                        try
+                        {
+                            p.Dispose();
+                        }
+                        catch { }
+                    });
+                    t.Start();
                     p.StandardInput.WriteLine(command);//输入命令  
                     p.StandardInput.WriteLine("exit");//退出cmd.exe  
                     p.WaitForExit();//等待执行完了，退出cmd.exe  
@@ -278,10 +305,20 @@ namespace utility
                     using (StreamReader reader = p.StandardOutput)//截取输出流  
                     {
                         string line = reader.ReadLine();//每次读取一行  
+                        line = line.Replace("(c) 2018 Microsoft Corporation. 著作權所有，並保留一切權利。", "");
+                        line = line.Replace("Microsoft Windows [版本 10.0.17134.1488]", "");
+                        line = line.Replace("Microsoft Windows [版本 10.0.19041.450]", "");
+                        line = line.Replace("(c) 2020 Microsoft Corporation。著作權所有，並保留一切權利。", "");
+                        line = line.Trim();
                         while (!reader.EndOfStream)
                         {
                             sb.Append(line).Append("\n");//在Web中使用<br />换行  
                             line = reader.ReadLine();
+                            line = line.Replace("(c) 2018 Microsoft Corporation. 著作權所有，並保留一切權利。", "");
+                            line = line.Replace("Microsoft Windows [版本 10.0.17134.1488]", "");
+                            line = line.Replace("Microsoft Windows [版本 10.0.19041.450]", "");
+                            line = line.Replace("(c) 2020 Microsoft Corporation。著作權所有，並保留一切權利。", "");
+                            line = line.Trim();
                         }
                         p.WaitForExit();//等待程序执行完退出进程  
                         p.Close();//关闭进程  
@@ -291,6 +328,7 @@ namespace utility
             }
             return sb.ToString();
         }
+
 
         public string microtime()
         {
@@ -348,8 +386,6 @@ namespace utility
                                 myFile.Dispose();
                             }
                         }
-
-
                     }
                     break;
                 case false:
@@ -385,7 +421,8 @@ namespace utility
         }
         public string json_encode(object input)
         {
-            return EscapeUnicode(JsonConvert.SerializeObject(input, Formatting.None));
+            //return EscapeUnicode(JsonConvert.SerializeObject(input, Formatting.None));
+            return JsonConvert.SerializeObject(input, Formatting.None);
         }
         public string json_encode_formated(object input)
         {
@@ -506,6 +543,7 @@ namespace utility
         public byte[] file_get_contents_post(string URL, ConcurrentDictionary<string, string> posts)
         {
             //NameValueCollection postParameters = new NameValueCollection();
+
             string[] mPostData = new string[posts.Keys.Count];
             int step = 0;
             foreach (string k in posts.Keys)
@@ -605,9 +643,10 @@ namespace utility
             return Convert.ToBase64String(data);
         }
         public byte[] file_get_contents_post(string url, string postData)
-        {
-            HttpWebRequest httpWReq =
-            (HttpWebRequest)WebRequest.Create(url);
+        {            
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+            HttpWebRequest httpWReq = (HttpWebRequest)WebRequest.Create(url);
 
             //ASCIIEncoding encoding = new ASCIIEncoding();
 

@@ -15,7 +15,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
-        private DataTable dt = new DataTable();
+        public DataTable dt = new DataTable();
         private bool isGridInit = false;
         public void init(Form1 theform)
         {
@@ -76,11 +76,15 @@ namespace system_status.App_code
         public void run()
         {
             //_form.UpdateUI_DataGridGrid(_form.events_grid, "clear", "", "", -1);
-            string eventLogName = "Application";
-            EventLog eventLog = new EventLog();
-            eventLog.Log = eventLogName;
+            //string eventLogName = "Application";
+            //"Application"
+            System.Diagnostics.EventLog eventLog = new System.Diagnostics.EventLog();
+            eventLog.Log = "Application";
+            //eventLog.Log = eventLogName;
             int step = 0;
             DataRow row = dt.NewRow();
+            //_form.my.file_put_contents(_form.my.pwd() + "\\log\\events.txt", _form.my.json_encode(eventLog.Entries));
+            //_form.my.file_put_contents(_form.my.pwd() + "\\log\\events.txt", "");            
             for (int i = eventLog.Entries.Count - 1; i >= 0; i--)
             {
                 EventLogEntry log = eventLog.Entries[i];
@@ -89,7 +93,11 @@ namespace system_status.App_code
                 //d["Category"] = log.Category;
                 //d["Message"] = log.Message;
                 //d["DateTime"] = log.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss");
+                //var twtzinfo = TimeZoneInfo.FindSystemTimeZoneById("Taipei Standard Time");
                 string eventDateTime = log.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+                //_form.my.file_put_contents(_form.my.pwd() + "\\log\\events.txt", eventDateTime, true);
                 //改成現在時間跟上一次回報的時間之間才傳
                 if (Convert.ToInt64(_form.my.strtotime(eventDateTime)) < Convert.ToInt64(_form.my.time()) - Convert.ToInt64(_form.my.getSystemKey("LOOP_MINUTE")) * 60)
                 {

@@ -15,7 +15,7 @@ namespace system_status.App_code
         Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
-        private DataTable dt = new DataTable();
+        public DataTable dt = new DataTable();
         private bool isGridInit = false;
         // Protocol
         // From : https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa364724(v=vs.85)
