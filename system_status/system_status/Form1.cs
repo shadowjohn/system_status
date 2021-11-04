@@ -18,10 +18,10 @@ namespace system_status
 {
     public partial class Form1 : Form
     {
+        public double VERSION = 1.00;
         private FileStream s2 = null;
         public string LOCK_FILE = "";
-        public bool GLOBAL_RUN_AT_START = false;
-        public double VERSION = 1.0;
+        public bool GLOBAL_RUN_AT_START = false;        
         public string LOG_PATH = "";
         public myinclude my = null;
         private system_info cSystem = null;
@@ -569,6 +569,7 @@ namespace system_status
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
 
@@ -593,6 +594,10 @@ namespace system_status
             }
             //同時最多只能跑一支
             killSameProcessName();
+
+            //寫入目前版本
+            my.file_put_contents(my.pwd() + "\\version.txt", VERSION.ToString());
+
             notifyIcon1.Visible = true;
             //lock file
             s2 = new FileStream(this.LOCK_FILE, FileMode.Open, FileAccess.Read, FileShare.None);
