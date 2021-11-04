@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceProcess;
-using System.Windows.Forms;
+﻿using System.Data;
 using System.Management;
+using System.ServiceProcess;
 using System.Threading;
-using System.Data;
+using System.Windows.Forms;
 
 namespace system_status.App_code
 {
-    class system_service
+    internal class system_service
     {
-        Form1 _form = null;
+        private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
         public DataTable dt = new DataTable();
@@ -35,29 +31,28 @@ namespace system_status.App_code
             _form.system_service_grid.AllowDrop = false;
             _form.system_service_grid.ReadOnly = true;
 
-
             //_form.system_service_grid.Columns.Clear();
             string json_columns = @"
 [
-    {   
+    {
         ""system_serviceID"":{""id"":""system_serviceID"",""name"":""項次"",""width"":50,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },           
-    {   
+    },
+    {
         ""system_serviceName"":{""id"":""system_serviceName"",""name"":""功能名稱"",""width"":300,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""system_serviceDescription"":{""id"":""system_serviceDescription"",""name"":""功能描述"",""width"":300,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""system_serviceStatus"":{""id"":""system_serviceStatus"",""name"":""狀態"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""system_serviceStartupStatus"":{""id"":""system_serviceStartupStatus"",""name"":""啟動類型"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""system_servicePathName"":{""id"":""system_servicePathName"",""name"":""路徑"",""width"":350,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     }
-]            
+]
 ";
             //表格初始化
             if (isGridInit == false)
@@ -77,6 +72,7 @@ namespace system_status.App_code
             _form.threads["system_service"].Start();
             //run();
         }
+
         public void run()
         {
             int step = 0;
@@ -122,6 +118,7 @@ namespace system_status.App_code
                         //_form.system_service_grid.Rows[lastId].Cells["system_serviceStatus"].Value = "執行中";
                         row["system_serviceStatus"] = "執行中";
                         break;
+
                     case "Stopped":
                         //_form.system_service_grid.Rows[lastId].Cells["system_serviceStatus"].Value = "停止";
                         row["system_serviceStatus"] = "停止";
@@ -131,18 +128,17 @@ namespace system_status.App_code
                 var st = service.ServiceType;
 
                 /*
-                Automatic 	2 	
-                Boot 	0 	
-                Disabled 	4 	
-                Manual 	3 	
-                System 	1 	
+                Automatic 	2
+                Boot 	0
+                Disabled 	4
+                Manual 	3
+                System 	1
                 */
                 // From : https://www.itdaan.com/tw/753d0af27c5447f3eb5ca7ff90a5bd09
                 //_form.system_service_grid.Rows[lastId].Cells["system_serviceStartupStatus"].Value = serviceObject.Properties["StartMode"].Value;
                 row["system_serviceStartupStatus"] = serviceObject.Properties["StartMode"].Value;
                 //_form.system_service_grid.Rows[lastId].Cells["system_servicePathName"].Value = serviceObject.Properties["PathName"].Value;
                 row["system_servicePathName"] = serviceObject.Properties["PathName"].Value;
-
 
                 //_form.system_service_grid.Rows[lastId].Cells["system_serviceLoginAccount"].Value = service.MachineName;
                 dt.Rows.Add(row);

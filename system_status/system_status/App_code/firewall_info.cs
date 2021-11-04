@@ -1,39 +1,39 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
 using System.Data;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace system_status.App_code
 {
-    class firewall_info
+    internal class firewall_info
     {
-
-        Form1 _form = null;
+        private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
         public DataTable dt = new DataTable();
         private bool isGridInit = false;
+
         // Protocol
         // From : https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa364724(v=vs.85)
         private int NET_FW_IP_PROTOCOL_TCP = 6;
+
         private int NET_FW_IP_PROTOCOL_UDP = 17;
         private int NET_FW_IP_PROTOCOL_ICMPv4 = 1;
         private int NET_FW_IP_PROTOCOL_ICMPv6 = 58;
 
         // Direction
         private int NET_FW_RULE_DIR_IN = 1;
+
         private int NET_FW_RULE_DIR_OUT = 2;
 
         // Action
         private int NET_FW_ACTION_BLOCK = 0;
+
         private int NET_FW_ACTION_ALLOW = 1;
+
         public void init(Form1 theform)
         {
-
             _form = theform;
             if (_form.threads.ContainsKey("firewall_info"))
             {
@@ -49,45 +49,44 @@ namespace system_status.App_code
             _form.firewall_grid.AllowDrop = false;
             _form.firewall_grid.ReadOnly = true;
 
-
             //_form.firewall_grid.Columns.Clear();
             string json_columns = @"
 [
-    {   
+    {
         ""firewallID"":{""id"":""firewallID"",""name"":""項次"",""width"":50,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },           
-    {   
+    },
+    {
         ""firewallName"":{""id"":""firewallName"",""name"":""功能名稱"",""width"":300,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-            
-    {   
+
+    {
         ""firewallApplicationName"":{""id"":""firewallApplicationName"",""name"":""ApplicationName"",""width"":350,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
-    }, 
-    {   
+    },
+    {
         ""firewallServiceName"":{""id"":""firewallServiceName"",""name"":""ServiceName"",""width"":150,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""firewallEnabled"":{""id"":""firewallEnabled"",""name"":""Enabled"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""firewallProtocol"":{""id"":""firewallProtocol"",""name"":""Protocol"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""firewallAllowBlock"":{""id"":""firewallAllowBlock"",""name"":""允許／阻擋"",""width"":120,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""firewallDirectionInOut"":{""id"":""firewallDirectionInOut"",""name"":""連入/連出"",""width"":120,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""firewallLocalPorts"":{""id"":""firewallLocalPorts"",""name"":""LocalPorts"",""width"":160,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""firewallRemotePorts"":{""id"":""firewallRemotePorts"",""name"":""RemotePorts"",""width"":160,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""firewallLocalAddresses"":{""id"":""firewallLocalAddresses"",""name"":""LocalAddresses"",""width"":160,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""firewallRemoteAddresses"":{""id"":""firewallRemoteAddresses"",""name"":""RemoteAddresses"",""width"":160,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     }
 ]";
@@ -111,6 +110,7 @@ namespace system_status.App_code
 
             //run();
         }
+
         public void run()
         {
             DataRow row = dt.NewRow();
@@ -147,14 +147,17 @@ namespace system_status.App_code
                         //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "TCP";
                         row["firewallProtocol"] = "TCP";
                         break;
+
                     case 17:
                         //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "UDP";
                         row["firewallProtocol"] = "UDP";
                         break;
+
                     case 1:
                         //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "ICPMv4";
                         row["firewallProtocol"] = "ICPMv4";
                         break;
+
                     case 58:
                         //_form.firewall_grid.Rows[lastId].Cells["firewallProtocol"].Value = "ICMPv6";
                         row["firewallProtocol"] = "ICMPv6";
@@ -166,6 +169,7 @@ namespace system_status.App_code
                         //_form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "阻擋";
                         row["firewallAllowBlock"] = "阻擋";
                         break;
+
                     case 1: //Allow
                         //_form.firewall_grid.Rows[lastId].Cells["firewallAllowBlock"].Value = "允許";
                         row["firewallAllowBlock"] = "允許";
@@ -177,6 +181,7 @@ namespace system_status.App_code
                         //_form.firewall_grid.Rows[lastId].Cells["firewallDirectionInOut"].Value = "入";
                         row["firewallDirectionInOut"] = "入";
                         break;
+
                     case 2:
                         //_form.firewall_grid.Rows[lastId].Cells["firewallDirectionInOut"].Value = "出";
                         row["firewallDirectionInOut"] = "出";
@@ -201,6 +206,7 @@ namespace system_status.App_code
                         //_form.firewall_grid.Rows[lastId].Cells["firewallRemoteAddresses"].Value = rule.RemoteAddresses;
                         row["firewallRemoteAddresses"] = rule.RemoteAddresses;
                         break;
+
                     default:
                         //_form.firewall_grid.Rows[lastId].Cells["firewallLocalPorts"].Value = "";
                         row["firewallLocalPorts"] = "";
@@ -216,10 +222,8 @@ namespace system_status.App_code
                         break;
                 }
 
-
                 //if (rule.Name == "My firewall rule")
                 //{
-
                 //}
                 dt.Rows.Add(row);
             }

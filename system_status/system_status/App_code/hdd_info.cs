@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using Simplified.IO;
+using System;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Simplified.IO;
 using System.Threading;
-using System.Data;
+using System.Windows.Forms;
 
 namespace system_status.App_code
 {
-    class hdd_info
+    internal class hdd_info
     {
         public hdd_info()
         {
         }
+
         private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
@@ -27,7 +22,6 @@ namespace system_status.App_code
 
         public void init(Form1 theform)
         {
-
             _form = theform;
             if (_form.threads.ContainsKey("hdd_info"))
             {
@@ -48,22 +42,22 @@ namespace system_status.App_code
             //_form.hdd_grid.Columns.Clear();
             string json_columns = @"
 [
-    {   
+    {
         ""hddID"":{""id"":""hddID"",""name"":""磁碟代號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""hddType"":{""id"":""hddType"",""name"":""磁碟類型"",""width"":100,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""hddFormatType"":{""id"":""hddFormatType"",""name"":""分割類型"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""hddModel"":{""id"":""hddModel"",""name"":""硬碟型號"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""hddTotalSpace"":{""id"":""hddTotalSpace"",""name"":""總空間_資料"",""width"":80,""display"":false,""headerAlign"":""center"",""cellAlign"":""right""}
     },
-    {   
+    {
         ""hddTotalSpaceDisplay"":{""id"":""hddTotalSpaceDisplay"",""name"":""總空間"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""right""}
     },
     {
@@ -113,7 +107,8 @@ namespace system_status.App_code
             _form.threads["hdd_info"].Start();
             //run();
         }
-        void run()
+
+        private void run()
         {
             DataRow row = dt.NewRow();
             int step = 0;
@@ -176,10 +171,8 @@ namespace system_status.App_code
                 //_form.hdd_grid.Rows[lastId].Cells["hddUsageSpaceDisplay"].Value = _form.my.size_hum_read(usageSize);
                 row["hddUsageSpaceDisplay"] = _form.my.size_hum_read(usageSize);
 
-
                 //_form.hdd_grid.Rows[lastId].Cells["hddFreeSpace"].Value = freeSpace;
                 row["hddFreeSpace"] = freeSpace;
-
 
                 //_form.hdd_grid.Rows[lastId].Cells["hddFreeSpaceDisplay"].Value = _form.my.size_hum_read(freeSpace);
                 //_form.UpdateUI_DataGridGrid(_form.hdd_grid, "set_cell", "hddFreeSpaceDisplay", _form.my.size_hum_read(freeSpace), lastId);
@@ -189,12 +182,10 @@ namespace system_status.App_code
                 //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Value = string.Format("{0:0.00}", percent) + " %";
                 row["hddUsagePercent"] = string.Format("{0:0.00}", percent) + " %";
 
-
                 //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 if (percent < 60)
                 {
                     //_form.hdd_grid.Rows[lastId].Cells["hddUsagePercent"].Style.ForeColor = Color.Green;
-
                 }
                 else if (percent >= 60 && percent < 85)
                 {
@@ -225,7 +216,6 @@ namespace system_status.App_code
                         }
                         /*if (SmartDrive.DriveLetters[0] != driverName)
                         {
-
                             continue;
                         }
                         */
@@ -260,17 +250,20 @@ namespace system_status.App_code
                                         row["hddTemperature"] = t.ToString();
                                     }
                                     break;
+
                                 case "Reallocated sector count":
                                     //壞軌數
                                     //_form.hdd_grid.Rows[lastId].Cells["hddBadSectors"].Value = p.Data;
                                     row["hddBadSectors"] = p.Data;
                                     break;
+
                                 case "Power-on hours count":
-                                    //開機時數                                
+                                    //開機時數
                                     //_form.hdd_grid.Rows[lastId].Cells["hddUsageHour"].Value = p.Data;
-                                    
+
                                     row["hddUsageHour"] = p.Data;
                                     break;
+
                                 case "Power cycle count":
                                     //開關機次數
                                     //_form.hdd_grid.Rows[lastId].Cells["hddOnOffTimes"].Value = p.Data;
@@ -282,7 +275,6 @@ namespace system_status.App_code
                 }
                 catch
                 {
-
                 }
 
                 dt.Rows.Add(row);

@@ -10,19 +10,19 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using WUApiLib;
+
 namespace system_status.App_code
 {
-
-    class system_info
+    internal class system_info
     {
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        #region Obtain memory information API    
+
+        #region Obtain memory information API
+
         public static extern bool GlobalMemoryStatusEx(ref MEMORY_INFO mi);
 
         //Define the information structure of memory
@@ -39,12 +39,15 @@ namespace system_status.App_code
             public ulong ullAvailVirtual; //Available virtual memory size
             public ulong ullAvailExtendedVirtual; //Keep this value always zero
         }
-        #endregion
-        Form1 _form = null;
+
+        #endregion Obtain memory information API
+
+        private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
         public DataTable dt = new DataTable();
         private bool isGridInit = false;
+
         private MEMORY_INFO GetMemoryStatus()
         {
             MEMORY_INFO mi = new MEMORY_INFO();
@@ -52,12 +55,14 @@ namespace system_status.App_code
             GlobalMemoryStatusEx(ref mi);
             return mi;
         }
+
         private ulong GetUsedMemory()
         {
             //取得已用掉的 ram
             MEMORY_INFO mi = GetMemoryStatus();
             return (mi.ullTotalPhys - mi.ullAvailPhys);
         }
+
         public void init(Form1 theform)
         {
             _form = theform;
@@ -79,13 +84,13 @@ namespace system_status.App_code
             //_form.system_grid.Columns.Clear();
             string json_columns = @"
 [
-    {   
+    {
         ""systemID"":{""id"":""systemID"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },            
-    {   
+    },
+    {
         ""systemName"":{""id"":""systemName"",""name"":""功能名稱"",""width"":220,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""systemData"":{""id"":""systemData"",""name"":""數值"",""width"":400,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     }
 ]";
@@ -112,6 +117,7 @@ namespace system_status.App_code
             _form.threads["system_info"].Start();
             //run();
         }
+
         private string _getFrameWorkVersion()
         {
             //取得 Framework 版本
@@ -131,6 +137,7 @@ namespace system_status.App_code
                 }
             }
         }
+
         // Checking the version using >= enables forward compatibility.
         private string _CheckFor45PlusVersion(int releaseKey)
         {
@@ -158,7 +165,8 @@ namespace system_status.App_code
             // that 4.5 or later is installed.
             return "No 4.5 or later version detected";
         }
-        Dictionary<string, string> getUsedCPU_RAM()
+
+        private Dictionary<string, string> getUsedCPU_RAM()
         {
             //cpu loading
             PerformanceCounter cpuCounter;
@@ -166,14 +174,15 @@ namespace system_status.App_code
 
             cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total", Environment.MachineName);
             cpuCounter.NextValue();
-            System.Threading.Thread.Sleep(1000); //This avoid that answer always 0                
+            System.Threading.Thread.Sleep(1000); //This avoid that answer always 0
             ramCounter = new PerformanceCounter("Memory", "Available MBytes");
             Dictionary<string, string> output = new Dictionary<string, string>();
             output["CPU"] = cpuCounter.NextValue() + " %";
             output["RAM"] = ramCounter.NextValue() + " MB";
             return output;
         }
-        void run()
+
+        private void run()
         {
             int step = 0;
             //_form.UpdateUI_DataGridGrid(_form.system_grid, "clear", "", "", -1);
@@ -193,7 +202,6 @@ namespace system_status.App_code
             row["systemData"] = _form.textSystemName.Text.ToString();
             dt.Rows.Add(row);
 
-            
             //_form.logError("System info:1");
 
             //From : https://stackoverflow.com/questions/4742389/get-pc-system-information-on-windows-machine
@@ -218,7 +226,6 @@ namespace system_status.App_code
                     row["systemName"] = "作業系統";
                     row["systemData"] = managementObject["Caption"].ToString();
                     dt.Rows.Add(row);
-
                 }
                 if (managementObject["OSArchitecture"] != null)
                 {
@@ -272,8 +279,6 @@ namespace system_status.App_code
                 }
             }
 
-
-
             //cpu id
             string cpu_id = "";
             try
@@ -291,7 +296,7 @@ namespace system_status.App_code
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
             lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
-            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPUID";            
+            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "CPUID";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = cpu_id;
             */
 
@@ -340,10 +345,9 @@ namespace system_status.App_code
                 _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
                 lastId = _form.system_grid.Rows.Count - 1;
                 _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
-                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "網域名稱";                
+                _form.system_grid.Rows[lastId].Cells["systemName"].Value = "網域名稱";
                 _form.system_grid.Rows[lastId].Cells["systemData"].Value = mo["Workgroup"] == null ? "" : mo["Workgroup"].ToString();
                 */
-
 
                 row = dt.NewRow();
                 row["systemID"] = ++step;
@@ -385,7 +389,7 @@ namespace system_status.App_code
             row["systemData"] = host.HostName.ToString();
             dt.Rows.Add(row);
             //_form.logError("System info:19");
-            // 取本機 IP 
+            // 取本機 IP
             // From : https://stackoverflow.com/questions/6803073/get-local-ip-address
             int ip_step = 1;
             foreach (var ip in host.AddressList)
@@ -439,7 +443,7 @@ namespace system_status.App_code
             string framework_version = _getFrameWorkVersion();
             /*
             _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
-            lastId = _form.system_grid.Rows.Count - 1;            
+            lastId = _form.system_grid.Rows.Count - 1;
             _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
             _form.system_grid.Rows[lastId].Cells["systemName"].Value = "Framework版本";
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = framework_version;
@@ -520,7 +524,7 @@ namespace system_status.App_code
 
             //ping
             string CMD_PING = "ping 8.8.8.8 -n 1 -w 1 && exit";
-            string CMD_PING_TMP = _form.my.system(CMD_PING,-1);
+            string CMD_PING_TMP = _form.my.system(CMD_PING, -1);
             if (_form.my.is_string_like(CMD_PING_TMP, "要求等候逾時"))
             {
                 //_form.logError("System info:34");
@@ -554,7 +558,7 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
             // windows defender
             // From : https://github.com/MicrosoftDocs/windows-itpro-docs/issues/6092
             //_form.logError("System info:38");
-            string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion); exit(1);\" ; exit ; echo '' ; exit";            
+            string CMD = "echo ######## && powershell.exe -NoLogo -NoProfile -NonInteractive -Command \"'AMProductVersion: ' + $((Get-MpComputerStatus).AMProductVersion) ; 'AMEngineVersion: ' + $((Get-MpComputerStatus).AMEngineVersion) ; 'AntispywareSignatureVersion: ' + $((Get-MpComputerStatus).AntispywareSignatureVersion) ; 'AntivirusSignatureVersion: ' + $((Get-MpComputerStatus).AntivirusSignatureVersion); exit(1);\" ; exit ; echo '' ; exit";
             string tmp = "";
             try
             {
@@ -564,8 +568,7 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
             {
                 tmp = "無法辨識";
             }
-            
-            
+
             //_form.logError("System info:39");
             if (!_form.my.is_string_like(tmp, "無法辨識"))
             {
@@ -613,7 +616,7 @@ Ping 8.8.8.8 (使用 32 位元組的資料):
             row = dt.NewRow();
             row["systemID"] = ++step;
             row["systemName"] = "BASEBOARD";
-            string baseboard = _form.my.trim(_form.my.system("wmic baseboard get product,Manufacturer && exit",3*1000));
+            string baseboard = _form.my.trim(_form.my.system("wmic baseboard get product,Manufacturer && exit", 3 * 1000));
             baseboard = _form.my.explode("\n", baseboard).Last<string>();
             row["systemData"] = baseboard;
             dt.Rows.Add(row);

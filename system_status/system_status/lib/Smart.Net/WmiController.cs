@@ -4,14 +4,12 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
-using System.Text;
 
 namespace Simplified.IO
 {
@@ -25,6 +23,7 @@ namespace Simplified.IO
             foreach (var device in new ManagementObjectSearcher(@"SELECT * FROM Win32_DiskDrive").Get())
             {
                 #region Drive Info
+
                 //try
                 //{
                 Drive drive = new Drive
@@ -34,10 +33,9 @@ namespace Simplified.IO
                     Model = device["Model"]?.ToString().Trim(),
                     Type = device["InterfaceType"]?.ToString().Trim(),
                     Serial = device["SerialNumber"]?.ToString().Trim()
-
                 };
 
-                #endregion
+                #endregion Drive Info
 
                 #region Get drive letters
 
@@ -45,7 +43,6 @@ namespace Simplified.IO
                     "ASSOCIATORS OF {Win32_DiskDrive.DeviceID='" + device.Properties["DeviceID"].Value
                     + "'} WHERE AssocClass = Win32_DiskDriveToDiskPartition").Get())
                 {
-
                     foreach (var disk in new ManagementObjectSearcher(
                         "ASSOCIATORS OF {Win32_DiskPartition.DeviceID='"
                         + partition["DeviceID"]
@@ -53,12 +50,11 @@ namespace Simplified.IO
                     {
                         drive.DriveLetters.Add(disk["Name"].ToString());
                     }
-
                 }
 
-                #endregion
+                #endregion Get drive letters
 
-                #region Overall Smart Status       
+                #region Overall Smart Status
 
                 ManagementScope scope = new ManagementScope("\\\\.\\ROOT\\WMI");
                 ObjectQuery query = new ObjectQuery(@"SELECT * FROM MSStorageDriver_FailurePredictStatus Where InstanceName like ""%"
@@ -70,7 +66,7 @@ namespace Simplified.IO
                     drive.IsOK = (bool)m.Properties["PredictFailure"].Value == false;
                 }
 
-                #endregion
+                #endregion Overall Smart Status
 
                 #region Smart Registers
 
@@ -145,16 +141,15 @@ namespace Simplified.IO
                     }
                 }
 
-                #endregion
+                #endregion Smart Registers
 
                 drives.Add(drive);
-                //}                 
+                //}
                 //catch (Exception ex)
                 //{
                 //throw new Exception("Error retrieving Smart data for one or more drives. " + ex.Message);
                 //}
             }
-
 
             return drives;
         }

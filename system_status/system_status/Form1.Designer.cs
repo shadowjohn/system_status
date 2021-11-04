@@ -54,12 +54,12 @@
             this.tabs_events = new System.Windows.Forms.TabPage();
             this.events_grid = new System.Windows.Forms.DataGridView();
             this.tabs_IIS = new System.Windows.Forms.TabPage();
+            this.iis_grid = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.iis_grid = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
             this.tabs_setting.SuspendLayout();
             this.tabs_host.SuspendLayout();
@@ -77,9 +77,9 @@
             this.tabs_events.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.events_grid)).BeginInit();
             this.tabs_IIS.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iis_grid)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.iis_grid)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -185,8 +185,8 @@
             this.tabs_host.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.tabs_host.Location = new System.Drawing.Point(4, 22);
             this.tabs_host.Name = "tabs_host";
-            this.tabs_host.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabs_host.Size = new System.Drawing.Size(801, 421);
+            this.tabs_host.Padding = new System.Windows.Forms.Padding(3);
+            this.tabs_host.Size = new System.Drawing.Size(800, 420);
             this.tabs_host.TabIndex = 0;
             this.tabs_host.Text = "本機資訊";
             this.tabs_host.UseVisualStyleBackColor = true;
@@ -198,7 +198,7 @@
             this.system_grid.Location = new System.Drawing.Point(3, 3);
             this.system_grid.Name = "system_grid";
             this.system_grid.RowTemplate.Height = 24;
-            this.system_grid.Size = new System.Drawing.Size(795, 415);
+            this.system_grid.Size = new System.Drawing.Size(794, 414);
             this.system_grid.TabIndex = 0;
             // 
             // tabs_hdd
@@ -206,8 +206,8 @@
             this.tabs_hdd.Controls.Add(this.hdd_grid);
             this.tabs_hdd.Location = new System.Drawing.Point(4, 22);
             this.tabs_hdd.Name = "tabs_hdd";
-            this.tabs_hdd.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabs_hdd.Size = new System.Drawing.Size(801, 421);
+            this.tabs_hdd.Padding = new System.Windows.Forms.Padding(3);
+            this.tabs_hdd.Size = new System.Drawing.Size(800, 420);
             this.tabs_hdd.TabIndex = 1;
             this.tabs_hdd.Text = "硬碟資訊";
             this.tabs_hdd.UseVisualStyleBackColor = true;
@@ -228,7 +228,7 @@
             this.hdd_grid.Name = "hdd_grid";
             this.hdd_grid.RowTemplate.Height = 24;
             this.hdd_grid.ShowEditingIcon = false;
-            this.hdd_grid.Size = new System.Drawing.Size(795, 415);
+            this.hdd_grid.Size = new System.Drawing.Size(794, 414);
             this.hdd_grid.TabIndex = 1;
             // 
             // tabs_running_program
@@ -236,7 +236,7 @@
             this.tabs_running_program.Controls.Add(this.running_program_grid);
             this.tabs_running_program.Location = new System.Drawing.Point(4, 22);
             this.tabs_running_program.Name = "tabs_running_program";
-            this.tabs_running_program.Size = new System.Drawing.Size(801, 421);
+            this.tabs_running_program.Size = new System.Drawing.Size(800, 420);
             this.tabs_running_program.TabIndex = 4;
             this.tabs_running_program.Text = "執行緒";
             this.tabs_running_program.UseVisualStyleBackColor = true;
@@ -248,7 +248,7 @@
             this.running_program_grid.Location = new System.Drawing.Point(0, 0);
             this.running_program_grid.Name = "running_program_grid";
             this.running_program_grid.RowTemplate.Height = 24;
-            this.running_program_grid.Size = new System.Drawing.Size(801, 421);
+            this.running_program_grid.Size = new System.Drawing.Size(800, 420);
             this.running_program_grid.TabIndex = 1;
             // 
             // tabs_schedule
@@ -256,7 +256,7 @@
             this.tabs_schedule.Controls.Add(this.schedule_grid);
             this.tabs_schedule.Location = new System.Drawing.Point(4, 22);
             this.tabs_schedule.Name = "tabs_schedule";
-            this.tabs_schedule.Size = new System.Drawing.Size(801, 421);
+            this.tabs_schedule.Size = new System.Drawing.Size(800, 420);
             this.tabs_schedule.TabIndex = 5;
             this.tabs_schedule.Text = "排程";
             this.tabs_schedule.UseVisualStyleBackColor = true;
@@ -268,7 +268,7 @@
             this.schedule_grid.Location = new System.Drawing.Point(0, 0);
             this.schedule_grid.Name = "schedule_grid";
             this.schedule_grid.RowTemplate.Height = 24;
-            this.schedule_grid.Size = new System.Drawing.Size(801, 421);
+            this.schedule_grid.Size = new System.Drawing.Size(800, 420);
             this.schedule_grid.TabIndex = 1;
             // 
             // tabs_service
@@ -276,7 +276,7 @@
             this.tabs_service.Controls.Add(this.system_service_grid);
             this.tabs_service.Location = new System.Drawing.Point(4, 22);
             this.tabs_service.Name = "tabs_service";
-            this.tabs_service.Size = new System.Drawing.Size(801, 421);
+            this.tabs_service.Size = new System.Drawing.Size(800, 420);
             this.tabs_service.TabIndex = 3;
             this.tabs_service.Text = "系統服務";
             this.tabs_service.UseVisualStyleBackColor = true;
@@ -288,7 +288,7 @@
             this.system_service_grid.Location = new System.Drawing.Point(0, 0);
             this.system_service_grid.Name = "system_service_grid";
             this.system_service_grid.RowTemplate.Height = 24;
-            this.system_service_grid.Size = new System.Drawing.Size(801, 421);
+            this.system_service_grid.Size = new System.Drawing.Size(800, 420);
             this.system_service_grid.TabIndex = 1;
             // 
             // tabs_firewall
@@ -296,7 +296,7 @@
             this.tabs_firewall.Controls.Add(this.firewall_grid);
             this.tabs_firewall.Location = new System.Drawing.Point(4, 22);
             this.tabs_firewall.Name = "tabs_firewall";
-            this.tabs_firewall.Size = new System.Drawing.Size(801, 421);
+            this.tabs_firewall.Size = new System.Drawing.Size(800, 420);
             this.tabs_firewall.TabIndex = 2;
             this.tabs_firewall.Text = "防火牆資訊";
             this.tabs_firewall.UseVisualStyleBackColor = true;
@@ -308,7 +308,7 @@
             this.firewall_grid.Location = new System.Drawing.Point(0, 0);
             this.firewall_grid.Name = "firewall_grid";
             this.firewall_grid.RowTemplate.Height = 24;
-            this.firewall_grid.Size = new System.Drawing.Size(801, 421);
+            this.firewall_grid.Size = new System.Drawing.Size(800, 420);
             this.firewall_grid.TabIndex = 1;
             // 
             // tabs_events
@@ -336,11 +336,21 @@
             this.tabs_IIS.Controls.Add(this.iis_grid);
             this.tabs_IIS.Location = new System.Drawing.Point(4, 22);
             this.tabs_IIS.Name = "tabs_IIS";
-            this.tabs_IIS.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabs_IIS.Padding = new System.Windows.Forms.Padding(3);
             this.tabs_IIS.Size = new System.Drawing.Size(800, 420);
             this.tabs_IIS.TabIndex = 6;
             this.tabs_IIS.Text = "IIS檢測";
             this.tabs_IIS.UseVisualStyleBackColor = true;
+            // 
+            // iis_grid
+            // 
+            this.iis_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.iis_grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.iis_grid.Location = new System.Drawing.Point(3, 3);
+            this.iis_grid.Name = "iis_grid";
+            this.iis_grid.RowTemplate.Height = 24;
+            this.iis_grid.Size = new System.Drawing.Size(794, 414);
+            this.iis_grid.TabIndex = 3;
             // 
             // tableLayoutPanel1
             // 
@@ -387,18 +397,7 @@
             // 
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "notifyIcon1";
-            this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
-            // 
-            // iis_grid
-            // 
-            this.iis_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.iis_grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.iis_grid.Location = new System.Drawing.Point(3, 3);
-            this.iis_grid.Name = "iis_grid";
-            this.iis_grid.RowTemplate.Height = 24;
-            this.iis_grid.Size = new System.Drawing.Size(794, 414);
-            this.iis_grid.TabIndex = 3;
             // 
             // Form1
             // 
@@ -430,11 +429,11 @@
             this.tabs_events.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.events_grid)).EndInit();
             this.tabs_IIS.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.iis_grid)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.iis_grid)).EndInit();
             this.ResumeLayout(false);
 
         }

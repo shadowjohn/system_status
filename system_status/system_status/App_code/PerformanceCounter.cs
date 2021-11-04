@@ -2,37 +2,31 @@
 // From : https://stackoverflow.com/questions/17026204/retrieve-process-network-usage
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Diagnostics;
 
 public class PerformanceCounter_APP
 {
-
     private static PerformanceCounter avgCounter64Sample;
     private static PerformanceCounter avgCounter64SampleBase;
 
-    
+    /*ArrayList samplesList = new ArrayList();
 
-        /*ArrayList samplesList = new ArrayList();
-
-        // If the category does not exist, create the category and exit.
-        // Performance counters should not be created and immediately used.
-        // There is a latency time to enable the counters, they should be created
-        // prior to executing the application that uses the counters.
-        // Execute this sample a second time to use the category.
-        if (SetupCategory())
-            return;
-        CreateCounters();
-        CollectSamples(samplesList);
-        CalculateResults(samplesList);
-        */
-   
+    // If the category does not exist, create the category and exit.
+    // Performance counters should not be created and immediately used.
+    // There is a latency time to enable the counters, they should be created
+    // prior to executing the application that uses the counters.
+    // Execute this sample a second time to use the category.
+    if (SetupCategory())
+        return;
+    CreateCounters();
+    CollectSamples(samplesList);
+    CalculateResults(samplesList);
+    */
 
     private static bool SetupCategory()
     {
         if (!PerformanceCounterCategory.Exists("AverageCounter64SampleCategory"))
         {
-
             CounterCreationDataCollection counterDataCollection = new CounterCreationDataCollection();
 
             // Add the counter.
@@ -69,7 +63,6 @@ public class PerformanceCounter_APP
             "AverageCounter64Sample",
             false);
 
-
         avgCounter64SampleBase = new PerformanceCounter("AverageCounter64SampleCategory",
             "AverageCounter64SampleBase",
             false);
@@ -77,15 +70,14 @@ public class PerformanceCounter_APP
         avgCounter64Sample.RawValue = 0;
         avgCounter64SampleBase.RawValue = 0;
     }
+
     private static void CollectSamples(ArrayList samplesList)
     {
-
         Random r = new Random(DateTime.Now.Millisecond);
 
         // Loop for the samples.
         for (int j = 0; j < 100; j++)
         {
-
             int value = r.Next(1, 10);
             Console.Write(j + " = " + value);
 

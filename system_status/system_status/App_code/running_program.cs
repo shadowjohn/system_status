@@ -4,22 +4,19 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace system_status.App_code
 {
-
-    class running_program
+    internal class running_program
     {
-        Form1 _form = null;
+        private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
         public DataTable dt = new DataTable();
         private bool isGridInit = false;
+
         public void init(Form1 theform)
         {
             _form = theform;
@@ -43,34 +40,34 @@ namespace system_status.App_code
             is_running = false;
             string json_columns = @"
 [
-    {   
+    {
         ""running_programID"":{""id"":""running_programID"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-{   
+{
         ""running_programPID"":{""id"":""running_programPID"",""name"":""PID"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""running_programName"":{""id"":""running_programName"",""name"":""工作名稱"",""width"":200,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""running_programIsDanger"":{""id"":""running_programIsDanger"",""name"":""是否可疑"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""running_programBaseName"":{""id"":""running_programBaseName"",""name"":""執行檔名"",""width"":200,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""running_programPath"":{""id"":""running_programPath"",""name"":""檔案位置"",""width"":450,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""running_programCommandLine"":{""id"":""running_programCommandLine"",""name"":""執行方法"",""width"":550,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""running_programStart_datetime"":{""id"":""running_programStart_datetime"",""name"":""開始時間"",""width"":150,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""running_programRun_times"":{""id"":""running_programRun_times"",""name"":""已跑多久"",""width"":120,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""running_programRun_user"":{""id"":""running_programRun_user"",""name"":""執行身分"",""width"":550,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     }
 ]
@@ -95,10 +92,10 @@ namespace system_status.App_code
             //run();
         }
 
-        void run()
+        private void run()
         {
             DataRow row = dt.NewRow();
-            
+
             //_form.running_program_grid.Rows.Clear();
             //_form.UpdateUI_DataGridGrid(_form.running_program_grid, "clear", "", "", -1);
             is_running = true;
@@ -143,6 +140,7 @@ namespace system_status.App_code
             _form.setStatusBar("執行緒資訊載入完成...", 100);
             is_running = false;
         }
+
         public string GetProcessOwner(int processId)
         {
             string query = "Select * From Win32_Process Where ProcessID = " + processId;
@@ -162,17 +160,19 @@ namespace system_status.App_code
 
             return "NO OWNER";
         }
+
         private ManagementObjectSearcher mos = null;
         private ManagementObjectCollection moc = null;
+
         private void GetProcessInfo()
         {
             string Query = "SELECT ProcessID,ExecutablePath,CommandLine,CreationDate FROM Win32_Process ";
             mos = new ManagementObjectSearcher(Query);
             moc = mos.Get();
         }
+
         private Dictionary<string, string> GetProcessPath(int processId)
         {
-
             Dictionary<string, string> o = new Dictionary<string, string>();
             o["fullPath"] = "";
             o["CommandLine"] = "";
@@ -203,6 +203,5 @@ namespace system_status.App_code
 
             return o;
         }
-
     }
 }

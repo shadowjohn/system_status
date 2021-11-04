@@ -1,21 +1,18 @@
-﻿using System;
+﻿using IniParser;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-using utility;
-using system_status.App_code;
-using IniParser;
-using IniParser.Model;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using system_status.App_code;
+using utility;
 
 namespace system_status
 {
@@ -27,19 +24,22 @@ namespace system_status
         public double VERSION = 1.0;
         public string LOG_PATH = "";
         public myinclude my = null;
-        system_info cSystem = null;
-        hdd_info cHdd = null;
-        firewall_info cFirewall = null;
-        events cEvents = null;
-        system_service cSystemService = null;
-        running_program cRunningProgram = null;
-        schedule cSchedule = null;
-        iis cIis = null;
+        private system_info cSystem = null;
+        private hdd_info cHdd = null;
+        private firewall_info cFirewall = null;
+        private events cEvents = null;
+        private system_service cSystemService = null;
+        private running_program cRunningProgram = null;
+        private schedule cSchedule = null;
+        private iis cIis = null;
+
         //ini cIni = null;
         //public IniData iniData = null; // 儲存 config 設定
         public FileIniDataParser iniParser = new FileIniDataParser();
+
         static public Form theform;
         public Dictionary<string, Thread> threads = new Dictionary<string, Thread>();
+
         public void setStatusBar(string title, int percent)
         {
             percent = (percent >= 100) ? 100 : percent;
@@ -48,10 +48,12 @@ namespace system_status
             //toolStripProgressBar1.Value = percent;
             UpdateUI_toolStripProgressBar(percent, toolStripProgressBar1);
         }
+
         public void setStatusBarTitle(string title)
         {
             setStatusBarTitle(title, -1);
         }
+
         public void setStatusBarTitle(string title, int ms) //設定 startbar title 一段時間後自動回歸 就緒
         {
             toolStripStatusLabel1.Text = title;
@@ -69,6 +71,7 @@ namespace system_status
                 UpdateUI("就緒", toolStripStatusLabel1);
             });
         }
+
         private void myCrash(object sender, UnhandledExceptionEventArgs args)
         {
             killAllThreads("ALL");
@@ -76,12 +79,36 @@ namespace system_status
             notifyIcon1.Dispose();
             Application.Exit();
         }
+
+        private void killSameProcessName()
+        {
+            Process currentProcess = Process.GetCurrentProcess();
+            //MessageBox.Show(currentProcess.ProcessName);
+            int currentId = currentProcess.Id;
+            string currentName = currentProcess.ProcessName;
+            Process[] processlist = Process.GetProcesses();
+            foreach (Process theprocess in processlist)
+            {
+                if (theprocess.ProcessName == currentName && theprocess.Id != currentId)
+                {
+                    try
+                    {
+                        theprocess.Kill();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
         private void killAllThreads(string killSingleTime)
         {
-            //killSingleTime 可以是 thread index name            
+            //killSingleTime 可以是 thread index name
             //killSingleTime 可以是 ALL
             //remove all threads
-            //From : http://godleon.blogspot.com/2011/06/linq.html                        
+            //From : http://godleon.blogspot.com/2011/06/linq.html
             foreach (string index in this.threads.Keys.ToArray())
             {
                 //時間會放在最後 _ 如果 killSingleTime = "ALL" 就全刪
@@ -98,6 +125,7 @@ namespace system_status
                             threads[index] = null;
                         }
                         break;
+
                     default:
                         {
                             //如果是直接指定 index 就刪直接刪
@@ -111,7 +139,9 @@ namespace system_status
                 }
             }
         }
+
         private delegate void UpdateUICallBack(string value, ToolStripStatusLabel ctl);
+
         private void UpdateUI(string value, ToolStripStatusLabel ctl)
         {
             if (this.InvokeRequired)
@@ -126,6 +156,7 @@ namespace system_status
         }
 
         private delegate void UpdateUICallBack_toolStripProgressBar(int value, ToolStripProgressBar ctl);
+
         private void UpdateUI_toolStripProgressBar(int value, ToolStripProgressBar ctl)
         {
             if (this.InvokeRequired)
@@ -140,6 +171,7 @@ namespace system_status
         }
 
         private delegate int UpdateUICallBack_DataGridGrid(DataGridView ctl, string kind, string key, object value, int index = -1);
+
         public int UpdateUI_DataGridGrid(DataGridView ctl, string kind, string key, object value, int index = -1)
         {
             if (this.InvokeRequired)
@@ -155,9 +187,11 @@ namespace system_status
                     case "clear":
                         ctl.Rows.Clear();
                         return -1;
+
                     case "add":
                         ctl.Rows.Add();
                         return ctl.Rows.Count - 1;
+
                     case "set_cell":
                         if (index != -1)
                         {
@@ -168,6 +202,7 @@ namespace system_status
                             ctl.Rows[ctl.Rows.Count - 1].Cells[key].Value = value.ToString();
                         }
                         return -1;
+
                     case "set_font":
                         if (index != -1)
                         {
@@ -178,6 +213,7 @@ namespace system_status
                             ctl.Rows[ctl.Rows.Count - 1].Cells[key].Style.Font = (Font)value;
                         }
                         return -1;
+
                     default:
                         return -1;
                 }
@@ -198,15 +234,12 @@ namespace system_status
             cEvents = new events();
             cIis = new iis();
             //cIni = new ini();
-
         }
 
-        void log(string input)
+        private void log(string input)
         {
             Console.WriteLine(input);
         }
-
-
 
         private void tabControl1_Click(object sender, EventArgs e)
         {
@@ -223,6 +256,7 @@ namespace system_status
                         cSystem.init(this);
                     }
                     break;
+
                 case "tabs_hdd":
                     //讀硬碟的
                     log("硬碟");
@@ -231,6 +265,7 @@ namespace system_status
                         cHdd.init(this);
                     }
                     break;
+
                 case "tabs_running_program":
                     //執行緒
                     log("執行緒");
@@ -239,6 +274,7 @@ namespace system_status
                         cRunningProgram.init(this);
                     }
                     break;
+
                 case "tabs_schedule":
                     //排程
                     log("排程");
@@ -247,6 +283,7 @@ namespace system_status
                         cSchedule.init(this);
                     }
                     break;
+
                 case "tabs_service":
                     //服務
                     log("服務");
@@ -255,6 +292,7 @@ namespace system_status
                         cSystemService.init(this);
                     }
                     break;
+
                 case "tabs_firewall":
                     //防火牆
                     log("防火牆");
@@ -263,6 +301,7 @@ namespace system_status
                         cFirewall.init(this);
                     }
                     break;
+
                 case "tabs_events":
                     //events
                     log("事件");
@@ -271,6 +310,7 @@ namespace system_status
                         cEvents.init(this);
                     }
                     break;
+
                 case "tabs_IIS":
                     //IIS
                     log("IIS");
@@ -284,9 +324,9 @@ namespace system_status
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-
             //cIni.ini_save();
         }
+
         public void alert(string message)
         {
             MessageBox.Show(message);
@@ -322,6 +362,7 @@ namespace system_status
                     threads["RUN_UPLOAD"].Start();
 
                     break;
+
                 case "啟動中...":
                     run_status_label.Text = "尚未啟動";
                     run_status_label.ForeColor = Color.Red;
@@ -333,8 +374,8 @@ namespace system_status
                     }
                     break;
             }
-
         }
+
         private void run_upload()
         {
             if (textSystemName.Text == "")
@@ -372,7 +413,7 @@ namespace system_status
                 setStatusBar("等待資料完成...", 0);
             }
 
-            //setStatusBar("同步開始...取得硬碟資訊", 40);            
+            //setStatusBar("同步開始...取得硬碟資訊", 40);
             try
             {
                 //output["SYSTEM_INFO"] = my.gridViewToDataTable(system_grid);
@@ -441,6 +482,7 @@ namespace system_status
             }
             o = null;
         }
+
         private void Form1_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
@@ -458,8 +500,6 @@ namespace system_status
             WindowState = FormWindowState.Normal;
         }
 
-
-
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             /*foreach (var k in threads.Keys)
@@ -476,23 +516,25 @@ namespace system_status
             }
             catch
             {
-
             }
             notifyIcon1.Visible = false;
             notifyIcon1.Dispose();
             exit();
         }
+
         private void exit()
         {
             System.Environment.Exit(0);
         }
-        void create_log_dir()
+
+        private void create_log_dir()
         {
             if (!my.is_dir(LOG_PATH))
             {
                 my.mkdir(LOG_PATH);
             }
         }
+
         public void logError(string data)
         {
             try
@@ -502,14 +544,16 @@ namespace system_status
             }
             catch
             {
-
             }
         }
-        void CLog(string data)
+
+        private void CLog(string data)
         {
             Console.WriteLine(data);
         }
+
         private delegate void UpdateUIDGVCallBack(DataGridView dgv, DataTable dt);
+
         public void updateDGVUI(DataGridView dgv, DataTable dt)
         {
             if (this.InvokeRequired)
@@ -522,6 +566,7 @@ namespace system_status
                 dgv.DataSource = dt;
             }
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -546,6 +591,9 @@ namespace system_status
                 Form1_FormClosing(sender, null);
                 return;
             }
+            //同時最多只能跑一支
+            killSameProcessName();
+            notifyIcon1.Visible = true;
             //lock file
             s2 = new FileStream(this.LOCK_FILE, FileMode.Open, FileAccess.Read, FileShare.None);
 
@@ -556,8 +604,6 @@ namespace system_status
             notifyIcon1.BalloonTipText = "已縮小";
             notifyIcon1.BalloonTipTitle = this.Text;
             notifyIcon1.Text = this.Text;
-
-
 
             this.StartPosition = FormStartPosition.CenterScreen;
             this.TopMost = true;
@@ -571,7 +617,6 @@ namespace system_status
             //tabControl1.SelectTab("tabs_running_program");
             tabControl1.SelectTab("tabs_setting");
             tabControl1_Click(new object(), new EventArgs());
-
 
             /*if (iniData["setting"]["NAME"] == "")
             {

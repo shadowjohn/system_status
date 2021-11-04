@@ -17,8 +17,8 @@ namespace system_status.App_code
             ini_path = theform.my.pwd() + @"\setting.ini";
             if (!theform.my.is_file(ini_path))
             {
-                //theform.my.file_put                
-                theform.my.file_put_contents(ini_path,"[setting]\nNAME = ");                
+                //theform.my.file_put
+                theform.my.file_put_contents(ini_path,"[setting]\nNAME = ");
             }
             //From : https://github.com/rickyah/ini-parser
             try
@@ -41,7 +41,7 @@ namespace system_status.App_code
             {
                 theform.iniData["setting"]["NAME"] = "";
             }
-            theform.textSystemName.Text = theform.iniData["setting"]["NAME"];            
+            theform.textSystemName.Text = theform.iniData["setting"]["NAME"];
         }
         public void ini_save()
         {

@@ -1,22 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace system_status.App_code
 {
-    class events
+    internal class events
     {
-        Form1 _form = null;
+        private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
         public DataTable dt = new DataTable();
         private bool isGridInit = false;
+
         public void init(Form1 theform)
         {
             _form = theform;
@@ -39,19 +36,19 @@ namespace system_status.App_code
             //_form.events_grid.Columns.Clear();
             string json_columns = @"
 [
-    {   
+    {
         ""eventsID"":{""id"":""eventsID"",""name"":""項次"",""width"":50,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },           
-    {   
+    },
+    {
         ""eventsIndex"":{""id"":""eventsIndex"",""name"":""編號"",""width"":90,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },    
-    {   
+    },
+    {
         ""eventsDateTime"":{ ""id"":""eventsDateTime"",""name"":""事件時間"",""width"":190,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },        
-    {   
+    },
+    {
         ""eventsCategory"":{""id"":""eventsCategory"",""name"":""Category"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""eventsMessage"":{""id"":""eventsMessage"",""name"":""內容"",""width"":550,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     }
 ";
@@ -73,6 +70,7 @@ namespace system_status.App_code
             _form.threads["events"] = new Thread(() => run());
             _form.threads["events"].Start();
         }
+
         public void run()
         {
             //_form.UpdateUI_DataGridGrid(_form.events_grid, "clear", "", "", -1);
@@ -84,7 +82,7 @@ namespace system_status.App_code
             int step = 0;
             DataRow row = dt.NewRow();
             //_form.my.file_put_contents(_form.my.pwd() + "\\log\\events.txt", _form.my.json_encode(eventLog.Entries));
-            //_form.my.file_put_contents(_form.my.pwd() + "\\log\\events.txt", "");            
+            //_form.my.file_put_contents(_form.my.pwd() + "\\log\\events.txt", "");
             for (int i = eventLog.Entries.Count - 1; i >= 0; i--)
             {
                 EventLogEntry log = eventLog.Entries[i];
@@ -95,7 +93,6 @@ namespace system_status.App_code
                 //d["DateTime"] = log.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss");
                 //var twtzinfo = TimeZoneInfo.FindSystemTimeZoneById("Taipei Standard Time");
                 string eventDateTime = log.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss");
-
 
                 //_form.my.file_put_contents(_form.my.pwd() + "\\log\\events.txt", eventDateTime, true);
                 //改成現在時間跟上一次回報的時間之間才傳
@@ -121,8 +118,6 @@ namespace system_status.App_code
                 row["eventsMessage"] = log.Message;
                 row["eventsDateTime"] = eventDateTime;
                 dt.Rows.Add(row);
-
-
 
                 //my.echo(log.Message + "\n");
                 //step++;

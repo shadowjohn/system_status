@@ -2,24 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using System.Web;
-using System.Net;
 
 namespace system_status.App_code
 {
-    class iis
+    internal class iis
     {
-        Form1 _form = null;
+        private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
         public DataTable dt = new DataTable();
         private bool isGridInit = false;
+
         public void init(Form1 theform)
         {
             _form = theform;
@@ -41,28 +37,28 @@ namespace system_status.App_code
             // _form.iis_grid.Columns.Clear();
             string json_columns = @"
 [
-    {   
+    {
         ""iis_site_id"":{""id"":""iis_site_id"",""name"":""項次"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },  
-    {   
+    },
+    {
         ""iis_ApplicationPoolName"":{""id"":""iis_ApplicationPoolName"",""name"":""iis_ApplicationPoolName"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
-    },            
-    {   
+    },
+    {
         ""iis_site_name"":{""id"":""iis_site_name"",""name"":""站台名稱"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
-    },            
-    {   
+    },
+    {
         ""iis_PhysicalPath"":{""id"":""iis_PhysicalPath"",""name"":""PhysicalPath"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
-    }, 
-    {   
+    },
+    {
         ""iis_Path"":{""id"":""iis_Path"",""name"":""Path"",""width"":380,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
-    }, 
-    {   
+    },
+    {
         ""iis_IsWebconfigEncrypt"":{""id"":""iis_IsWebconfigEncrypt"",""name"":""Web.config是否加密"",""width"":180,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""iis_customErrors"":{""id"":""iis_customErrors"",""name"":""customErrors設定"",""width"":180,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""iis_sessionTimeout"":{""id"":""iis_sessionTimeout"",""name"":""sessionTimeout"",""width"":130,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
     {
@@ -90,7 +86,8 @@ namespace system_status.App_code
             _form.threads["iis"] = new Thread(() => run());
             _form.threads["iis"].Start();
         }
-        void run()
+
+        private void run()
         {
             try
             {
@@ -280,7 +277,7 @@ namespace system_status.App_code
                                     //(doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"] == null) ? row["iis_sessionTimeout"] : doc.GetElementsByTagName("sessionState")[0].Attributes["timeout"].ToString() :
                                     //row["iis_sessionTimeout"];
                                 }
-                                /*                            
+                                /*
                                 for (int i = 0, max_i = m.Count(); i < max_i; i++)
                                 {
                                     if (_form.my.is_istring_like(m[i], "<sessionState"))
@@ -352,8 +349,6 @@ namespace system_status.App_code
                     }
                 }
                 //
-
-
 
                 _form.updateDGVUI(_form.iis_grid, dt);
                 //_form.my.file_put_contents(_form.my.pwd() + "\\log\\iislog.txt", _form.my.json_encode(dt));

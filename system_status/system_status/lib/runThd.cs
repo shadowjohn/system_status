@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using utility;
-using System.Windows.Forms;
-using System.Diagnostics;
+
 namespace runThd_namespace
 {
-    class runThd
+    internal class runThd
     {
-        myinclude my = new myinclude();
+        private myinclude my = new myinclude();
         private Thread Thd = null;
         //private int Value = 0;
 
         public runThd()
         {
-
         }
 
         public void Start()

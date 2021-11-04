@@ -1,21 +1,18 @@
 ﻿using Microsoft.Win32.TaskScheduler;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace system_status.App_code
 {
-    class schedule
+    internal class schedule
     {
-        Form1 _form = null;
+        private Form1 _form = null;
         public bool is_running = false;
         public string last_date = "";
         public DataTable dt = new DataTable();
         private bool isGridInit = false;
+
         public void init(Form1 theform)
         {
             _form = theform;
@@ -38,26 +35,26 @@ namespace system_status.App_code
             //_form.schedule_grid.Columns.Clear();
             string json_columns = @"
 [
-    {   
+    {
         ""scheduleID"":{""id"":""scheduleID"",""name"":""項次"",""width"":50,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
-    },           
-    {   
+    },
+    {
         ""scheduleName"":{""id"":""scheduleName"",""name"":""排程名稱"",""width"":300,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-            
-    {   
+
+    {
         ""scheduleEnable"":{""id"":""scheduleEnable"",""name"":""是否執行"",""width"":80,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""scheduleFolder"":{""id"":""scheduleFolder"",""name"":""目錄"",""width"":350,""display"":false,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""schedulePath"":{""id"":""schedulePath"",""name"":""語法路徑"",""width"":350,""display"":true,""headerAlign"":""center"",""cellAlign"":""left""}
     },
-    {   
+    {
         ""schedulePrevDateTime"":{""id"":""schedulePrevDateTime"",""name"":""上次執行時間"",""width"":180,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     },
-    {   
+    {
         ""scheduleNextDateTime"":{""id"":""scheduleNextDateTime"",""name"":""下次執行時間"",""width"":180,""display"":true,""headerAlign"":""center"",""cellAlign"":""center""}
     }
 ";
@@ -79,12 +76,12 @@ namespace system_status.App_code
             _form.threads["schedule"] = new Thread(() => run());
             _form.threads["schedule"].Start();
         }
+
         public void run()
         {
             //_form.UpdateUI_DataGridGrid(_form.schedule_grid, "clear", "", "", -1);
             using (TaskService ts = new TaskService())
             {
-
                 EnumFolderTasks(ts.RootFolder);
                 _form.updateDGVUI(_form.schedule_grid, dt);
 
@@ -93,7 +90,8 @@ namespace system_status.App_code
                 is_running = false;
             }
         }
-        void EnumFolderTasks(TaskFolder fld)
+
+        private void EnumFolderTasks(TaskFolder fld)
         {
             DataRow row = dt.NewRow();
             int step = 0;
@@ -130,8 +128,6 @@ namespace system_status.App_code
                 row["schedulePath"] = path;
                 row["schedulePrevDateTime"] = task.LastRunTime.ToString("yyyy-MM-dd HH:mm:ss");
 
-
-
                 if (!task.IsActive)
                 {
                     //_form.UpdateUI_DataGridGrid(_form.schedule_grid, "set_cell", "scheduleNextDateTime", "--", lastId);
@@ -152,13 +148,11 @@ namespace system_status.App_code
                     }
                 }
                 dt.Rows.Add(row);
-
             }
             foreach (TaskFolder sfld in fld.SubFolders)
             {
                 EnumFolderTasks(sfld);
             }
         }
-
     }
 }
