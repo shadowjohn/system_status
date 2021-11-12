@@ -528,11 +528,12 @@ namespace system_status.App_code
             _form.system_grid.Rows[lastId].Cells["systemData"].Value = CPU_RAM["RAM"];
             */
 
-            row = dt.NewRow();
+            /*row = dt.NewRow();
             row["systemID"] = ++step;
             row["systemName"] = "UsedRam";
             row["systemData"] = CPU_RAM["RAM"];
             dt.Rows.Add(row);
+            */
             //_form.logError("System info32");
 
             /*
@@ -550,13 +551,18 @@ namespace system_status.App_code
             dt.Rows.Add(row);
             //_form.logError("System info33");
             //已用的 ram
-            /*
-            _form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
-            lastId = _form.system_grid.Rows.Count - 1;
-            _form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
-            _form.system_grid.Rows[lastId].Cells["systemName"].Value = "UsedRam";
-            _form.system_grid.Rows[lastId].Cells["systemData"].Value = GetUsedMemory().ToString();
-            */
+
+            //_form.UpdateUI_DataGridGrid(_form.system_grid, "add", "", "", -1);
+            //lastId = _form.system_grid.Rows.Count - 1;
+            //_form.system_grid.Rows[lastId].Cells["systemID"].Value = (lastId + 1);
+            //_form.system_grid.Rows[lastId].Cells["systemName"].Value = "UsedRam";
+            //_form.system_grid.Rows[lastId].Cells["systemData"].Value = GetUsedMemory().ToString();
+            row = dt.NewRow();
+            row["systemID"] = ++step;
+            row["systemName"] = "UsedRam";
+            row["systemData"] = GetUsedMemory().ToString();
+            dt.Rows.Add(row);
+
 
             //ping
             string CMD_PING = "ping 8.8.8.8 -n 1 -w 1 && exit";

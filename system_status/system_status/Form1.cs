@@ -18,7 +18,7 @@ namespace system_status
 {
     public partial class Form1 : Form
     {
-        public double VERSION = 1.04;
+        public double VERSION = 1.05;
         private FileStream s2 = null;
         public string LOCK_FILE = "";
         public bool GLOBAL_RUN_AT_START = false;        
