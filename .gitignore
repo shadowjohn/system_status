@@ -75,3 +75,4 @@ _[Ss]cripts
 *.dot[Cc]over
 system_status/.vs
 /system_status/.vs
+/system_status_watchdog/.vs
