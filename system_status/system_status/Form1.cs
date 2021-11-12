@@ -18,10 +18,10 @@ namespace system_status
 {
     public partial class Form1 : Form
     {
-        public double VERSION = 1.05;
+        public double VERSION = 1.06;
         private FileStream s2 = null;
         public string LOCK_FILE = "";
-        public bool GLOBAL_RUN_AT_START = false;        
+        public bool GLOBAL_RUN_AT_START = false;
         public string LOG_PATH = "";
         public myinclude my = null;
         private system_info cSystem = null;
@@ -580,7 +580,14 @@ namespace system_status
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(myCrash);
             this.LOCK_FILE = my.pwd() + "\\lock.txt";
-            textSystemName.Text = my.getSystemKey("COMPUTER_NAME");
+            string COMPUTER_NAME = my.getSystemKey("COMPUTER_NAME");
+            if (COMPUTER_NAME== "請填寫主機名稱")
+            {
+                MessageBox.Show("請填寫主機名稱...請先修改 system_status.exe.config");
+                exit();
+            }
+            textSystemName.Text = COMPUTER_NAME;
+
             if (!my.is_file(this.LOCK_FILE))
             {
                 my.file_put_contents(this.LOCK_FILE, "");
@@ -595,9 +602,9 @@ namespace system_status
             //同時最多只能跑一支
             killSameProcessName();
 
-            if(!my.isProcessRunning("system_status_watchdog"))
+            if (!my.isProcessRunning("system_status_watchdog"))
             {
-                my.system(my.pwd()+ "\\system_status_watchdog.exe",-1);
+                my.system(my.pwd() + "\\system_status_watchdog.exe", -1);
             }
 
             //寫入目前版本
