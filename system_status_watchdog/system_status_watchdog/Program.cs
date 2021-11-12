@@ -133,7 +133,8 @@ namespace system_status_watchdog
             {
                 F1.threads["mainThread"] = new Thread(F1.run_check_update);
                 F1.threads["mainThread"].Start();
-                Thread.Sleep(60 * 1000);
+                //10分鐘執行一次
+                Thread.Sleep(10 * 60 * 1000);
             }
         }
     }
