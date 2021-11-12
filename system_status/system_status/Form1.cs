@@ -18,7 +18,7 @@ namespace system_status
 {
     public partial class Form1 : Form
     {
-        public double VERSION = 1.00;
+        public double VERSION = 1.04;
         private FileStream s2 = null;
         public string LOCK_FILE = "";
         public bool GLOBAL_RUN_AT_START = false;        
@@ -595,6 +595,11 @@ namespace system_status
             //同時最多只能跑一支
             killSameProcessName();
 
+            if(!my.isProcessRunning("system_status_watchdog"))
+            {
+                my.system(my.pwd()+ "\\system_status_watchdog.exe",-1);
+            }
+
             //寫入目前版本
             my.file_put_contents(my.pwd() + "\\version.txt", VERSION.ToString());
 
@@ -604,7 +609,7 @@ namespace system_status
 
             this.LOG_PATH = my.pwd() + "\\log";
             create_log_dir();
-            this.Text += string.Format(" - 版本：{0:0.0}", VERSION);
+            this.Text += string.Format(" - 版本：{0}", VERSION);
 
             notifyIcon1.BalloonTipText = "已縮小";
             notifyIcon1.BalloonTipTitle = this.Text;

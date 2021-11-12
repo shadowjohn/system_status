@@ -288,7 +288,17 @@ namespace utility
             }
             return cpuInfo;
         }
-
+        public bool isProcessRunning(string processName)
+        {
+            bool isRunning = false;
+            string mn = mainname(processName);
+            foreach (var process in Process.GetProcessesByName(mn))
+            {
+                isRunning = true;
+                break;
+            }
+            return isRunning;
+        }
         public string system(string command, int waitms)
         {
             StringBuilder sb = new StringBuilder();
@@ -307,6 +317,10 @@ namespace utility
                     p.Start();//启动cmd.exe
                     Thread t = new Thread(() =>
                     {
+                        if (waitms == -1)
+                        {
+                            return;
+                        }
                         Thread.Sleep(waitms);
                         try
                         {
