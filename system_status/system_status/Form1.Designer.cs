@@ -60,6 +60,8 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.tabs_installed_program = new System.Windows.Forms.TabPage();
+            this.installed_program_grid = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
             this.tabs_setting.SuspendLayout();
             this.tabs_host.SuspendLayout();
@@ -80,6 +82,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.iis_grid)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.tabs_installed_program.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.installed_program_grid)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -92,6 +96,7 @@
             this.tabControl1.Controls.Add(this.tabs_service);
             this.tabControl1.Controls.Add(this.tabs_firewall);
             this.tabControl1.Controls.Add(this.tabs_events);
+            this.tabControl1.Controls.Add(this.tabs_installed_program);
             this.tabControl1.Controls.Add(this.tabs_IIS);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
@@ -399,6 +404,26 @@
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
+            // tabs_installed_program
+            // 
+            this.tabs_installed_program.Controls.Add(this.installed_program_grid);
+            this.tabs_installed_program.Location = new System.Drawing.Point(4, 22);
+            this.tabs_installed_program.Name = "tabs_installed_program";
+            this.tabs_installed_program.Size = new System.Drawing.Size(800, 420);
+            this.tabs_installed_program.TabIndex = 9;
+            this.tabs_installed_program.Text = "已安裝程式";
+            this.tabs_installed_program.UseVisualStyleBackColor = true;
+            // 
+            // installed_program_grid
+            // 
+            this.installed_program_grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.installed_program_grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.installed_program_grid.Location = new System.Drawing.Point(0, 0);
+            this.installed_program_grid.Name = "installed_program_grid";
+            this.installed_program_grid.RowTemplate.Height = 24;
+            this.installed_program_grid.Size = new System.Drawing.Size(800, 420);
+            this.installed_program_grid.TabIndex = 4;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -434,6 +459,8 @@
             this.tableLayoutPanel1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.tabs_installed_program.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.installed_program_grid)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -469,6 +496,8 @@
         public System.Windows.Forms.DataGridView events_grid;
         private System.Windows.Forms.Label run_status_label;
         public System.Windows.Forms.DataGridView iis_grid;
+        private System.Windows.Forms.TabPage tabs_installed_program;
+        public System.Windows.Forms.DataGridView installed_program_grid;
     }
 }
 

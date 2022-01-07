@@ -91,7 +91,7 @@ namespace system_status.App_code
         {
             try
             {
-                int step = 0;
+                //int step = 0;
                 DataRow row = dt.NewRow();
                 //https://stackoverflow.com/questions/4593412/list-all-websites-in-iis-c-sharp
                 var iisManager = new ServerManager();

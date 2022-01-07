@@ -83,7 +83,7 @@ namespace system_status_watchdog
                     //無網路
                 }
             }
-            if (local_version != remote_version || isNeedUpdate)
+            if (local_version < remote_version || isNeedUpdate)
             {
                 //Console.WriteLine("step 4");
                 //版本不一樣，如果服務正在跑，就停止，下載，重新啟動程式

@@ -18,7 +18,7 @@ namespace system_status
 {
     public partial class Form1 : Form
     {
-        public double VERSION = 1.06;
+        public double VERSION = 1.07;
         private FileStream s2 = null;
         public string LOCK_FILE = "";
         public bool GLOBAL_RUN_AT_START = false;
@@ -32,6 +32,7 @@ namespace system_status
         private running_program cRunningProgram = null;
         private schedule cSchedule = null;
         private iis cIis = null;
+        private installed_program cInstalledProgram = null;
 
         //ini cIni = null;
         //public IniData iniData = null; // 儲存 config 設定
@@ -233,6 +234,7 @@ namespace system_status
             cSchedule = new schedule();
             cEvents = new events();
             cIis = new iis();
+            cInstalledProgram = new installed_program();
             //cIni = new ini();
         }
 
@@ -310,13 +312,21 @@ namespace system_status
                         cEvents.init(this);
                     }
                     break;
-
                 case "tabs_IIS":
                     //IIS
                     log("IIS");
                     if (cIis.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cIis.last_date) >= 5 * 60)
                     {
                         cIis.init(this);
+                    }
+                    break;
+                case "tabs_installed_program":
+                    {
+                        log("已安裝的程式");
+                        if (cInstalledProgram.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cInstalledProgram.last_date) >= 5 * 60)
+                        {
+                            cInstalledProgram.init(this);
+                        }
                     }
                     break;
             }
@@ -398,6 +408,7 @@ namespace system_status
             cSystemService.init(this);
             cSchedule.init(this);
             cIis.init(this);
+            cInstalledProgram.init(this);
             Thread.Sleep(3000);
             while (
                 cSystem.is_running == true ||
@@ -407,7 +418,9 @@ namespace system_status
                 cSystemService.is_running == true ||
                 cFirewall.is_running == true ||
                 cSchedule.is_running == true ||
-                cIis.is_running == true)
+                cIis.is_running == true ||
+                cInstalledProgram.is_running == true
+                )
             {
                 Thread.Sleep(1000);
                 setStatusBar("等待資料完成...", 0);
@@ -460,6 +473,13 @@ namespace system_status
             {
                 //output["IIS_INFO"] = my.gridViewToDataTable(iis_grid);
                 output["IIS_INFO"] = cIis.dt;
+            }
+            catch { }
+
+            try
+            {
+                //output["IIS_INFO"] = my.gridViewToDataTable(iis_grid);
+                output["INSTALL_PROGRAM"] = cInstalledProgram.dt;
             }
             catch { }
 
@@ -581,7 +601,7 @@ namespace system_status
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(myCrash);
             this.LOCK_FILE = my.pwd() + "\\lock.txt";
             string COMPUTER_NAME = my.getSystemKey("COMPUTER_NAME");
-            if (COMPUTER_NAME== "請填寫主機名稱")
+            if (COMPUTER_NAME == "請填寫主機名稱")
             {
                 MessageBox.Show("請填寫主機名稱...請先修改 system_status.exe.config");
                 exit();
