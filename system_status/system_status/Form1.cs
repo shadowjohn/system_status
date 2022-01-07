@@ -32,7 +32,7 @@ namespace system_status
         private running_program cRunningProgram = null;
         private schedule cSchedule = null;
         private iis cIis = null;
-        private installed_program cInstalledProgram = null;
+        private installed_software cInstalledSoftware = null;
 
         //ini cIni = null;
         //public IniData iniData = null; // 儲存 config 設定
@@ -234,7 +234,7 @@ namespace system_status
             cSchedule = new schedule();
             cEvents = new events();
             cIis = new iis();
-            cInstalledProgram = new installed_program();
+            cInstalledSoftware = new installed_software();
             //cIni = new ini();
         }
 
@@ -323,9 +323,9 @@ namespace system_status
                 case "tabs_installed_program":
                     {
                         log("已安裝的程式");
-                        if (cInstalledProgram.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cInstalledProgram.last_date) >= 5 * 60)
+                        if (cInstalledSoftware.last_date == "" || Convert.ToInt32(my.time()) - Convert.ToInt32(cInstalledSoftware.last_date) >= 5 * 60)
                         {
-                            cInstalledProgram.init(this);
+                            cInstalledSoftware.init(this);
                         }
                     }
                     break;
@@ -408,7 +408,7 @@ namespace system_status
             cSystemService.init(this);
             cSchedule.init(this);
             cIis.init(this);
-            cInstalledProgram.init(this);
+            cInstalledSoftware.init(this);
             Thread.Sleep(3000);
             while (
                 cSystem.is_running == true ||
@@ -419,7 +419,7 @@ namespace system_status
                 cFirewall.is_running == true ||
                 cSchedule.is_running == true ||
                 cIis.is_running == true ||
-                cInstalledProgram.is_running == true
+                cInstalledSoftware.is_running == true
                 )
             {
                 Thread.Sleep(1000);
@@ -479,7 +479,7 @@ namespace system_status
             try
             {
                 //output["IIS_INFO"] = my.gridViewToDataTable(iis_grid);
-                output["INSTALL_PROGRAM"] = cInstalledProgram.dt;
+                output["INSTALLED_SOFTWARE_INFO"] = cInstalledSoftware.dt;
             }
             catch { }
 

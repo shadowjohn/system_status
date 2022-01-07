@@ -126,7 +126,7 @@
     <Compile Include="App_code\hdd_info.cs" />
     <Compile Include="App_code\iis.cs" />
     <Compile Include="App_code\ini.cs" />
-    <Compile Include="App_code\installed_program.cs" />
+    <Compile Include="App_code\installed_software.cs" />
     <Compile Include="App_code\PerformanceCounter.cs" />
     <Compile Include="App_code\running_program.cs" />
     <Compile Include="App_code\system_info.cs" />
